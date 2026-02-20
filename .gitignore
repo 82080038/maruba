@@ -1,0 +1,33 @@
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# PHP/vendor/cache
+vendor/
+composer.lock
+
+# App secrets & runtime
+App/.env
+App/public/uploads/
+App/public/storage/
+
+# Local scripts and credentials (do NOT commit)
+sudo_pass.txt
+setup_github.sh
+fix_apache.sh
+fix_permissions.php
+update_permissions.php
+update_docs_perm.sql
+.git-credentials
+
+# Logs/temp
+*.log
+storage/
+/tmp/
+maruba_rsa
+maruba_rsa.pub
+maruba_*
+*.key
+*.pem
