@@ -1,0 +1,12 @@
+RewriteEngine On
+RewriteBase /maruba
+
+# Lewati assets/uploads di App/public
+RewriteCond %{REQUEST_URI} ^/maruba/App/public/assets/ [NC]
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_URI} ^/maruba/App/public/uploads/ [NC]
+RewriteRule ^ - [L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
