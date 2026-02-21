@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Icon Visibility Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background: white;
+        }
+        .mobile-toggle {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            font-size: 1.25rem;
+        }
+        .bg-primary {
+            background-color: #0d6efd !important;
+        }
+        .hamburger-icon {
+            width: 20px;
+            height: 14px;
+            position: relative;
+            display: inline-block;
+        }
+        .hamburger-icon span {
+            display: block;
+            position: absolute;
+            height: 2px;
+            width: 100%;
+            background: white;
+            border-radius: 1px;
+            opacity: 1;
+            left: 0;
+            transform: rotate(0deg);
+            transition: .25s ease-in-out;
+        }
+        .hamburger-icon span:nth-child(1) { top: 0px; }
+        .hamburger-icon span:nth-child(2) { top: 6px; }
+        .hamburger-icon span:nth-child(3) { top: 12px; }
+        .icon-test {
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">🧪 Icon Visibility Test</h1>
+        
+        <div class="test-section">
+            <h3>1. SVG Icon Test (Original)</h3>
+            <div class="icon-test">
+                <div class="bg-primary p-3 rounded" style="display: inline-block;">
+                    <button class="btn mobile-toggle" title="Menu">
+                        <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" style="display: block;">
+                            <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"></path>
+                        </svg>
+                    </button>
+                </div>
+                <p class="mt-2">SVG icon - seharusnya 3 garis horizontal</p>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. Bootstrap Icon Test</h3>
+            <div class="icon-test">
+                <div class="bg-primary p-3 rounded" style="display: inline-block;">
+                    <button class="btn mobile-toggle" title="Menu">
+                        <i class="bi bi-list fs-5"></i>
+                    </button>
+                </div>
+                <p class="mt-2">Bootstrap icon - seharusnya icon list</p>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. Text Hamburger Test</h3>
+            <div class="icon-test">
+                <div class="bg-primary p-3 rounded" style="display: inline-block;">
+                    <button class="btn mobile-toggle" title="Menu">
+                        <span style="font-size: 20px;">☰</span>
+                    </button>
+                </div>
+                <p class="mt-2">Text hamburger - seharusnya ☰</p>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>4. CSS Hamburger Test</h3>
+            <div class="icon-test">
+                <div class="bg-primary p-3 rounded" style="display: inline-block;">
+                    <button class="btn mobile-toggle" title="Menu">
+                        <div class="hamburger-icon">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </button>
+                </div>
+                <p class="mt-2">CSS hamburger - seharusnya 3 garis CSS</p>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>5. Complete Fallback System (Like in App)</h3>
+            <div class="icon-test">
+                <div class="bg-primary p-3 rounded" style="display: inline-block;">
+                    <button class="btn mobile-toggle" id="testToggle" title="Menu">
+                        <!-- Primary: SVG Icon -->
+                        <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" style="display: block;">
+                            <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5.0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"></path>
+                        </svg>
+                        <!-- Fallback 1: Bootstrap Icon -->
+                        <i class="bi bi-list fs-5" style="display: none;"></i>
+                        <!-- Fallback 2: Text Hamburger -->
+                        <span style="display: none;">☰</span>
+                        <!-- Fallback 3: CSS Hamburger -->
+                        <div class="hamburger-icon" style="display: none;">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </button>
+                </div>
+                <p class="mt-2">Complete fallback system - auto-detect best option</p>
+                <div id="fallbackResult" class="alert alert-info mt-2">Testing...</div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>6. Simple Text Solution (Guaranteed to Work)</h3>
+            <div class="icon-test">
+                <div class="bg-primary p-3 rounded" style="display: inline-block;">
+                    <button class="btn mobile-toggle" title="Menu" style="font-size: 18px; font-weight: bold;">
+                        MENU
+                    </button>
+                </div>
+                <p class="mt-2">Simple text - "MENU" (guaranteed visible)</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        // Ensure jQuery is loaded before running scripts
+        (function($) {
+            'use strict';
+            
+            $(document).ready(function() {
+                console.log('=== Icon Visibility Test Started ===');
+                
+                // Test complete fallback system
+                var testToggle = $('#testToggle');
+                var fallbackResult = $('#fallbackResult');
+                
+                if (testToggle.length > 0) {
+                    console.log('Testing fallback system...');
+                    
+                    // Check SVG
+                    var svgIcon = testToggle.find('svg');
+                    if (svgIcon.length > 0 && svgIcon.css('display') !== 'none') {
+                        fallbackResult.html('<strong>✅ SVG Icon Working!</strong> Red border test applied.');
+                        svgIcon.css('border', '2px solid red');
+                        setTimeout(function() {
+                            svgIcon.css('border', 'none');
+                        }, 3000);
+                    } else {
+                        // Try Bootstrap icon
+                        svgIcon.hide();
+                        var bootstrapIcon = testToggle.find('.bi-list');
+                        bootstrapIcon.show();
+                        
+                        if (bootstrapIcon.is(':visible')) {
+                            fallbackResult.html('<strong>✅ Bootstrap Icon Working!</strong> Green border test applied.');
+                            bootstrapIcon.css('border', '2px solid green');
+                            setTimeout(function() {
+                                bootstrapIcon.css('border', 'none');
+                            }, 3000);
+                        } else {
+                            // Try text fallback
+                            bootstrapIcon.hide();
+                            var textFallback = testToggle.find('span');
+                            textFallback.show();
+                            
+                            if (textFallback.is(':visible')) {
+                                fallbackResult.html('<strong>✅ Text Fallback Working!</strong> Blue border test applied.');
+                                textFallback.css('border', '2px solid blue');
+                                setTimeout(function() {
+                                    textFallback.css('border', 'none');
+                                }, 3000);
+                            } else {
+                                // Try CSS hamburger
+                                textFallback.hide();
+                                var cssHamburger = testToggle.find('.hamburger-icon');
+                                cssHamburger.show();
+                                
+                                if (cssHamburger.is(':visible')) {
+                                    fallbackResult.html('<strong>✅ CSS Hamburger Working!</strong> Yellow border test applied.');
+                                    cssHamburger.css('border', '2px solid yellow');
+                                    setTimeout(function() {
+                                        cssHamburger.css('border', 'none');
+                                    }, 3000);
+                                } else {
+                                    fallbackResult.html('<strong>❌ All Fallbacks Failed!</strong> Using simple text solution.');
+                                    testToggle.html('MENU');
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Click test
+                $('.mobile-toggle').on('click', function() {
+                    $(this).css('background-color', 'rgba(255,255,255,0.5)');
+                    setTimeout(() => {
+                        $(this).css('background-color', 'rgba(255,255,255,0.1)');
+                    }, 200);
+                    console.log('Icon clicked!');
+                });
+                
+                console.log('=== Icon Visibility Test Complete ===');
+            });
+            
+        })(jQuery);
+    </script>
+</body>
+</html>

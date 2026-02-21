@@ -20,9 +20,12 @@ class LoanController
     {
         require_login();
         AuthHelper::requirePermission('loans', 'create');
+        verify_csrf();
+
         $memberId = (int)($_POST['member_id'] ?? 0);
         $productId = (int)($_POST['product_id'] ?? 0);
-        $amount = (float)($_POST['amount'] ?? 0);
+        $amountRaw = (string)($_POST['amount'] ?? '');
+        $amount = (float)preg_replace('/[^0-9.]/', '', $amountRaw);
         $tenor = (int)($_POST['tenor_months'] ?? 0);
         $purpose = trim($_POST['purpose'] ?? '');
 

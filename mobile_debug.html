@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mobile Sidebar Debug</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            padding: 20px;
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .debug-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background: white;
+        }
+        .debug-header {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: -20px -20px 20px -20px;
+            border-radius: 8px 8px 0 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .status-ok {
+            color: #198754;
+            font-weight: bold;
+        }
+        .status-error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .status-warning {
+            color: #fd7e14;
+            font-weight: bold;
+        }
+        .bg-primary-custom {
+            background-color: #0d6efd !important;
+        }
+        .mobile-toggle {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            align-items: center;
+            justify-content: center;
+            width: auto;
+            height: 40px;
+            font-size: 1.25rem;
+            padding: 0 12px;
+        }
+        .hamburger-icon {
+            width: 20px;
+            height: 14px;
+            position: relative;
+            display: inline-block;
+        }
+        .hamburger-icon span {
+            display: block;
+            position: absolute;
+            height: 2px;
+            width: 100%;
+            background: white;
+            border-radius: 1px;
+            opacity: 1;
+            left: 0;
+            transform: rotate(0deg);
+            transition: .25s ease-in-out;
+        }
+        .hamburger-icon span:nth-child(1) { top: 0px; }
+        .hamburger-icon span:nth-child(2) { top: 6px; }
+        .hamburger-icon span:nth-child(3) { top: 12px; }
+        .sidebar-test {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            background-color: #212529;
+            color: white;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 1045;
+            padding: 1rem;
+        }
+        .sidebar-test.show {
+            transform: translateX(0);
+        }
+        .sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 1040;
+        }
+        .sidebar-backdrop.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .debug-result {
+            font-family: monospace;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border: 1px solid #dee2e6;
+        }
+        .test-button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .test-button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">🔍 Mobile Sidebar Toggle Debug</h1>
+
+        <!-- Test Header -->
+        <div class="bg-primary-custom text-white p-3 rounded mb-4">
+            <h3>Test Environment</h3>
+            <p>Testing mobile sidebar toggle functionality</p>
+            <div class="bg-primary p-3 rounded d-inline-block">
+                <button class="btn mobile-toggle" id="mobileSidebarToggle" title="Menu">
+                    <!-- Primary: SVG Icon -->
+                    <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" style="display: block; pointer-events: none;">
+                        <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"></path>
+                    </svg>
+                    <!-- Fallback 1: Bootstrap Icon -->
+                    <i class="bi bi-list fs-5" style="display: none;"></i>
+                    <!-- Fallback 2: Text Hamburger -->
+                    <span style="display: none;">☰</span>
+                    <!-- Fallback 3: CSS Hamburger -->
+                    <div class="hamburger-icon" style="display: none;">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <!-- Label for clarity - ALWAYS VISIBLE ON MOBILE -->
+                    <span class="ms-2" style="font-size: 0.875rem; display: inline-block;">MENU</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Test Sidebar -->
+        <div class="sidebar-test" id="mainSidebar">
+            <h4>Test Sidebar</h4>
+            <ul class="nav flex-column">
+                <li class="nav-item"><a href="#" class="nav-link text-white">📊 Dashboard</a></li>
+                <li class="nav-item"><a href="#" class="nav-link text-white">💰 Pinjaman</a></li>
+                <li class="nav-item"><a href="#" class="nav-link text-white">👥 Anggota</a></li>
+                <li class="nav-item"><a href="#" class="nav-link text-white">📦 Produk</a></li>
+                <li class="nav-item"><a href="#" class="nav-link text-white">🚪 Logout</a></li>
+            </ul>
+        </div>
+
+        <!-- Sidebar Backdrop -->
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <!-- Debug Sections -->
+        <div class="debug-section">
+            <div class="debug-header">
+                <h4>1. JavaScript & jQuery Status</h4>
+            </div>
+            <div id="jqueryStatus" class="debug-result">Checking...</div>
+            <button class="test-button bg-primary text-white" onclick="testJQuery()">Test jQuery</button>
+            <button class="test-button bg-success text-white" onclick="testButtonClick()">Test Button Click</button>
+        </div>
+
+        <div class="debug-section">
+            <div class="debug-header">
+                <h4>2. DOM Elements Status</h4>
+            </div>
+            <div id="domStatus" class="debug-result">Checking...</div>
+            <button class="test-button bg-info text-white" onclick="checkDOMElements()">Check Elements</button>
+        </div>
+
+        <div class="debug-section">
+            <div class="debug-header">
+                <h4>3. Event Handlers Status</h4>
+            </div>
+            <div id="eventStatus" class="debug-result">Checking...</div>
+            <button class="test-button bg-warning text-dark" onclick="checkEventHandlers()">Check Events</button>
+            <button class="test-button bg-danger text-white" onclick="simulateToggle()">Force Toggle</button>
+        </div>
+
+        <div class="debug-section">
+            <div class="debug-header">
+                <h4>4. CSS Visibility Status</h4>
+            </div>
+            <div id="cssStatus" class="debug-result">Checking...</div>
+            <button class="test-button bg-secondary text-white" onclick="checkCSSVisibility()">Check CSS</button>
+        </div>
+
+        <div class="debug-section">
+            <div class="debug-header">
+                <h4>5. Browser Console Logs</h4>
+            </div>
+            <div id="consoleStatus" class="debug-result">Open F12 to see console logs</div>
+            <button class="test-button bg-dark text-white" onclick="openConsoleLogs()">Trigger Debug Logs</button>
+        </div>
+
+        <div class="debug-section">
+            <div class="debug-header">
+                <h4>6. Test Results Summary</h4>
+            </div>
+            <div id="summaryStatus" class="debug-result">Run all tests above to get summary</div>
+            <button class="test-button bg-success text-white" onclick="runAllTests()">Run All Tests</button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Global debug variables
+        let debugResults = {
+            jquery: false,
+            dom: false,
+            events: false,
+            css: false
+        };
+
+        // Ensure jQuery is loaded before running scripts
+        (function($) {
+            'use strict';
+
+            $(document).ready(function() {
+                console.log('=== Mobile Sidebar Debug Started ===');
+                console.log('Window width:', window.innerWidth);
+                console.log('jQuery version:', $.fn.jquery);
+
+                // Auto-run initial checks
+                setTimeout(function() {
+                    testJQuery();
+                    checkDOMElements();
+                    checkCSSVisibility();
+                }, 500);
+
+                // Setup test toggle functionality
+                setupTestToggle();
+
+                console.log('=== Mobile Sidebar Debug Ready ===');
+            });
+
+            function setupTestToggle() {
+                const toggleButton = $('#mobileSidebarToggle');
+                const sidebar = $('#mainSidebar');
+                const backdrop = $('#sidebarBackdrop');
+
+                console.log('Setting up test toggle...');
+                console.log('Toggle button found:', toggleButton.length);
+                console.log('Sidebar found:', sidebar.length);
+                console.log('Backdrop found:', backdrop.length);
+
+                toggleButton.off('click').on('click', function(e) {
+                    e.preventDefault();
+                    console.log('=== TEST TOGGLE BUTTON CLICKED ===');
+
+                    const isVisible = sidebar.hasClass('show');
+                    console.log('Sidebar currently visible:', isVisible);
+
+                    if (isVisible) {
+                        sidebar.removeClass('show');
+                        backdrop.removeClass('show');
+                        console.log('Sidebar hidden');
+                    } else {
+                        sidebar.addClass('show');
+                        backdrop.addClass('show');
+                        console.log('Sidebar shown');
+                    }
+
+                    // Visual feedback
+                    toggleButton.css('background-color', 'rgba(255,255,255,0.3)');
+                    setTimeout(function() {
+                        toggleButton.css('background-color', 'rgba(255,255,255,0.1)');
+                    }, 200);
+                });
+
+                console.log('Test toggle setup complete');
+            }
+
+        })(jQuery);
+
+        // Global functions for button clicks
+        function testJQuery() {
+            const status = $('#jqueryStatus');
+            try {
+                if (typeof jQuery !== 'undefined') {
+                    status.html('<span class="status-ok">✅ jQuery loaded: v' + jQuery.fn.jquery + '</span>');
+                    debugResults.jquery = true;
+                } else {
+                    status.html('<span class="status-error">❌ jQuery not loaded</span>');
+                    debugResults.jquery = false;
+                }
+            } catch (e) {
+                status.html('<span class="status-error">❌ jQuery error: ' + e.message + '</span>');
+                debugResults.jquery = false;
+            }
+        }
+
+        function testButtonClick() {
+            const button = document.getElementById('mobileSidebarToggle');
+            if (button) {
+                console.log('Manually triggering button click...');
+                button.click();
+                $('#jqueryStatus').append('<br><span class="status-ok">✅ Button click triggered</span>');
+            } else {
+                $('#jqueryStatus').append('<br><span class="status-error">❌ Button not found</span>');
+            }
+        }
+
+        function checkDOMElements() {
+            const status = $('#domStatus');
+            let results = '';
+
+            // Check toggle button
+            const toggle = $('#mobileSidebarToggle');
+            results += 'Toggle button: ' + (toggle.length ? '<span class="status-ok">✅ Found</span>' : '<span class="status-error">❌ Missing</span>') + '<br>';
+
+            // Check SVG icon
+            const svg = toggle.find('svg');
+            results += 'SVG icon: ' + (svg.length ? '<span class="status-ok">✅ Found</span>' : '<span class="status-error">❌ Missing</span>') + '<br>';
+
+            // Check MENU label
+            const menuLabel = toggle.find('span').last();
+            results += 'MENU label: ' + (menuLabel.length && menuLabel.text() === 'MENU' ? '<span class="status-ok">✅ Found</span>' : '<span class="status-error">❌ Missing</span>') + '<br>';
+
+            // Check sidebar
+            const sidebar = $('#mainSidebar');
+            results += 'Sidebar element: ' + (sidebar.length ? '<span class="status-ok">✅ Found</span>' : '<span class="status-error">❌ Missing</span>') + '<br>';
+
+            // Check backdrop
+            const backdrop = $('#sidebarBackdrop');
+            results += 'Backdrop element: ' + (backdrop.length ? '<span class="status-ok">✅ Found</span>' : '<span class="status-error">❌ Missing</span>') + '<br>';
+
+            status.html(results);
+            debugResults.dom = toggle.length && sidebar.length && backdrop.length;
+        }
+
+        function checkEventHandlers() {
+            const status = $('#eventStatus');
+            const toggle = $('#mobileSidebarToggle');
+
+            // Check if jQuery events are attached
+            const events = $._data(toggle[0], 'events');
+            const hasClick = events && events.click && events.click.length > 0;
+
+            let results = 'jQuery click events: ' + (hasClick ? '<span class="status-ok">✅ Attached</span>' : '<span class="status-error">❌ Not attached</span>') + '<br>';
+
+            // Test manual event trigger
+            try {
+                toggle.trigger('click');
+                results += 'Event trigger test: <span class="status-ok">✅ Working</span><br>';
+            } catch (e) {
+                results += 'Event trigger test: <span class="status-error">❌ Failed - ' + e.message + '</span><br>';
+            }
+
+            status.html(results);
+            debugResults.events = hasClick;
+        }
+
+        function simulateToggle() {
+            console.log('=== SIMULATING TOGGLE ===');
+            const sidebar = $('#mainSidebar');
+            const backdrop = $('#sidebarBackdrop');
+
+            const isVisible = sidebar.hasClass('show');
+            console.log('Current state:', isVisible ? 'visible' : 'hidden');
+
+            if (isVisible) {
+                sidebar.removeClass('show');
+                backdrop.removeClass('show');
+                $('#eventStatus').append('<br><span class="status-ok">✅ Sidebar hidden</span>');
+            } else {
+                sidebar.addClass('show');
+                backdrop.addClass('show');
+                $('#eventStatus').append('<br><span class="status-ok">✅ Sidebar shown</span>');
+            }
+        }
+
+        function checkCSSVisibility() {
+            const status = $('#cssStatus');
+            let results = '';
+
+            const toggle = $('#mobileSidebarToggle');
+            const sidebar = $('#mainSidebar');
+
+            // Check toggle visibility
+            const toggleDisplay = toggle.css('display');
+            const toggleVisibility = toggle.css('visibility');
+            const toggleOpacity = toggle.css('opacity');
+
+            results += 'Toggle display: ' + (toggleDisplay !== 'none' ? '<span class="status-ok">✅ ' + toggleDisplay + '</span>' : '<span class="status-error">❌ ' + toggleDisplay + '</span>') + '<br>';
+            results += 'Toggle visibility: ' + (toggleVisibility !== 'hidden' ? '<span class="status-ok">✅ ' + toggleVisibility + '</span>' : '<span class="status-error">❌ ' + toggleVisibility + '</span>') + '<br>';
+            results += 'Toggle opacity: ' + (parseFloat(toggleOpacity) > 0 ? '<span class="status-ok">✅ ' + toggleOpacity + '</span>' : '<span class="status-error">❌ ' + toggleOpacity + '</span>') + '<br>';
+
+            // Check sidebar position
+            const sidebarTransform = sidebar.css('transform');
+            const sidebarLeft = sidebar.css('left');
+            results += 'Sidebar transform: <span class="status-ok">' + sidebarTransform + '</span><br>';
+            results += 'Sidebar left: <span class="status-ok">' + sidebarLeft + '</span><br>';
+
+            // Check window size
+            results += 'Window width: ' + (window.innerWidth < 992 ? '<span class="status-ok">✅ Mobile (' + window.innerWidth + 'px)</span>' : '<span class="status-warning">⚠️ Desktop (' + window.innerWidth + 'px)</span>') + '<br>';
+
+            status.html(results);
+            debugResults.css = toggleDisplay !== 'none' && toggleVisibility !== 'hidden';
+        }
+
+        function openConsoleLogs() {
+            console.log('=== DEBUG CONSOLE LOGS ===');
+            console.log('jQuery loaded:', typeof jQuery !== 'undefined');
+            console.log('Toggle button:', $('#mobileSidebarToggle').length);
+            console.log('Sidebar:', $('#mainSidebar').length);
+            console.log('Backdrop:', $('#sidebarBackdrop').length);
+            console.log('Window width:', window.innerWidth);
+            console.log('Is mobile:', window.innerWidth < 992);
+
+            $('#consoleStatus').html('<span class="status-ok">✅ Debug logs sent to console - check F12</span>');
+        }
+
+        function runAllTests() {
+            console.log('=== RUNNING ALL TESTS ===');
+
+            testJQuery();
+            checkDOMElements();
+            checkEventHandlers();
+            checkCSSVisibility();
+
+            const summary = $('#summaryStatus');
+            let results = '<strong>Test Results:</strong><br>';
+            results += 'jQuery: ' + (debugResults.jquery ? '<span class="status-ok">✅ PASS</span>' : '<span class="status-error">❌ FAIL</span>') + '<br>';
+            results += 'DOM Elements: ' + (debugResults.dom ? '<span class="status-ok">✅ PASS</span>' : '<span class="status-error">❌ FAIL</span>') + '<br>';
+            results += 'Event Handlers: ' + (debugResults.events ? '<span class="status-ok">✅ PASS</span>' : '<span class="status-error">❌ FAIL</span>') + '<br>';
+            results += 'CSS Visibility: ' + (debugResults.css ? '<span class="status-ok">✅ PASS</span>' : '<span class="status-error">❌ FAIL</span>') + '<br>';
+
+            const allPass = debugResults.jquery && debugResults.dom && debugResults.events && debugResults.css;
+            results += '<br><strong>Overall: ' + (allPass ? '<span class="status-ok">✅ ALL TESTS PASS</span>' : '<span class="status-error">❌ SOME TESTS FAIL</span>') + '</strong>';
+
+            summary.html(results);
+
+            console.log('Test results:', debugResults);
+            console.log('All tests pass:', allPass);
+        }
+
+        // Auto-run summary on page load
+        setTimeout(runAllTests, 1000);
+    </script>
+</body>
+</html>

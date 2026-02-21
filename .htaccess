@@ -7,6 +7,23 @@ RewriteRule ^ - [L]
 RewriteCond %{REQUEST_URI} ^/maruba/App/public/uploads/ [NC]
 RewriteRule ^ - [L]
 
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ index.php [QSA,L]
+# Lewati file yang ada (assets, images, css, js)
+RewriteCond %{REQUEST_FILENAME} -f [NC]
+RewriteRule ^ - [L]
+
+# Lewati direktori yang ada
+RewriteCond %{REQUEST_FILENAME} -d [NC]
+RewriteRule ^ - [L]
+
+# Handle index.php requests (legacy support)
+RewriteCond %{REQUEST_URI} ^/maruba/index\.php(/.*)?$ [NC]
+RewriteRule ^index\.php/(.*)$ index.php/$1 [QSA,L]
+
+# Handle root URL specifically
+RewriteCond %{REQUEST_URI} ^/maruba/?$ [NC]
+RewriteRule ^$ index.php/ [QSA,L]
+
+# Clean URL routing - semua request ke index.php
+RewriteCond %{REQUEST_URI} !^/maruba/index\.php [NC]
+RewriteCond %{REQUEST_URI} !^/maruba/?$ [NC]
+RewriteRule ^(.*)$ index.php/$1 [QSA,L]

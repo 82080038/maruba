@@ -46,8 +46,10 @@ class RepaymentsController
     {
         require_login();
         AuthHelper::requirePermission('repayments', 'create');
+        verify_csrf();
         $repaymentId = (int)($_POST['repayment_id'] ?? 0);
-        $amountPaid = (float)($_POST['amount_paid'] ?? 0);
+        $amountRaw = (string)($_POST['amount_paid'] ?? '');
+        $amountPaid = (float)preg_replace('/[^0-9.]/', '', $amountRaw);
         $method = trim($_POST['method'] ?? '');
         if (!$repaymentId || $amountPaid <= 0 || empty($method)) {
             $_SESSION['error'] = 'Data tidak lengkap.';

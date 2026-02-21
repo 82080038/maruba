@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mobile SVG Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background: white;
+        }
+        .mobile-toggle {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            font-size: 1.25rem;
+        }
+        .bg-primary {
+            background-color: #0d6efd !important;
+        }
+        @media (max-width: 991px) {
+            .mobile-toggle {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+        }
+        @media (min-width: 992px) {
+            .mobile-toggle {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">🧪 Mobile SVG Icon Test</h1>
+        
+        <div class="test-section">
+            <h3>1. SVG Icon Test</h3>
+            <p>SVG hamburger icon yang digunakan di mobile sidebar:</p>
+            <div class="bg-primary p-3 rounded" style="display: inline-block;">
+                <button class="btn mobile-toggle" title="Menu">
+                    <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" style="display: block;">
+                        <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"></path>
+                    </svg>
+                    <span style="display: none;">☰</span>
+                </button>
+            </div>
+            <p class="mt-2">✅ SVG icon seharusnya terlihat sebagai 3 garis horizontal</p>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. Responsive Test</h3>
+            <p>Resize browser window untuk test responsive behavior:</p>
+            <ul>
+                <li><strong>Desktop (≥992px):</strong> Tombol seharusnya HIDDEN</li>
+                <li><strong>Mobile (<992px):</strong> Tombol seharusnya VISIBLE</li>
+            </ul>
+            <div class="alert alert-info">
+                <strong>Current window width:</strong> <span id="windowWidth"></span>px<br>
+                <strong>Should show mobile toggle:</strong> <span id="shouldShow"></span>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. Click Test</h3>
+            <p>Klik tombol hamburger untuk test click functionality:</p>
+            <div id="clickResult" class="alert alert-secondary">Belum ada klik...</div>
+        </div>
+        
+        <div class="test-section">
+            <h3>4. Browser Compatibility</h3>
+            <div id="browserInfo" class="alert alert-info"></div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        // Ensure jQuery is loaded before running scripts
+        (function($) {
+            'use strict';
+            
+            $(document).ready(function() {
+                console.log('=== Mobile SVG Test Started ===');
+                
+                // Update window width
+                function updateWindowInfo() {
+                    const width = $(window).width();
+                    const shouldShow = width < 992;
+                    
+                    $('#windowWidth').text(width);
+                    $('#shouldShow').text(shouldShow ? 'YES' : 'NO');
+                    
+                    console.log('Window width:', width, 'Should show mobile:', shouldShow);
+                }
+                
+                // Initial update
+                updateWindowInfo();
+                
+                // Update on resize
+                $(window).on('resize', updateWindowInfo);
+                
+                // Click test
+                $('.mobile-toggle').on('click', function() {
+                    console.log('Mobile toggle clicked!');
+                    $('#clickResult')
+                        .removeClass('alert-secondary')
+                        .addClass('alert-success')
+                        .text('✅ Tombol berhasil diklik! ' + new Date().toLocaleTimeString());
+                });
+                
+                // Browser info
+                const browserInfo = {
+                    userAgent: navigator.userAgent,
+                    language: navigator.language,
+                    platform: navigator.platform,
+                    cookieEnabled: navigator.cookieEnabled,
+                    onLine: navigator.onLine
+                };
+                
+                $('#browserInfo').html(
+                    '<strong>Browser:</strong> ' + browserInfo.userAgent.split(' ')[0] + '<br>' +
+                    '<strong>Language:</strong> ' + browserInfo.language + '<br>' +
+                    '<strong>Platform:</strong> ' + browserInfo.platform + '<br>' +
+                    '<strong>Online:</strong> ' + (browserInfo.onLine ? 'Yes' : 'No')
+                );
+                
+                // SVG test
+                const svgElement = $('.mobile-toggle svg');
+                console.log('SVG element found:', svgElement.length);
+                console.log('SVG display:', svgElement.css('display'));
+                console.log('SVG fill:', svgElement.css('fill'));
+                
+                // Test SVG rendering
+                if (svgElement.length > 0) {
+                    svgElement.css('border', '2px solid red');
+                    setTimeout(function() {
+                        svgElement.css('border', 'none');
+                    }, 2000);
+                }
+                
+                console.log('=== Mobile SVG Test Complete ===');
+            });
+            
+        })(jQuery);
+    </script>
+</body>
+</html>

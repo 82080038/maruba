@@ -62,9 +62,54 @@ function asset_url(string $path): string
     return rtrim(PUBLIC_URL, '/') . '/' . ltrim($path, '/');
 }
 
+// CSRF helpers
+function csrf_token(): string
+{
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+function csrf_field(): string
+{
+    return '<input type="hidden" name="_token" value="' . htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') . '">';
+}
+
+function verify_csrf(): void
+{
+    if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+        return;
+    }
+    $token = $_POST['_token'] ?? '';
+    if (empty($token) || !hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
+        http_response_code(419);
+        exit('CSRF token mismatch');
+    }
+}
+
 function route_url(string $path = ''): string
 {
-    // Gunakan index.php agar aman meski mod_rewrite belum aktif
+    // Clean URL untuk SPA - tanpa index.php
+    $base = rtrim(BASE_URL, '/');
+    
+    // Handle special cases for legacy support
+    if ($path === '/') {
+        return $base . '/';
+    }
+    
+    if ($path !== '') {
+        $url = $base . '/' . ltrim($path, '/');
+    } else {
+        $url = $base;
+    }
+    
+    return $url;
+}
+
+// Legacy function for index.php URLs (deprecated)
+function legacy_route_url(string $path = ''): string
+{
     $base = rtrim(BASE_URL, '/');
     $url = $base . '/index.php';
     if ($path !== '') {

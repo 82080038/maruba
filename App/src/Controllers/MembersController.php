@@ -27,9 +27,10 @@ class MembersController
     {
         require_login();
         AuthHelper::requirePermission('members', 'create');
+        verify_csrf();
         $name = trim($_POST['name'] ?? '');
-        $nik = trim($_POST['nik'] ?? '');
-        $phone = trim($_POST['phone'] ?? '');
+        $nik = preg_replace('/\D+/', '', (string)($_POST['nik'] ?? ''));
+        $phone = preg_replace('/\D+/', '', (string)($_POST['phone'] ?? ''));
         $address = trim($_POST['address'] ?? '');
         $lat = (float)($_POST['lat'] ?? 0);
         $lng = (float)($_POST['lng'] ?? 0);

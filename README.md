@@ -3,6 +3,8 @@
 Aplikasi manajemen koperasi sederhana berbasis PHP yang mendukung autentikasi, peran/izin (RBAC), pengelolaan anggota, pengajuan & pencairan pinjaman, survei lapangan dengan geotagging, penagihan angsuran, laporan, audit log, serta API JSON untuk integrasi.
 
 ## Fitur Utama
+- Arsitektur server-rendered (bukan SPA): tiap tautan memuat halaman penuh via controller + view terpisah, dibungkus `layout_admin.php`.
+- Legacy path kompatibel: semua tautan admin memakai `/maruba/index.php/...` agar aman di lingkungan tanpa rewrite.
 - Autentikasi pengguna dan RBAC berbasis JSON permissions di tabel `roles`.
 - Dashboard metrik (outstanding, anggota aktif, pinjaman berjalan, NPL%) dan aktivitas terbaru (audit log).
 - Modul Anggota dengan dukungan geolokasi (lat/lng) dan endpoint update geo.
@@ -138,6 +140,12 @@ curl -s -X POST \
 - `BASE_URL` dan `PUBLIC_URL` diatur di `App/src/bootstrap.php`.
 - Gunakan helper `route_url('path')` untuk link rute, dan `asset_url('assets/..')` untuk aset.
 - Saat rewrite non-aktif, rute akan menggunakan `index.php` agar tetap berfungsi.
+- Mode admin kini server-rendered penuh: semua tautan sidebar sudah statis di `layout_admin.php` (SPA loader dinonaktifkan). Jika menambah menu baru, edit PHP sidebar dan gunakan `is_active()` helper untuk highlight.
+
+## Keamanan Aplikasi
+- CSRF: tersedia helper `csrf_field()` untuk disisipkan pada setiap `<form>`; controller POST harus memanggil `verify_csrf()` sebelum memproses input. Token disimpan di sesi `$_SESSION['csrf_token']`.
+- Validasi dasar: angka rupiah dinormalisasi ke digit di controller (pinjaman/angsuran), NIK/telepon dibersihkan dari non-digit.
+- Upload: file bukti/dokumen ditaruh di `App/public/uploads/` (sudah di-ignore git). Pastikan permission direktori aman di produksi.
 
 ## Keamanan & Kebersihan Repo
 Sudah diabaikan melalui `.gitignore`:

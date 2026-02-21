@@ -6,7 +6,8 @@ ob_start();
     <div class="card shadow-sm">
       <div class="card-body">
         <h5 class="card-title mb-4">Pengajuan Pinjaman</h5>
-        <form method="post" action="<?= route_url('loans/store') ?>" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <form id="loanCreateForm" method="post" action="<?= route_url('loans/store') ?>" enctype="multipart/form-data" class="needs-validation" novalidate>
+          <?= csrf_field(); ?>
           <div class="mb-3">
             <label class="form-label">Anggota/Nasabah</label>
             <select name="member_id" class="form-select" required>
@@ -32,13 +33,13 @@ ob_start();
           <div class="row">
             <div class="col-md-6 mb-3">
               <label class="form-label">Jumlah Pinjaman (Rp)</label>
-              <input type="text" name="amount" class="form-control" placeholder="0" required>
-              <div class="invalid-feedback">Wajib diisi.</div>
+              <input id="loanAmount" type="text" name="amount" class="form-control" placeholder="0" required>
+              <div id="amountError" class="invalid-feedback">Wajib diisi.</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Jangka Waktu (bulan)</label>
-              <input type="number" name="tenor_months" class="form-control" min="1" required>
-              <div class="invalid-feedback">Wajib diisi.</div>
+              <input id="loanTenor" type="number" name="tenor_months" class="form-control" min="1" required>
+              <div id="tenorError" class="invalid-feedback">Wajib diisi.</div>
             </div>
           </div>
           <div class="mb-3">
@@ -71,45 +72,59 @@ ob_start();
               </div>
             </div>
           </div>
-          <button type="submit" class="btn btn-primary w-100">Ajukan Pinjaman</button>
+          <button id="loanSubmitBtn" type="submit" class="btn btn-primary w-100">Ajukan Pinjaman</button>
         </form>
       </div>
     </div>
   </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<?= asset_url('assets/js/helpers-id.js') ?>"></script>
+<script src="<?= asset_url('assets/js/dom-helpers.js') ?>"></script>
 <script>
-(() => {
-  'use strict'
-  const forms = document.querySelectorAll('.needs-validation')
-  Array.from(forms).forEach(form => {
-    form.addEventListener('submit', event => {
-      if (!form.checkValidity()) {
-        event.preventDefault()
-        event.stopPropagation()
-      }
-      form.classList.add('was-validated')
-    }, false)
-  })
-})()
-
-// Auto-fill tenor/fee when product selected
-document.querySelector('select[name=product_id]').addEventListener('change', function () {
-  const opt = this.options[this.selectedIndex];
-  if (opt.dataset.tenor) {
-    document.querySelector('input[name=tenor_months]').value = opt.dataset.tenor;
-  }
-  if (opt.dataset.fee) {
-    // Bisa tampilkan info fee di UI jika perlu
-  }
-});
-
-// Format currency input
-document.querySelector('input[name=amount]').addEventListener('input', function () {
-  let val = this.value.replace(/\D/g, '');
-  if (val) {
-    this.value = IDHelper.formatNumber(val, 0);
-  }
-});
+// Ensure jQuery is loaded before running scripts
+(function($) {
+    'use strict';
+    
+    // Form validation with jQuery
+    $('#loanCreateForm').on('submit', function(event) {
+        event.preventDefault();
+        
+        // Clear previous errors
+        $('.invalid-feedback').hide();
+        $('.form-control').removeClass('is-invalid');
+        
+        let isValid = true;
+        
+        // Validate loan amount
+        if (!$('#loanAmount').val().trim() || parseFloat($('#loanAmount').val()) <= 0) {
+            $('#loanAmount').addClass('is-invalid');
+            $('#amountError').show();
+            isValid = false;
+        }
+        
+        // Validate tenor
+        if (!$('#loanTenor').val().trim() || parseInt($('#loanTenor').val()) <= 0) {
+            $('#loanTenor').addClass('is-invalid');
+            $('#tenorError').show();
+            isValid = false;
+        }
+        
+        if (isValid) {
+            // Show loading state
+            MarubaDOM.showButtonLoading('loanSubmitBtn', 'Menyimpan...');
+            
+            // Submit form
+            this.submit();
+        }
+    });
+    
+    // Format currency input
+    MarubaDOM.formatCurrencyInput('loanAmount');
+    
+})(jQuery);
 </script>
 <?php
 $content = ob_get_clean();

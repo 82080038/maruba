@@ -1,16 +1,3 @@
-<?php
-// Check if user is logged in
-if (empty($_SESSION['user'])) {
-    header('Location: ' . route_url(''));
-    exit;
-}
-
-$serverRendered = isset($content);
-$currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
-function is_active(string $needle, string $path): string {
-    return (strpos($path, $needle) !== false) ? 'active' : '';
-}
-?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -200,23 +187,24 @@ function is_active(string $needle, string $path): string {
         /* Main Content Styles */
         .main-content {
             margin-left: 280px;
-            margin-top: 8px; /* Reduced gap to header (5-10px range) */
-            min-height: calc(100vh - 88px);
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(6px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-            border-radius: 16px 0 0 0;
-            transition: margin-left 0.3s ease;
-            padding: 24px;
+            margin-top: 80px; /* Header height */
+            min-height: calc(100vh - 80px);
+            padding: 2rem;
             overflow-y: auto;
+            background: #f8f9fa;
+        }
+        
+        .content-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
         .page-header {
             background: white;
-            padding: 0.75rem 1rem;
+            padding: 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 1px 6px rgba(0,0,0,0.04);
-            margin-bottom: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
         }
         
         .page-title {
@@ -376,7 +364,7 @@ function is_active(string $needle, string $path): string {
                 <button class="mobile-menu-toggle" id="mobileMenuToggle">
                     <i class="bi bi-list fs-4"></i>
                 </button>
-                <a href="/maruba/index.php/dashboard" class="header-brand">
+                <a href="<?= route_url('dashboard') ?>" class="header-brand">
                     <i class="bi bi-building me-2"></i>
                     KSP LGJ
                 </a>
@@ -394,14 +382,14 @@ function is_active(string $needle, string $path): string {
                         <?= htmlspecialchars($_SESSION['user']['name'] ?? 'Guest') ?>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="/maruba/index.php/profile">
+                        <li><a class="dropdown-item" href="<?= route_url('profile') ?>">
                             <i class="bi bi-person me-2"></i> Profile
                         </a></li>
-                        <li><a class="dropdown-item" href="/maruba/index.php/settings">
+                        <li><a class="dropdown-item" href="<?= route_url('settings') ?>">
                             <i class="bi bi-gear me-2"></i> Settings
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="/maruba/index.php/logout">
+                        <li><a class="dropdown-item" href="<?= route_url('logout') ?>">
                             <i class="bi bi-box-arrow-right me-2"></i> Logout
                         </a></li>
                     </ul>
@@ -425,62 +413,22 @@ function is_active(string $needle, string $path): string {
         </div>
         
         <div class="sidenav-menu" id="sidenavMenu">
-            <div class="menu-section">
-                <div class="menu-section-title">Utama</div>
-                <a href="/maruba/index.php/dashboard" class="menu-item <?= is_active('/dashboard', $currentPath) ?>"><i class="bi bi-speedometer2"></i> Dashboard</a>
-            </div>
-            <div class="menu-section">
-                <div class="menu-section-title">Transaksi</div>
-                <a href="/maruba/index.php/loans" class="menu-item <?= is_active('/loans', $currentPath) ?>"><i class="bi bi-cash-stack"></i> Pinjaman</a>
-                <a href="/maruba/index.php/repayments" class="menu-item <?= is_active('/repayments', $currentPath) ?>"><i class="bi bi-wallet2"></i> Angsuran</a>
-                <a href="/maruba/index.php/disbursement" class="menu-item <?= is_active('/disbursement', $currentPath) ?>"><i class="bi bi-credit-card"></i> Pencairan</a>
-            </div>
-            <div class="menu-section">
-                <div class="menu-section-title">Data Master</div>
-                <a href="/maruba/index.php/members" class="menu-item <?= is_active('/members', $currentPath) ?>"><i class="bi bi-people"></i> Anggota</a>
-                <a href="/maruba/index.php/products" class="menu-item <?= is_active('/products', $currentPath) ?>"><i class="bi bi-box"></i> Produk</a>
-                <a href="/maruba/index.php/surveys" class="menu-item <?= is_active('/surveys', $currentPath) ?>"><i class="bi bi-clipboard-check"></i> Survei</a>
-            </div>
-            <div class="menu-section">
-                <div class="menu-section-title">Laporan</div>
-                <a href="/maruba/index.php/reports" class="menu-item <?= is_active('/reports', $currentPath) ?>"><i class="bi bi-file-bar-graph"></i> Laporan</a>
-                <a href="/maruba/index.php/audit" class="menu-item <?= is_active('/audit', $currentPath) ?>"><i class="bi bi-clock-history"></i> Audit Log</a>
-            </div>
-            <div class="menu-section">
-                <div class="menu-section-title">Sistem</div>
-                <a href="/maruba/index.php/users" class="menu-item <?= is_active('/users', $currentPath) ?>"><i class="bi bi-person-gear"></i> Pengguna</a>
-                <a href="/maruba/index.php/surat" class="menu-item <?= is_active('/surat', $currentPath) ?>"><i class="bi bi-file-text"></i> Surat-Surat</a>
-                <a href="/maruba/index.php/logout" class="menu-item"><i class="bi bi-box-arrow-right"></i> Logout</a>
-            </div>
+            <!-- Menu items will be dynamically loaded here -->
         </div>
     </nav>
 
     <!-- Main Content -->
     <main class="main-content" id="mainContent">
         <div class="content-wrapper">
-            <!-- Flash Messages -->
-            <?php if (!empty($_SESSION['success'])): ?>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <?= htmlspecialchars($_SESSION['success']) ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <?php unset($_SESSION['success']); ?>
-            <?php endif; ?>
-            <?php if (!empty($_SESSION['error'])): ?>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <?= htmlspecialchars($_SESSION['error']) ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <?php unset($_SESSION['error']); ?>
-            <?php endif; ?>
-
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                <p class="page-subtitle" id="pageSubtitle">Selamat datang di sistem koperasi</p>
+            </div>
+            
             <!-- Dynamic Content -->
             <div class="content-card" id="dynamicContent">
-                <?php if ($serverRendered ?? false): ?>
-                    <?= $content ?? '' ?>
-                <?php else: ?>
-                    <!-- Content will be loaded here -->
-                <?php endif; ?>
+                <!-- Content will be loaded here -->
             </div>
         </div>
     </main>
@@ -502,12 +450,11 @@ function is_active(string $needle, string $path): string {
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="<?= asset_url('assets/js/helpers-id.js') ?>"></script>
+    <script src="<?= public_url('assets/js/helpers-id.js') ?>"></script>
     <script src="<?= asset_url('assets/js/dom-helpers.js') ?>"></script>
     
     <script>
         // Global variables
-        const serverRendered = <?= $serverRendered ? 'true' : 'false' ?>;
         let currentPage = 'dashboard';
         let isLoading = false;
         
@@ -517,14 +464,12 @@ function is_active(string $needle, string $path): string {
             
             // Initialize components
             initializeDateTime();
+            initializeSidenav();
             initializeMobileMenu();
-            initializeDropdownMenus();
-            if (!serverRendered) {
-                initializeSidenav();
-                initializeNavigation();
-                // Load initial page only for SPA mode
-                loadPage('dashboard');
-            }
+            initializeNavigation();
+            
+            // Load initial page
+            loadPage('dashboard');
             
             console.log('Application initialized successfully');
         });
@@ -559,39 +504,97 @@ function is_active(string $needle, string $path): string {
             setInterval(updateDateTime, 1000);
         }
         
-        // Initialize sidenav menu (no-op in server-rendered mode)
+        // Initialize sidenav menu
         function initializeSidenav() {
-            return;
+            // Load menu items dynamically
+            loadMenuItems();
         }
-
-        // Ensure Bootstrap dropdown works in header
-        function initializeDropdownMenus() {
-            const dropdownTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
-            dropdownTriggerList.forEach(function (dropdownTriggerEl) {
-                try {
-                    new bootstrap.Dropdown(dropdownTriggerEl);
-                } catch (e) {
-                    // fallback
+        
+        // Load menu items based on user permissions
+        function loadMenuItems() {
+            const menuItems = [
+                {
+                    section: 'Utama',
+                    items: [
+                        { id: 'dashboard', icon: 'bi-speedometer2', label: 'Dashboard', href: 'dashboard' },
+                    ]
+                },
+                {
+                    section: 'Transaksi',
+                    items: [
+                        { id: 'loans', icon: 'bi-cash-stack', label: 'Pinjaman', href: 'loans', permission: 'loans.view' },
+                        { id: 'repayments', icon: 'bi-wallet2', label: 'Angsuran', href: 'repayments', permission: 'repayments.view' },
+                    ]
+                },
+                {
+                    section: 'Data Master',
+                    items: [
+                        { id: 'members', icon: 'bi-people', label: 'Anggota', href: 'members', permission: 'members.view' },
+                        { id: 'products', icon: 'bi-box', label: 'Produk', href: 'products', permission: 'products.view' },
+                        { id: 'surveys', icon: 'bi-clipboard-check', label: 'Survei', href: 'surveys', permission: 'surveys.view' },
+                    ]
+                },
+                {
+                    section: 'Laporan',
+                    items: [
+                        { id: 'reports', icon: 'bi-file-bar-graph', label: 'Laporan', href: 'reports', permission: 'reports.view' },
+                        { id: 'audit', icon: 'bi-clock-history', label: 'Audit Log', href: 'audit', permission: 'audit_logs.view' },
+                    ]
+                },
+                {
+                    section: 'Sistem',
+                    items: [
+                        { id: 'users', icon: 'bi-person-gear', label: 'Pengguna', href: 'users', permission: 'users.view' },
+                        { id: 'documents', icon: 'bi-file-text', label: 'Surat-Surat', href: 'surat', permission: 'documents.view' },
+                    ]
+                }
+            ];
+            
+            let menuHTML = '';
+            
+            menuItems.forEach(section => {
+                // Filter items based on permissions
+                const allowedItems = section.items.filter(item => {
+                    // If no permission required, allow
+                    if (!item.permission) return true;
+                    
+                    // Check if user has permission (simplified check)
+                    return true; // TODO: Implement actual permission check
+                });
+                
+                if (allowedItems.length > 0) {
+                    menuHTML += `
+                        <div class="menu-section">
+                            <div class="menu-section-title">${section.section}</div>
+                    `;
+                    
+                    allowedItems.forEach(item => {
+                        const isActive = item.id === currentPage ? 'active' : '';
+                        menuHTML += `
+                            <a href="#" class="menu-item ${isActive}" data-page="${item.id}" data-href="${item.href}">
+                                <i class="bi ${item.icon}"></i>
+                                ${item.label}
+                            </a>
+                        `;
+                    });
+                    
+                    menuHTML += `
+                        </div>
+                    `;
                 }
             });
-            // Manual toggle fallback for user dropdown
-            const userBtn = document.getElementById('userDropdown');
-            const userMenu = userBtn ? userBtn.nextElementSibling : null;
-            if (userBtn && userMenu) {
-                userBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const isOpen = userMenu.classList.contains('show');
-                    userMenu.classList.toggle('show', !isOpen);
-                    userBtn.classList.toggle('show', !isOpen);
-                });
-                document.addEventListener('click', function(e) {
-                    if (!userMenu.classList.contains('show')) return;
-                    if (!e.target.closest('.user-menu')) {
-                        userMenu.classList.remove('show');
-                        userBtn.classList.remove('show');
-                    }
-                });
-            }
+            
+            // Add logout
+            menuHTML += `
+                <div class="menu-section">
+                    <a href="<?= route_url('logout') ?>" class="menu-item">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Logout
+                    </a>
+                </div>
+            `;
+            
+            $('#sidenavMenu').html(menuHTML);
         }
         
         // Initialize mobile menu
@@ -614,7 +617,6 @@ function is_active(string $needle, string $path): string {
         // Initialize navigation
         function initializeNavigation() {
             $(document).on('click', '.menu-item[data-page]', function(e) {
-                if (serverRendered) return; // allow normal navigation for server-rendered mode
                 e.preventDefault();
                 
                 const page = $(this).data('page');
@@ -645,8 +647,8 @@ function is_active(string $needle, string $path): string {
             $('#loadingSpinner').addClass('show');
             
             // Update URL without page reload
-            if (href && !serverRendered) {
-                history.pushState({page: page}, '', href);
+            if (href) {
+                history.pushState({page: page}, '', `<?= route_url('') ?>${href}`);
             }
             
             // Simulate loading content (replace with actual AJAX call)
@@ -666,12 +668,12 @@ function is_active(string $needle, string $path): string {
                     title: 'Dashboard',
                     subtitle: 'Ringkasan statistik dan aktivitas terkini',
                     content: `
-                        <div class="row" id="dashboardMetrics">
+                        <div class="row">
                             <div class="col-md-3 mb-4">
                                 <div class="card bg-primary text-white">
                                     <div class="card-body">
                                         <h5 class="card-title">Total Anggota</h5>
-                                        <h2 class="mb-0" id="totalMembers">-</h2>
+                                        <h2 class="mb-0">1,234</h2>
                                     </div>
                                 </div>
                             </div>
@@ -679,7 +681,7 @@ function is_active(string $needle, string $path): string {
                                 <div class="card bg-success text-white">
                                     <div class="card-body">
                                         <h5 class="card-title">Pinjaman Aktif</h5>
-                                        <h2 class="mb-0" id="activeLoans">-</h2>
+                                        <h2 class="mb-0">567</h2>
                                     </div>
                                 </div>
                             </div>
@@ -687,15 +689,15 @@ function is_active(string $needle, string $path): string {
                                 <div class="card bg-warning text-white">
                                     <div class="card-body">
                                         <h5 class="card-title">Total Pinjaman</h5>
-                                        <h2 class="mb-0" id="totalOutstanding">-</h2>
+                                        <h2 class="mb-0">Rp 2.5M</h2>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3 mb-4">
                                 <div class="card bg-info text-white">
                                     <div class="card-body">
-                                        <h5 class="card-title">NPL</h5>
-                                        <h2 class="mb-0" id="nplRate">-</h2>
+                                        <h5 class="card-title">Angsuran Bulan Ini</h5>
+                                        <h2 class="mb-0">Rp 450K</h2>
                                     </div>
                                 </div>
                             </div>
@@ -707,35 +709,17 @@ function is_active(string $needle, string $path): string {
                                         <h5 class="card-title mb-0">Aktivitas Terkini</h5>
                                     </div>
                                     <div class="card-body">
-                                        <div id="recentActivities">
-                                            <div class="text-center">
-                                                <div class="spinner-border text-primary" role="status">
-                                                    <span class="visually-hidden">Loading...</span>
-                                                </div>
-                                                <p class="mt-2">Memuat aktivitas terkini...</p>
-                                            </div>
-                                        </div>
+                                        <p>Daftar aktivitas terkini akan ditampilkan di sini...</p>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h5 class="card-title mb-0">Informasi Sistem</h5>
+                                        <h5 class="card-title mb-0">Statistik</h5>
                                     </div>
                                     <div class="card-body">
-                                        <div class="mb-3">
-                                            <strong>User:</strong> <span id="currentUser">-</span>
-                                        </div>
-                                        <div class="mb-3">
-                                            <strong>Role:</strong> <span id="currentUserRole">-</span>
-                                        </div>
-                                        <div class="mb-3">
-                                            <strong>Login Time:</strong> <span id="loginTime">-</span>
-                                        </div>
-                                        <div class="mb-3">
-                                            <strong>Server Time:</strong> <span id="serverTime">-</span>
-                                        </div>
+                                        <p>Statistik penting akan ditampilkan di sini...</p>
                                     </div>
                                 </div>
                             </div>
@@ -748,7 +732,7 @@ function is_active(string $needle, string $path): string {
                     content: `
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h4>Daftar Pinjaman</h4>
-                            <button class="btn btn-primary" onclick="showCreateLoanModal()">
+                            <button class="btn btn-primary">
                                 <i class="bi bi-plus-circle me-2"></i>Tambah Pinjaman
                             </button>
                         </div>
@@ -764,49 +748,19 @@ function is_active(string $needle, string $path): string {
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
-                                <tbody id="loansTableBody">
+                                <tbody>
                                     <tr>
-                                        <td colspan="6" class="text-center">
-                                            <div class="spinner-border text-primary" role="status">
-                                                <span class="visually-hidden">Loading...</span>
-                                            </div>
-                                            <p class="mt-2">Memuat data pinjaman...</p>
+                                        <td>PJM001</td>
+                                        <td>Budi Santoso</td>
+                                        <td>Rp 5.000.000</td>
+                                        <td>12 bulan</td>
+                                        <td><span class="badge bg-success">Aktif</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary">Detail</button>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
-                    `
-                },
-                repayments: {
-                    title: 'Data Angsuran',
-                    subtitle: 'Kelola data angsuran pinjaman',
-                    content: `
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h4>Daftar Angsuran</h4>
-                            <button class="btn btn-primary" disabled>
-                                <i class="bi bi-plus-circle"></i> Tambah Angsuran (coming soon)
-                            </button>
-                        </div>
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>ID Angsuran</th>
-                                                <th>ID Pinjaman</th>
-                                                <th>Jumlah</th>
-                                                <th>Tanggal</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="repaymentsTableBody">
-                                            <tr><td colspan="5" class="text-center">Memuat data...</td></tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
                         </div>
                     `
                 },
@@ -816,16 +770,20 @@ function is_active(string $needle, string $path): string {
                     content: `
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h4>Daftar Anggota</h4>
-                            <button class="btn btn-primary" onclick="showCreateMemberModal()">
+                            <button class="btn btn-primary">
                                 <i class="bi bi-plus-circle me-2"></i>Tambah Anggota
                             </button>
                         </div>
-                        <div class="row" id="membersGrid">
-                            <div class="col-12 text-center">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Loading...</span>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-person-circle fs-1 text-primary mb-3"></i>
+                                        <h5>Budi Santoso</h5>
+                                        <p class="text-muted">ANG001</p>
+                                        <p class="mb-0">Aktif</p>
+                                    </div>
                                 </div>
-                                <p class="mt-2">Memuat data anggota...</p>
                             </div>
                         </div>
                     `
@@ -841,226 +799,7 @@ function is_active(string $needle, string $path): string {
             // Update content
             $('#dynamicContent').html(config.content);
             
-            // Load actual data for the page
-            loadPageData(page);
-            
             console.log(`Page loaded: ${page}`);
-        }
-        
-        // Load actual data for the page
-        function loadPageData(page) {
-            switch(page) {
-                case 'dashboard':
-                    loadDashboardData();
-                    break;
-                case 'loans':
-                    loadLoansData();
-                    break;
-                case 'repayments':
-                    loadRepaymentsData();
-                    break;
-                case 'members':
-                    loadMembersData();
-                    break;
-                default:
-                    console.log(`No data loader for page: ${page}`);
-            }
-        }
-        
-        // Load dashboard data
-        function loadDashboardData() {
-            $.ajax({
-                url: '/maruba/index.php/dashboard?ajax=1',
-                method: 'GET',
-                dataType: 'json',
-                success: function(response) {
-                    if (response.metrics) {
-                        response.metrics.forEach(metric => {
-                            let value = metric.value;
-                            if (metric.type === 'currency') {
-                                value = formatCurrency(value);
-                            } else if (metric.type === 'percent') {
-                                value = value + '%';
-                            }
-                            
-                            switch(metric.label) {
-                                case 'Anggota Aktif':
-                                    $('#totalMembers').text(value);
-                                    break;
-                                case 'Pinjaman Berjalan':
-                                    $('#activeLoans').text(value);
-                                    break;
-                                case 'Outstanding':
-                                    $('#totalOutstanding').text(value);
-                                    break;
-                                case 'NPL':
-                                    $('#nplRate').text(value);
-                                    break;
-                            }
-                        });
-                    }
-                    
-                    if (response.activities) {
-                        let activitiesHtml = '';
-                        response.activities.forEach(activity => {
-                            activitiesHtml += `
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="bi bi-circle-fill text-primary me-2" style="font-size: 0.5rem;"></i>
-                                    <div>
-                                        <strong>${activity.user_name || 'System'}</strong> 
-                                        ${activity.action} 
-                                        ${activity.entity} #${activity.entity_id}
-                                        <br><small class="text-muted">${formatDateTime(activity.created_at)}</small>
-                                    </div>
-                                </div>
-                            `;
-                        });
-                        $('#recentActivities').html(activitiesHtml || '<p>Tidak ada aktivitas terkini.</p>');
-                    }
-                    
-                    if (response.user) {
-                        $('#currentUser').text(response.user.name);
-                        $('#currentUserRole').text(response.user.role);
-                        $('#loginTime').text(formatDateTime(new Date()));
-                    }
-                    
-                    $('#serverTime').text(formatDateTime(new Date()));
-                },
-                error: function() {
-                    $('#dashboardMetrics').html('<div class="alert alert-danger">Gagal memuat data dashboard.</div>');
-                    $('#recentActivities').html('<div class="alert alert-danger">Gagal memuat aktivitas terkini.</div>');
-                }
-            });
-        }
-        
-        // Load loans data
-        function loadLoansData() {
-            // Simulate loading loans data
-            setTimeout(function() {
-                const loansData = [
-                    { id: 'PJM001', member: 'Budi Santoso', amount: 5000000, tenor: 12, status: 'Aktif' },
-                    { id: 'PJM002', member: 'Siti Aminah', amount: 3000000, tenor: 6, status: 'Aktif' },
-                    { id: 'PJM003', member: 'Ahmad Fauzi', amount: 7500000, tenor: 18, status: 'Aktif' }
-                ];
-                
-                let loansHtml = '';
-                loansData.forEach(loan => {
-                    loansHtml += `
-                        <tr>
-                            <td>${loan.id}</td>
-                            <td>${loan.member}</td>
-                            <td>${formatCurrency(loan.amount)}</td>
-                            <td>${loan.tenor} bulan</td>
-                            <td><span class="badge bg-success">${loan.status}</span></td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-primary me-1">Detail</button>
-                                <button class="btn btn-sm btn-outline-warning">Edit</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-                
-                $('#loansTableBody').html(loansHtml || '<tr><td colspan="6" class="text-center">Tidak ada data pinjaman.</td></tr>');
-            }, 1000);
-        }
-
-        // Load repayments data (placeholder until API available)
-        function loadRepaymentsData() {
-            setTimeout(function() {
-                const repaymentsData = [
-                    { id: 'ANG001', loan: 'PJM001', amount: 500000, date: '2026-02-01', status: 'Lunas' },
-                    { id: 'ANG002', loan: 'PJM002', amount: 350000, date: '2026-02-05', status: 'Proses' },
-                    { id: 'ANG003', loan: 'PJM003', amount: 420000, date: '2026-02-10', status: 'Proses' }
-                ];
-
-                let repaymentsHtml = '';
-                repaymentsData.forEach(r => {
-                    repaymentsHtml += `
-                        <tr>
-                            <td>${r.id}</td>
-                            <td>${r.loan}</td>
-                            <td>${formatCurrency(r.amount)}</td>
-                            <td>${r.date}</td>
-                            <td>${r.status}</td>
-                        </tr>
-                    `;
-                });
-
-                $('#repaymentsTableBody').html(repaymentsHtml || '<tr><td colspan="5" class="text-center">Tidak ada data angsuran.</td></tr>');
-            }, 300);
-        }
-        
-        // Load members data
-        function loadMembersData() {
-            // Simulate loading members data
-            setTimeout(function() {
-                const membersData = [
-                    { id: 'ANG001', name: 'Budi Santoso', status: 'Aktif', joinDate: '2023-01-15' },
-                    { id: 'ANG002', name: 'Siti Aminah', status: 'Aktif', joinDate: '2023-02-20' },
-                    { id: 'ANG003', name: 'Ahmad Fauzi', status: 'Aktif', joinDate: '2023-03-10' }
-                ];
-                
-                let membersHtml = '';
-                membersData.forEach(member => {
-                    membersHtml += `
-                        <div class="col-md-4 mb-4">
-                            <div class="card">
-                                <div class="card-body text-center">
-                                    <i class="bi bi-person-circle fs-1 text-primary mb-3"></i>
-                                    <h5>${member.name}</h5>
-                                    <p class="text-muted">${member.id}</p>
-                                    <p class="mb-1"><span class="badge bg-success">${member.status}</span></p>
-                                    <p class="mb-0"><small>Bergabung: ${formatDate(member.joinDate)}</small></p>
-                                    <div class="mt-3">
-                                        <button class="btn btn-sm btn-outline-primary me-1">Detail</button>
-                                        <button class="btn btn-sm btn-outline-warning">Edit</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                $('#membersGrid').html(membersHtml || '<div class="col-12 text-center">Tidak ada data anggota.</div>');
-            }, 1000);
-        }
-        
-        // Utility functions
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR'
-            }).format(amount);
-        }
-        
-        function formatDateTime(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleString('id-ID', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-        }
-        
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('id-ID', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-        }
-        
-        // Modal functions (placeholders)
-        function showCreateLoanModal() {
-            alert('Create loan modal - to be implemented');
-        }
-        
-        function showCreateMemberModal() {
-            alert('Create member modal - to be implemented');
         }
         
         // Handle browser back/forward

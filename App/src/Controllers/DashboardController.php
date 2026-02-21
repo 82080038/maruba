@@ -45,6 +45,18 @@ class DashboardController
         $stmt->execute();
         $activities = $stmt->fetchAll();
 
+        // For SPA, return JSON data instead of including view
+        if (isset($_GET['ajax']) || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'metrics' => $metrics,
+                'activities' => $activities,
+                'user' => $_SESSION['user']
+            ]);
+            return;
+        }
+
+        // Server-rendered dashboard view
         include view_path('dashboard/index');
     }
 }
