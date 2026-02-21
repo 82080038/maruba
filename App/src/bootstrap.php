@@ -1,6 +1,10 @@
 <?php
 // Basic bootstrap for the coop app
 
+// Production: Hide errors (uncomment for production)
+// ini_set('display_errors', '0');
+// error_reporting(0);
+
 // DEBUG: tampilkan error sementara (non-production)
 ini_set('display_errors', '1');
 error_reporting(E_ALL);
@@ -13,9 +17,10 @@ if (!defined('PUBLIC_URL')) {
     define('PUBLIC_URL', BASE_URL . '/App/public');
 }
 
-// Load .env if present
-$envFile = __DIR__ . '/../.env';
-if (file_exists($envFile)) {
+// Load .env if present (root or App/.env)
+$envFiles = [__DIR__ . '/../.env', __DIR__ . '/../App/.env'];
+foreach ($envFiles as $envFile) {
+    if (!file_exists($envFile)) continue;
     $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($lines as $line) {
         if (strpos($line, '#') === 0) continue;
@@ -29,6 +34,14 @@ if (file_exists($envFile)) {
             $_SERVER[$key] = $value;
         }
     }
+}
+
+// Tentukan APP_NAME dengan fallback, hilangkan tanda kutip pembungkus jika ada
+if (!defined('APP_NAME')) {
+    $appNameEnv = $_ENV['APP_NAME'] ?? getenv('APP_NAME') ?? 'Koperasi App';
+    // trim kutip single/double di awal-akhir
+    $appNameEnv = trim($appNameEnv, "\"' ");
+    define('APP_NAME', $appNameEnv ?: 'Koperasi App');
 }
 
 // Simple PSR-4-like autoloader for App namespace
@@ -45,6 +58,10 @@ spl_autoload_register(function ($class) {
     }
 });
 
+// Convenience aliases
+use App\Helpers\UiHelper;
+use App\Middleware\TenantMiddleware;
+
 // Start session for auth
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -55,6 +72,14 @@ function view_path(string $view, string $layout = 'layout'): string
 {
     return __DIR__ . '/Views/' . $view . '.php';
 }
+
+// UI helper wrappers
+function t(string $key): string { return UiHelper::t($key); }
+function format_number($value, int $decimals = 0): string { return UiHelper::formatNumber($value, $decimals); }
+function format_currency($value): string { return UiHelper::formatRupiah($value); }
+function format_date_id($dateString, bool $withDay = false): string { return UiHelper::formatDateId($dateString, $withDay); }
+function format_phone(string $phone): string { return UiHelper::formatPhone($phone); }
+function format_npwp(string $npwp): string { return UiHelper::formatNpwp($npwp); }
 
 function asset_url(string $path): string
 {
@@ -116,18 +141,6 @@ function legacy_route_url(string $path = ''): string
         $url .= '/' . ltrim($path, '/');
     }
     return $url;
-}
-
-// Formatting helpers (server-side)
-function format_number($value, int $decimals = 0): string
-{
-    $n = is_numeric($value) ? (float)$value : 0;
-    return number_format($n, $decimals, ',', '.');
-}
-
-function format_currency($value): string
-{
-    return 'Rp ' . format_number($value, 0);
 }
 
 // Auth helpers

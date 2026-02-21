@@ -43,9 +43,7 @@ class Router
             $path = '/';
         }
         
-        // Debug: Log the final path
-        error_log("Router dispatch: method=$method, uri=$uri, path=$path");
-        
+                
         // Check if route exists
         $handler = $this->routes[$method][$path] ?? null;
         if (!$handler) {
@@ -63,13 +61,6 @@ class Router
             echo '404 Not Found';
             error_log("No handler found for path: $path");
             return;
-        }
-        
-        // Debug: Log handler type
-        if (is_array($handler)) {
-            error_log("Handler type: array - " . $handler[0] . "::" . $handler[1]);
-        } else {
-            error_log("Handler type: callable");
         }
         
         if (is_array($handler)) {

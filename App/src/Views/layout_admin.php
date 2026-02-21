@@ -7,55 +7,33 @@ if (empty($_SESSION['user'])) {
 
 $serverRendered = isset($content);
 $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
+$appName = defined('APP_NAME') ? APP_NAME : ($_ENV['APP_NAME'] ?? getenv('APP_NAME') ?? 'Koperasi App');
 function is_active(string $needle, string $path): string {
     return (strpos($path, $needle) !== false) ? 'active' : '';
+}
+
+// Jika diminta mode partial (?partial=1), keluarkan hanya konten tanpa layout
+if (!empty($_GET['partial'])) {
+    echo '<div id="dynamicContent">' . ($content ?? '') . '</div>';
+    return;
 }
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?= htmlspecialchars($title ?? 'Koperasi KSP LGJ') ?></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="<?= asset_url('assets/css/style.css') ?>">
-    
-    <style>
-        /* Global Styles */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
-            overflow-x: hidden;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta name="csrf-token" content="<?= $_SESSION['csrf_token'] ?? '' ?>">
+    <title><?php echo APP_NAME; ?> - <?php echo $title ?? 'Dashboard'; ?></title>
         }
-        
-        /* Header Styles */
-        .main-header {
-            position: sticky;
-            top: 0;
-            z-index: 1030;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem;
-        }
-        
-        .header-brand {
-            display: flex;
-            align-items: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-decoration: none;
-            color: white;
+
+        .header-brand .brand-text {
+            display: block;
+            max-width: 240px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #fff;
         }
         
         .header-brand:hover {
@@ -65,18 +43,20 @@ function is_active(string $needle, string $path): string {
         .header-info {
             display: flex;
             align-items: center;
-            gap: 2rem;
+            gap: 1rem;
+            flex-wrap: nowrap;
         }
         
         .datetime-display {
             display: flex;
-            flex-direction: column;
-            align-items: flex-end;
+            flex-direction: row;
+            align-items: center;
+            gap: .75rem;
             font-size: 0.9rem;
         }
         
         .time-display {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
         }
         
@@ -89,10 +69,15 @@ function is_active(string $needle, string $path): string {
             background: rgba(255,255,255,0.2);
             border: 1px solid rgba(255,255,255,0.3);
             color: white;
-            padding: 0.5rem;
+            width: 36px;
+            height: 36px;
+            padding: 0;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
+            align-items: center;
+            justify-content: center;
+            margin-right: .5rem;
         }
         
         .mobile-menu-toggle:hover {
@@ -100,14 +85,41 @@ function is_active(string $needle, string $path): string {
             transform: scale(1.05);
         }
         
+        .header-icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: .25rem .5rem;
+            color: #fff;
+            border: 0;
+            background: transparent;
+        }
+        .header-icon-btn:hover { color: rgba(255,255,255,.85); }
+        
+        /* Responsive tweaks: show burger on md-, hide some header parts on sm- */
+        @media (max-width: 991.98px) {
+            .mobile-menu-toggle { display: inline-flex; }
+        }
+        @media (max-width: 767.98px) {
+            .datetime-display { display: none; }
+            .user-name-text { display: none; }
+            .header-content { gap: .5rem; }
+            /* Biarkan urutan normal: burger kiri, brand kanan */
+            .header-left { flex-direction: row; }
+            .mobile-menu-toggle { margin-right: .5rem; margin-left: 0; }
+            .header-brand { font-size: 1.05rem; max-width: 240px; }
+            .header-brand .brand-text { max-width: 220px; }
+        }
+        
         /* Sidenav Styles */
         .main-sidenav {
             position: fixed;
-            top: 80px; /* Header height */
+            top: 64px; /* Header height (compact) */
             left: 0;
-            width: 280px;
-            height: calc(100vh - 80px);
-            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            width: 220px;
+            height: calc(100vh - 64px);
+            /* Samakan warna dengan header */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             overflow-y: auto;
             transition: transform 0.3s ease;
@@ -116,7 +128,8 @@ function is_active(string $needle, string $path): string {
         }
         
         .sidenav-header {
-            padding: 1.5rem;
+            display: none;
+            padding: 0;
             background: rgba(255,255,255,0.1);
             border-bottom: 1px solid rgba(255,255,255,0.2);
         }
@@ -153,16 +166,16 @@ function is_active(string $needle, string $path): string {
         }
         
         .sidenav-menu {
-            padding: 1rem 0;
+            padding: .5rem 0;
         }
         
         .menu-section {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
         
         .menu-section-title {
-            padding: 0.5rem 1.5rem;
-            font-size: 0.75rem;
+            padding: 0.35rem 1rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
             opacity: 0.6;
             letter-spacing: 1px;
@@ -170,7 +183,7 @@ function is_active(string $needle, string $path): string {
         
         .menu-item {
             display: block;
-            padding: 0.75rem 1.5rem;
+            padding: 0.5rem 1rem;
             color: rgba(255,255,255,0.8);
             text-decoration: none;
             transition: all 0.3s ease;
@@ -192,14 +205,14 @@ function is_active(string $needle, string $path): string {
         }
         
         .menu-item i {
-            width: 20px;
-            margin-right: 0.75rem;
+            width: 18px;
+            margin-right: 0.6rem;
             text-align: center;
         }
         
         /* Main Content Styles */
         .main-content {
-            margin-left: 280px;
+            margin-left: 220px;
             margin-top: 8px; /* Reduced gap to header (5-10px range) */
             min-height: calc(100vh - 88px);
             background: rgba(255, 255, 255, 0.85);
@@ -207,9 +220,11 @@ function is_active(string $needle, string $path): string {
             box-shadow: 0 8px 24px rgba(0,0,0,0.06);
             border-radius: 16px 0 0 0;
             transition: margin-left 0.3s ease;
-            padding: 24px;
+            padding: 16px;
             overflow-y: auto;
         }
+        /* Make tables slightly denser */
+        .content-card .table { font-size: .95rem; }
         
         .page-header {
             background: white;
@@ -235,8 +250,8 @@ function is_active(string $needle, string $path): string {
             background: white;
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            padding: 2rem;
-            margin-bottom: 2rem;
+            padding: 0;
+            margin-bottom: 1.5rem;
         }
         
         /* Footer Styles */
@@ -245,7 +260,7 @@ function is_active(string $needle, string $path): string {
             color: white;
             padding: 2rem;
             text-align: center;
-            margin-left: 280px;
+            margin-left: 220px;
         }
         
         /* Responsive Styles */
@@ -301,7 +316,7 @@ function is_active(string $needle, string $path): string {
             }
             
             .content-card {
-                padding: 1rem;
+                padding: 0;
             }
         }
         
@@ -365,7 +380,7 @@ function is_active(string $needle, string $path): string {
     <!-- Loading Spinner -->
     <div class="loading-spinner" id="loadingSpinner">
         <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
+            <span class="visually-hidden"><?= t('loading') ?></span>
         </div>
     </div>
 
@@ -376,33 +391,35 @@ function is_active(string $needle, string $path): string {
                 <button class="mobile-menu-toggle" id="mobileMenuToggle">
                     <i class="bi bi-list fs-4"></i>
                 </button>
-                <a href="/maruba/index.php/dashboard" class="header-brand">
-                    <i class="bi bi-building me-2"></i>
-                    KSP LGJ
+                <a href="<?= route_url('dashboard') ?>" class="header-brand">
+                    <span class="brand-text"><?= htmlspecialchars($appName ?: 'Koperasi App') ?></span>
                 </a>
             </div>
             
             <div class="header-info">
                 <div class="datetime-display">
                     <div class="time-display" id="timeDisplay">00:00:00</div>
-                    <div class="date-display" id="dateDisplay">Loading...</div>
+                    <div class="date-display" id="dateDisplay"><?= t('loading') ?></div>
                 </div>
+                <button class="header-icon-btn" id="fullscreenToggle" type="button" aria-label="Toggle fullscreen" title="Layar penuh">
+                    <i class="bi bi-arrows-fullscreen fs-5" id="fullscreenIcon"></i>
+                </button>
                 
                 <div class="user-menu dropdown">
                     <button class="btn btn-link text-white dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
                         <i class="bi bi-person-circle me-1"></i>
-                        <?= htmlspecialchars($_SESSION['user']['name'] ?? 'Guest') ?>
+                        <span class="user-name-text"><?= htmlspecialchars($_SESSION['user']['name'] ?? 'Guest') ?></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="/maruba/index.php/profile">
-                            <i class="bi bi-person me-2"></i> Profile
+                        <li><a class="dropdown-item" href="<?= route_url('profile') ?>">
+                            <i class="bi bi-person me-2"></i> <?= t('profile') ?>
                         </a></li>
-                        <li><a class="dropdown-item" href="/maruba/index.php/settings">
-                            <i class="bi bi-gear me-2"></i> Settings
+                        <li><a class="dropdown-item" href="<?= route_url('settings') ?>">
+                            <i class="bi bi-gear me-2"></i> <?= t('settings') ?>
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="/maruba/index.php/logout">
-                            <i class="bi bi-box-arrow-right me-2"></i> Logout
+                        <li><a class="dropdown-item" href="<?= route_url('logout') ?>">
+                            <i class="bi bi-box-arrow-right me-2"></i> <?= t('logout') ?>
                         </a></li>
                     </ul>
                 </div>
@@ -425,32 +442,17 @@ function is_active(string $needle, string $path): string {
         </div>
         
         <div class="sidenav-menu" id="sidenavMenu">
+            <?php
+            // Load navigation helper
+            require_once __DIR__ . '/../Helpers/NavigationHelper.php';
+            echo \App\Helpers\generate_navigation_menu();
+            ?>
+
+            <!-- Logout item -->
             <div class="menu-section">
-                <div class="menu-section-title">Utama</div>
-                <a href="/maruba/index.php/dashboard" class="menu-item <?= is_active('/dashboard', $currentPath) ?>"><i class="bi bi-speedometer2"></i> Dashboard</a>
-            </div>
-            <div class="menu-section">
-                <div class="menu-section-title">Transaksi</div>
-                <a href="/maruba/index.php/loans" class="menu-item <?= is_active('/loans', $currentPath) ?>"><i class="bi bi-cash-stack"></i> Pinjaman</a>
-                <a href="/maruba/index.php/repayments" class="menu-item <?= is_active('/repayments', $currentPath) ?>"><i class="bi bi-wallet2"></i> Angsuran</a>
-                <a href="/maruba/index.php/disbursement" class="menu-item <?= is_active('/disbursement', $currentPath) ?>"><i class="bi bi-credit-card"></i> Pencairan</a>
-            </div>
-            <div class="menu-section">
-                <div class="menu-section-title">Data Master</div>
-                <a href="/maruba/index.php/members" class="menu-item <?= is_active('/members', $currentPath) ?>"><i class="bi bi-people"></i> Anggota</a>
-                <a href="/maruba/index.php/products" class="menu-item <?= is_active('/products', $currentPath) ?>"><i class="bi bi-box"></i> Produk</a>
-                <a href="/maruba/index.php/surveys" class="menu-item <?= is_active('/surveys', $currentPath) ?>"><i class="bi bi-clipboard-check"></i> Survei</a>
-            </div>
-            <div class="menu-section">
-                <div class="menu-section-title">Laporan</div>
-                <a href="/maruba/index.php/reports" class="menu-item <?= is_active('/reports', $currentPath) ?>"><i class="bi bi-file-bar-graph"></i> Laporan</a>
-                <a href="/maruba/index.php/audit" class="menu-item <?= is_active('/audit', $currentPath) ?>"><i class="bi bi-clock-history"></i> Audit Log</a>
-            </div>
-            <div class="menu-section">
-                <div class="menu-section-title">Sistem</div>
-                <a href="/maruba/index.php/users" class="menu-item <?= is_active('/users', $currentPath) ?>"><i class="bi bi-person-gear"></i> Pengguna</a>
-                <a href="/maruba/index.php/surat" class="menu-item <?= is_active('/surat', $currentPath) ?>"><i class="bi bi-file-text"></i> Surat-Surat</a>
-                <a href="/maruba/index.php/logout" class="menu-item"><i class="bi bi-box-arrow-right"></i> Logout</a>
+                <a href="<?= route_url('logout') ?>" class="menu-item">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
             </div>
         </div>
     </nav>
@@ -490,10 +492,10 @@ function is_active(string $needle, string $path): string {
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-6">
-                    <p class="mb-0">&copy; <?= date('Y') ?> KSP LGJ. All rights reserved.</p>
+                    <p class="mb-0">&copy; <?= date('Y') ?> <?= htmlspecialchars($_ENV['APP_NAME'] ?? getenv('APP_NAME') ?? 'KSP LGJ') ?>. Hak cipta dilindungi.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <p class="mb-0">Version 1.0.0 | Built with ❤️</p>
+                    <p class="mb-0">Versi 1.0.0 | Dibuat dengan ❤️</p>
                 </div>
             </div>
         </div>
@@ -504,13 +506,42 @@ function is_active(string $needle, string $path): string {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?= asset_url('assets/js/helpers-id.js') ?>"></script>
     <script src="<?= asset_url('assets/js/dom-helpers.js') ?>"></script>
-    
+    <script src="/assets/js/ksp-ui-library.js"></script>
+    <script src="/assets/js/ksp-components.js"></script>
+    <script src="/assets/js/indonesian-format.js"></script>
+
+    <?php if (isset($scripts)): ?>
+        <?php foreach ($scripts as $script): ?>
+            <script src="<?php echo $script; ?>"></script>
+        <?php endforeach; ?>
+    <?php endif; ?>
+
     <script>
         // Global variables
         const serverRendered = <?= $serverRendered ? 'true' : 'false' ?>;
+        const BASE_URL_JS = '<?= rtrim(route_url(''), '/') ?>';
+        const LEGACY_BASE_URL_JS = '<?= rtrim(legacy_route_url(''), '/') ?>';
         let currentPage = 'dashboard';
         let isLoading = false;
         
+        function initializeDropdowns() {
+            const dropdownTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
+            dropdownTriggerList.forEach(function (dropdownToggleEl) {
+                const inst = bootstrap.Dropdown.getOrCreateInstance(dropdownToggleEl);
+                // Pastikan handler tunggal untuk toggle (hindari duplikasi setelah partial load)
+                if (dropdownToggleEl._dropdownClickHandler) {
+                    dropdownToggleEl.removeEventListener('click', dropdownToggleEl._dropdownClickHandler);
+                }
+                const handler = function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    inst.toggle();
+                };
+                dropdownToggleEl.addEventListener('click', handler);
+                dropdownToggleEl._dropdownClickHandler = handler;
+            });
+        }
+
         // Initialize application
         $(document).ready(function() {
             console.log('=== KSP LGJ Single Page Application ===');
@@ -518,12 +549,24 @@ function is_active(string $needle, string $path): string {
             // Initialize components
             initializeDateTime();
             initializeMobileMenu();
-            initializeDropdownMenus();
+            initializeNavigation();
+            initializeFullscreenToggle();
+            initializeDropdowns();
+            
+            // Center active menu item on load
+            centerMenuItem($('.menu-item.active')[0]);
+
+            // Initial page load
             if (!serverRendered) {
                 initializeSidenav();
-                initializeNavigation();
                 // Load initial page only for SPA mode
                 loadPage('dashboard');
+            }
+            // Always center the active menu item on load (server-rendered or SPA)
+            const activeItem = document.querySelector('#sidenavMenu .menu-item.active');
+            if (activeItem) {
+                // Defer to ensure layout is ready
+                setTimeout(function(){ centerMenuItem(activeItem); }, 0);
             }
             
             console.log('Application initialized successfully');
@@ -559,9 +602,62 @@ function is_active(string $needle, string $path): string {
             setInterval(updateDateTime, 1000);
         }
         
+        // Fullscreen toggle handler
+        function initializeFullscreenToggle() {
+            const btn = document.getElementById('fullscreenToggle');
+            const icon = document.getElementById('fullscreenIcon');
+            if (!btn || !icon) return;
+
+            function isFullscreen() {
+                return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+            }
+            function updateIcon() {
+                const on = isFullscreen();
+                icon.classList.toggle('bi-arrows-fullscreen', !on);
+                icon.classList.toggle('bi-fullscreen-exit', on);
+            }
+            function requestFs(el) {
+                if (el.requestFullscreen) return el.requestFullscreen();
+                if (el.webkitRequestFullscreen) return el.webkitRequestFullscreen();
+                if (el.mozRequestFullScreen) return el.mozRequestFullScreen();
+                if (el.msRequestFullscreen) return el.msRequestFullscreen();
+            }
+            function exitFs() {
+                if (document.exitFullscreen) return document.exitFullscreen();
+                if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
+                if (document.mozCancelFullScreen) return document.mozCancelFullScreen();
+                if (document.msExitFullscreen) return document.msExitFullscreen();
+            }
+
+            btn.addEventListener('click', function() {
+                if (isFullscreen()) {
+                    exitFs();
+                } else {
+                    requestFs(document.documentElement);
+                }
+            });
+
+            document.addEventListener('fullscreenchange', updateIcon);
+            document.addEventListener('webkitfullscreenchange', updateIcon);
+            document.addEventListener('mozfullscreenchange', updateIcon);
+            document.addEventListener('MSFullscreenChange', updateIcon);
+
+            updateIcon();
+        }
+        
         // Initialize sidenav menu (no-op in server-rendered mode)
         function initializeSidenav() {
             return;
+        }
+        function centerMenuItem(element) {
+            const container = document.getElementById('mainSidenav');
+            if (!container || !element) return;
+            const el = element instanceof HTMLElement ? element : (element[0] || null);
+            if (!el) return;
+            const targetTop = el.offsetTop - (container.clientHeight / 2) + (el.clientHeight / 2);
+            const maxScroll = container.scrollHeight - container.clientHeight;
+            const newScroll = Math.max(0, Math.min(targetTop, maxScroll));
+            container.scrollTo({ top: newScroll, behavior: 'smooth' });
         }
 
         // Ensure Bootstrap dropdown works in header
@@ -630,6 +726,119 @@ function is_active(string $needle, string $path): string {
                 // Close mobile menu
                 if (window.innerWidth < 992) {
                     $('#mainSidenav').removeClass('show');
+                }
+            });
+            // Server-rendered: intercept sidebar nav to avoid full reload (jaga fullscreen)
+            if (serverRendered) {
+                // Intercept sidebar links
+                $(document).on('click', '#sidenavMenu a', function(e) {
+                    const href = this.getAttribute('href');
+                    // Abaikan klik dengan modifier/target baru
+                    if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+                    if (this.getAttribute('target') === '_blank') return;
+                    if (!href || href === '#') return;
+                    // biarkan logout/auth berjalan normal
+                    if (/\/logout$/.test(href) || /\/login$/.test(href)) return;
+                    // Jika target sama dengan halaman sekarang, cukup tutup sidenav di mobile
+                    const clean = (u) => u.replace(/[#?].*$/, '');
+                    if (clean(href) === clean(window.location.href)) {
+                        if (window.innerWidth < 992) $('#mainSidenav').removeClass('show');
+                        return;
+                    }
+                    e.preventDefault();
+                    loadPartialPage(href, this);
+                    if (window.innerWidth < 992) $('#mainSidenav').removeClass('show');
+                });
+                // Intercept header brand (logo) to avoid full reload
+                $(document).on('click', '.header-brand', function(e) {
+                    const href = this.getAttribute('href');
+                    if (!href) return;
+                    if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    loadPartialPage(href, null);
+                    if (window.innerWidth < 992) $('#mainSidenav').removeClass('show');
+                });
+                // Handle browser back/forward
+                window.addEventListener('popstate', function() {
+                    // Reload current URL content into container
+                    loadPartialPage(window.location.href, null);
+                });
+            }
+            $(document).on('click', '.menu-item', function() {
+                centerMenuItem(this);
+            });
+            $(document).on('click', '.menu-section', function() {
+                centerMenuItem(this);
+            });
+        }
+
+        // Load partial page content (server-rendered) tanpa reload penuh
+        function loadPartialPage(url, triggerEl) {
+            $('#loadingSpinner').addClass('show');
+            const injectPartial = function (html) {
+                const $doc = $('<div>').append($.parseHTML(html));
+                const $wrap = $doc.find('#dynamicContent').first();
+                const inner = $wrap.length ? $wrap.html() : html;
+                $('#dynamicContent').empty().html(inner);
+                const len = $('#dynamicContent').children().length;
+                if (url.indexOf('/dashboard') !== -1) {
+                                    }
+                return len > 0;
+            };
+            const onSuccess = function(pushUrl){
+                if (triggerEl) { $('.menu-item').removeClass('active'); $(triggerEl).addClass('active'); }
+                window.history.pushState({}, '', pushUrl);
+                $('#loadingSpinner').removeClass('show');
+                initializeDropdowns();
+            };
+            const ajaxUrl = url + (url.indexOf('?') === -1 ? '?partial=1' : '&partial=1');
+            $.get(ajaxUrl).done(function(html){
+                if (injectPartial(html)) { onSuccess(url); return; }
+                // Jika kosong, coba ulang tanpa ?partial=1 dan ekstraksi biasa
+                $.get(url).done(function(htmlFull){
+                    const $docFull = $('<div>').append($.parseHTML(htmlFull));
+                    const sels = ['#dynamicContent','#mainContent #dynamicContent','#mainContent .content-card','.content-card','main'];
+                    let found = false;
+                    for (let i=0;i<sels.length;i++){
+                        const $f = $docFull.find(sels[i]).first();
+                        if ($f.length && $.trim($f.html()).length){
+                            $('#dynamicContent').empty().html($f.html());
+                            found = true; break;
+                        }
+                    }
+                    if (!found && $docFull.find('#dashboardMetrics').length){
+                        const $dash = $docFull.find('#dashboardMetrics').closest('.row');
+                        const $f = $dash.length ? $dash.parent() : $docFull.find('#dashboardMetrics');
+                        $('#dynamicContent').empty().html($f.html());
+                        found = true;
+                    }
+                    if (found) { onSuccess(url); return; }
+                    window.location.href = url;
+                }).fail(function(){ window.location.href = url; });
+                // Coba ulang legacy
+                if (BASE_URL_JS && LEGACY_BASE_URL_JS && url.startsWith(BASE_URL_JS + '/')) {
+                    const alt = LEGACY_BASE_URL_JS + url.substring(BASE_URL_JS.length);
+                    $.get(alt + (alt.indexOf('?') === -1 ? '?partial=1' : '&partial=1')).done(function(html2){
+                        if (injectPartial(html2)) { onSuccess(url); return; }
+                        if (url.indexOf('/dashboard') !== -1) {
+                                                    }
+                        window.location.href = url; // terakhir
+                    }).fail(function(){ window.location.href = url; });
+                } else {
+                    window.location.href = url;
+                }
+            }).fail(function(){
+                // Jika gagal langsung, coba legacy sekali
+                if (BASE_URL_JS && LEGACY_BASE_URL_JS && url.startsWith(BASE_URL_JS + '/')) {
+                    const alt = LEGACY_BASE_URL_JS + url.substring(BASE_URL_JS.length);
+                    $.get(alt + (alt.indexOf('?') === -1 ? '?partial=1' : '&partial=1')).done(function(html2){
+                        if (injectPartial(html2)) { onSuccess(url); return; }
+                        if (url.indexOf('/dashboard') !== -1) {
+                                                    }
+                        window.location.href = url;
+                    }).fail(function(){ window.location.href = url; });
+                } else {
+                    window.location.href = url;
                 }
             });
         }

@@ -1,17 +1,39 @@
-# OS/editor
+# =========================================
+# KSP SAAS PLATFORM - COMPREHENSIVE GITIGNORE
+# =========================================
+
+# OS/editor files
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
 
 # PHP/vendor/cache
 vendor/
 composer.lock
 
+# Laravel/framework specific (if used)
+bootstrap/cache/
+storage/framework/
+storage/logs/
+
 # App secrets & runtime
 App/.env
+App/.env.local
+App/.env.production
+App/.env.staging
 App/public/uploads/
 App/public/storage/
+App/storage/
+storage/
+
+# Database files
+*.sql
+*.sqlite
+*.db
 
 # Local scripts and credentials (do NOT commit)
 sudo_pass.txt
@@ -21,13 +43,108 @@ fix_permissions.php
 update_permissions.php
 update_docs_perm.sql
 .git-credentials
-
-# Logs/temp
-*.log
-storage/
-/tmp/
 maruba_rsa
 maruba_rsa.pub
 maruba_*
 *.key
 *.pem
+
+# Logs/temp files
+*.log
+logs/
+tmp/
+temp/
+cache/
+
+# Node.js/npm (if used)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Python (for AI/ML components)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.atom/
+*.tmproj
+
+# Testing and coverage
+tests/
+phpunit.xml
+coverage/
+.nyc_output/
+
+# Documentation generated files
+docs/build/
+docs/.vuepress/dist/
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# CI/CD
+.github/workflows/*.yml
+.gitlab-ci.yml
+Jenkinsfile
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# API documentation
+api-docs/
+swagger.json
+openapi.yaml
+
+# Mobile app files (if separate)
+android/
+ios/
+*.apk
+*.ipa
+
+# SSL certificates
+ssl/
+certs/
+*.crt
+*.csr
+
+# Redis dumps
+dump.rdb
+
+# Firebase service account keys
+firebase-service-account.json
+
+# QRIS and payment gateway keys
+qris_keys/
+payment_keys/
+
+# AI/ML model files
+models/
+*.h5
+*.pkl
+*.joblib
+
+# OCR training data
+ocr_training/
+training_data/
+
+# Temporary files
+.tmp/
+temp/
+cache/
