@@ -11,8 +11,23 @@ class LoanController
         $title = 'Pengajuan Pinjaman';
         // Ambil anggota dan produk
         $pdo = \App\Database::getConnection();
-        $members = $pdo->query('SELECT id, name, nik, phone FROM members WHERE status="active" ORDER BY name')->fetchAll();
-        $products = $pdo->query('SELECT id, name, rate, tenor_months, fee FROM products WHERE type="loan" ORDER BY name')->fetchAll();
+        $tenantId = $this->getCurrentTenantId();
+
+        if ($tenantId === null) {
+            // System admin - can see all tenants
+            $members = $pdo->query('SELECT id, name, nik, phone FROM members WHERE status="active" ORDER BY name')->fetchAll();
+            $products = $pdo->query('SELECT id, name, rate, tenor_months, fee FROM products WHERE type="loan" ORDER BY name')->fetchAll();
+        } else {
+            // Tenant user - only see their tenant data
+            $stmtMembers = $pdo->prepare('SELECT id, name, nik, phone FROM members WHERE tenant_id = ? AND status="active" ORDER BY name');
+            $stmtMembers->execute([$tenantId]);
+            $members = $stmtMembers->fetchAll();
+
+            $stmtProducts = $pdo->prepare('SELECT id, name, rate, tenor_months, fee FROM products WHERE tenant_id = ? AND type="loan" ORDER BY name');
+            $stmtProducts->execute([$tenantId]);
+            $products = $stmtProducts->fetchAll();
+        }
+
         include view_path('loans/create');
     }
 
@@ -39,9 +54,10 @@ class LoanController
         $pdo = \App\Database::getConnection();
         $pdo->beginTransaction();
         try {
-            // Insert loan
-            $stmt = $pdo->prepare('INSERT INTO loans (member_id, product_id, amount, tenor_months, purpose, status) VALUES (?, ?, ?, ?, ?, ?)');
-            $stmt->execute([$memberId, $productId, $amount, $tenor, $purpose, 'draft']);
+            // Insert loan with tenant_id
+            $tenantId = $this->getCurrentTenantId();
+            $stmt = $pdo->prepare('INSERT INTO loans (member_id, product_id, amount, tenor_months, purpose, status, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?)');
+            $stmt->execute([$memberId, $productId, $amount, $tenor, $purpose, 'draft', $tenantId]);
             $loanId = $pdo->lastInsertId();
 
             // Handle file uploads
@@ -81,15 +97,52 @@ class LoanController
         AuthHelper::requirePermission('loans', 'view');
         $title = 'Daftar Pinjaman';
         $pdo = \App\Database::getConnection();
-        $stmt = $pdo->prepare('
-            SELECT l.*, m.name AS member_name, p.name AS product_name
-            FROM loans l
-            JOIN members m ON l.member_id = m.id
-            JOIN products p ON l.product_id = p.id
-            ORDER BY l.created_at DESC
-        ');
-        $stmt->execute();
+        $tenantId = $this->getCurrentTenantId();
+
+        if ($tenantId === null) {
+            // System admin - can see all tenants
+            $stmt = $pdo->query('
+                SELECT l.*, m.name AS member_name, p.name AS product_name, t.name as tenant_name
+                FROM loans l
+                JOIN members m ON l.member_id = m.id
+                JOIN products p ON l.product_id = p.id
+                LEFT JOIN tenants t ON l.tenant_id = t.id
+                ORDER BY l.created_at DESC
+            ');
+        } else {
+            // Tenant user - only see their tenant data
+            $stmt = $pdo->prepare('
+                SELECT l.*, m.name AS member_name, p.name AS product_name
+                FROM loans l
+                JOIN members m ON l.member_id = m.id
+                JOIN products p ON l.product_id = p.id
+                WHERE l.tenant_id = ?
+                ORDER BY l.created_at DESC
+            ');
+            $stmt->execute([$tenantId]);
+        }
+
         $loans = $stmt->fetchAll();
         include view_path('loans/index');
+    }
+
+    /**
+     * Get current tenant ID for data isolation
+     */
+    private function getCurrentTenantId(): ?int
+    {
+        // Check if user is system admin (tenant_id = NULL)
+        $currentUser = current_user();
+        if (!$currentUser) {
+            return null;
+        }
+
+        // Get user details including tenant_id
+        $pdo = \App\Database::getConnection();
+        $stmt = $pdo->prepare('SELECT tenant_id FROM users WHERE id = ?');
+        $stmt->execute([$currentUser['id']]);
+        $user = $stmt->fetch();
+
+        return $user ? $user['tenant_id'] : null;
     }
 }

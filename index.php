@@ -139,6 +139,98 @@ $router->get('/api/members', [ApiController::class, 'members']);
 $router->get('/api/surveys', [ApiController::class, 'surveys']);
 $router->post('/api/members/geo', [ApiController::class, 'updateMemberGeo']);
 $router->post('/api/surveys/geo', [ApiController::class, 'updateSurveyGeo']);
+$router->get('/api/dashboard', [ApiController::class, 'dashboard']);
+$router->get('/api/tenants', [ApiController::class, 'getTenants']);
+
+// ===== SAVINGS SYSTEM =====
+use App\Controllers\SavingsController;
+$router->get('/savings', [SavingsController::class, 'index']);
+$router->get('/savings/create', [SavingsController::class, 'create']);
+$router->post('/savings/store', [SavingsController::class, 'store']);
+$router->get('/savings/accounts', [SavingsController::class, 'accounts']);
+$router->post('/savings/deposit', [SavingsController::class, 'deposit']);
+$router->post('/savings/withdraw', [SavingsController::class, 'withdraw']);
+
+// ===== SHU (SISA HASIL USAHA) SYSTEM =====
+use App\Controllers\SHUController;
+$router->get('/shu', [SHUController::class, 'index']);
+$router->get('/shu/calculate', [SHUController::class, 'calculate']);
+$router->post('/shu/calculate', [SHUController::class, 'processCalculation']);
+$router->get('/shu/distribute', [SHUController::class, 'distribute']);
+$router->post('/shu/distribute', [SHUController::class, 'processDistribution']);
+
+// ===== ACCOUNTING SYSTEM =====
+use App\Controllers\AccountingController;
+$router->get('/accounting', [AccountingController::class, 'index']);
+$router->get('/accounting/journal', [AccountingController::class, 'journal']);
+$router->get('/accounting/journal/create', [AccountingController::class, 'createJournal']);
+$router->post('/accounting/journal/store', [AccountingController::class, 'storeJournal']);
+$router->get('/accounting/chart', [AccountingController::class, 'chartOfAccounts']);
+$router->get('/accounting/reports', [AccountingController::class, 'reports']);
+
+// ===== PAYMENT GATEWAY =====
+use App\Controllers\PaymentController;
+$router->get('/payments', [PaymentController::class, 'index']);
+$router->get('/payments/create', [PaymentController::class, 'create']);
+$router->post('/payments/process', [PaymentController::class, 'process']);
+$router->get('/payments/callback', [PaymentController::class, 'callback']);
+$router->post('/payments/webhook', [PaymentController::class, 'webhook']);
+
+// ===== DOCUMENT MANAGEMENT =====
+use App\Controllers\DocumentController;
+$router->get('/documents', [DocumentController::class, 'index']);
+$router->get('/documents/templates', [DocumentController::class, 'templates']);
+$router->get('/documents/templates/create', [DocumentController::class, 'createTemplate']);
+$router->post('/documents/templates/store', [DocumentController::class, 'storeTemplate']);
+$router->get('/documents/generate', [DocumentController::class, 'generate']);
+$router->post('/documents/generate', [DocumentController::class, 'processGenerate']);
+
+// ===== PAYROLL SYSTEM =====
+use App\Controllers\PayrollController;
+$router->get('/payroll', [PayrollController::class, 'index']);
+$router->get('/payroll/employees', [PayrollController::class, 'employees']);
+$router->get('/payroll/employees/create', [PayrollController::class, 'createEmployee']);
+$router->post('/payroll/employees/store', [PayrollController::class, 'storeEmployee']);
+$router->get('/payroll/process', [PayrollController::class, 'process']);
+$router->post('/payroll/process', [PayrollController::class, 'runPayroll']);
+
+// ===== COMPLIANCE MONITORING =====
+use App\Controllers\ComplianceController;
+$router->get('/compliance', [ComplianceController::class, 'index']);
+$router->get('/compliance/checks', [ComplianceController::class, 'checks']);
+$router->get('/compliance/reports', [ComplianceController::class, 'reports']);
+$router->post('/compliance/check', [ComplianceController::class, 'runCheck']);
+
+// ===== TENANT BACKUP MANAGEMENT =====
+use App\Controllers\TenantBackupController;
+$router->get('/backup', [TenantBackupController::class, 'index']);
+$router->post('/backup/create', [TenantBackupController::class, 'create']);
+$router->get('/backup/download', [TenantBackupController::class, 'download']);
+$router->post('/backup/restore', [TenantBackupController::class, 'restore']);
+
+// ===== NAVIGATION MANAGEMENT =====
+use App\Controllers\NavigationController;
+$router->get('/navigation', [NavigationController::class, 'index']);
+$router->post('/navigation/update', [NavigationController::class, 'update']);
+$router->post('/navigation/reset', [NavigationController::class, 'reset']);
+
+// ===== SUBSCRIPTION MANAGEMENT =====
+use App\Controllers\SubscriptionController;
+$router->get('/subscription', [SubscriptionController::class, 'index']);
+$router->get('/subscription/plans', [SubscriptionController::class, 'plans']);
+$router->post('/subscription/upgrade', [SubscriptionController::class, 'upgrade']);
+$router->get('/subscription/billing', [SubscriptionController::class, 'billing']);
+
+// ===== MULTI-TENANT ANALYTICS =====
+use App\Controllers\MultiTenantAnalyticsController;
+$router->get('/analytics', [MultiTenantAnalyticsController::class, 'index']);
+$router->get('/analytics/tenants', [MultiTenantAnalyticsController::class, 'tenants']);
+$router->get('/analytics/performance', [MultiTenantAnalyticsController::class, 'performance']);
+$router->get('/analytics/financial', [MultiTenantAnalyticsController::class, 'financial']);
+
+// ===== ADDITIONAL UTILITY ROUTES =====
+$router->get('/profile', [UsersController::class, 'profile']);
+$router->post('/profile/update', [UsersController::class, 'updateProfile']);
 
 // Dispatch the request
 $router->dispatch($requestMethod, $uri);

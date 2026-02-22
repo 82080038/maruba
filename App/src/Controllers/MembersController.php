@@ -9,8 +9,20 @@ class MembersController
         require_login();
         AuthHelper::requirePermission('members', 'view');
         $title = 'Daftar Anggota';
+
+        // Get current tenant ID
+        $tenantId = $this->getCurrentTenantId();
         $pdo = \App\Database::getConnection();
-        $stmt = $pdo->query('SELECT * FROM members ORDER BY name');
+
+        if ($tenantId === null) {
+            // System admin - can see all tenants
+            $stmt = $pdo->query('SELECT m.*, t.name as tenant_name FROM members m LEFT JOIN tenants t ON m.tenant_id = t.id ORDER BY m.name');
+        } else {
+            // Tenant user - only see their tenant data
+            $stmt = $pdo->prepare('SELECT * FROM members WHERE tenant_id = ? ORDER BY name');
+            $stmt->execute([$tenantId]);
+        }
+
         $members = $stmt->fetchAll();
         include view_path('members/index');
     }
@@ -48,6 +60,18 @@ class MembersController
         // Check if NIK already exists
         $memberModel = new \App\Models\Member();
         $existingMember = $memberModel->findWhere(['nik' => $data['nik']]);
+
+        if ($existingMember) {
+            $_SESSION['registration_error'] = 'NIK sudah terdaftar dalam sistem.';
+            header('Location: ' . route_url('members/register'));
+            return;
+        }
+
+        // Add tenant_id for data isolation
+        $data['tenant_id'] = $this->getCurrentTenantId();
+
+        // Save member
+        $memberId = $memberModel->create($data);
         if (!empty($existingMember)) {
             $_SESSION['registration_error'] = 'NIK sudah terdaftar dalam sistem.';
             header('Location: ' . route_url('members/register'));
@@ -280,9 +304,30 @@ class MembersController
             return;
         }
         $pdo = \App\Database::getConnection();
-        $stmt = $pdo->prepare('INSERT INTO members (name, nik, phone, address, lat, lng) VALUES (?, ?, ?, ?, ?, ?)');
-        $stmt->execute([$name, $nik, $phone, $address, $lat, $lng]);
+        $tenantId = $this->getCurrentTenantId();
+        $stmt = $pdo->prepare('INSERT INTO members (name, nik, phone, address, lat, lng, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?)');
+        $stmt->execute([$name, $nik, $phone, $address, $lat, $lng, $tenantId]);
         $_SESSION['success'] = 'Anggota berhasil ditambahkan.';
         header('Location: ' . route_url('members'));
+    }
+
+    /**
+     * Get current tenant ID for data isolation
+     */
+    private function getCurrentTenantId(): ?int
+    {
+        // Check if user is system admin (tenant_id = NULL)
+        $currentUser = current_user();
+        if (!$currentUser) {
+            return null;
+        }
+
+        // Get user details including tenant_id
+        $pdo = \App\Database::getConnection();
+        $stmt = $pdo->prepare('SELECT tenant_id FROM users WHERE id = ?');
+        $stmt->execute([$currentUser['id']]);
+        $user = $stmt->fetch();
+
+        return $user ? $user['tenant_id'] : null;
     }
 }

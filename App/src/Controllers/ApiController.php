@@ -17,10 +17,26 @@ class ApiController
         header('Content-Type: application/json');
 
         $memberModel = new Member();
-        $members = $memberModel->findWhere([
-            'lat' => ['IS NOT NULL', ''],
-            'lng' => ['IS NOT NULL', '']
-        ], ['name' => 'ASC']);
+
+        // Get current tenant ID for filtering (if authenticated)
+        $tenantId = $this->getCurrentTenantId();
+
+        if ($tenantId === null) {
+            // Public API - only show members with coordinates (no sensitive data)
+            $members = $memberModel->findWhere([
+                'lat' => ['IS NOT NULL', ''],
+                'lng' => ['IS NOT NULL', ''],
+                'status' => 'active'  // Only active members
+            ], ['name' => 'ASC']);
+        } else {
+            // Tenant API - show tenant's members with coordinates
+            $members = $memberModel->findWhere([
+                'tenant_id' => $tenantId,
+                'lat' => ['IS NOT NULL', ''],
+                'lng' => ['IS NOT NULL', ''],
+                'status' => 'active'
+            ], ['name' => 'ASC']);
+        }
 
         echo json_encode($members);
     }
@@ -31,7 +47,18 @@ class ApiController
         header('Content-Type: application/json');
 
         $surveyModel = new Survey();
-        $surveys = $surveyModel->getCompletedSurveys();
+
+        // Get current tenant ID for filtering (if authenticated)
+        $tenantId = $this->getCurrentTenantId();
+
+        if ($tenantId === null) {
+            // Public API - only show completed surveys with coordinates
+            $surveys = $surveyModel->getCompletedSurveys();
+        } else {
+            // Tenant API - show tenant's surveys with coordinates
+            // This needs to be implemented in Survey model with tenant filtering
+            $surveys = $this->getTenantSurveysWithGeo($tenantId);
+        }
 
         // Filter only surveys with geo coordinates
         $surveysWithGeo = array_filter($surveys, function($survey) {
@@ -298,7 +325,6 @@ class ApiController
             ]
         ]);
     }
-}
 
     // ===== TENANT MANAGEMENT API =====
     public function getTenants(): void
@@ -715,5 +741,45 @@ class ApiController
         }
 
         return (float)$cost;
+    }
+
+    /**
+     * Get current tenant ID for API filtering
+     */
+    private function getCurrentTenantId(): ?int
+    {
+        // Check if user is authenticated and has tenant context
+        $currentUser = current_user();
+        if (!$currentUser) {
+            return null; // Public API access
+        }
+
+        // Get user details including tenant_id
+        $pdo = \App\Database::getConnection();
+        $stmt = $pdo->prepare('SELECT tenant_id FROM users WHERE id = ?');
+        $stmt->execute([$currentUser['id']]);
+        $user = $stmt->fetch();
+
+        return $user ? $user['tenant_id'] : null;
+    }
+
+    /**
+     * Get tenant surveys with geo coordinates
+     */
+    private function getTenantSurveysWithGeo(int $tenantId): array
+    {
+        $pdo = \App\Database::getConnection();
+        $stmt = $pdo->prepare("
+            SELECT s.*, l.amount as loan_amount, m.name as member_name,
+                   u.name as surveyor_name, l.tenant_id
+            FROM surveys s
+            JOIN loans l ON s.loan_id = l.id
+            JOIN members m ON l.member_id = m.id
+            JOIN users u ON s.surveyor_id = u.id
+            WHERE l.tenant_id = ? AND s.geo_lat IS NOT NULL AND s.geo_lng IS NOT NULL
+            ORDER BY s.created_at DESC
+        ");
+        $stmt->execute([$tenantId]);
+        return $stmt->fetchAll();
     }
 }

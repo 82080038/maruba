@@ -71,10 +71,45 @@ class DashboardController
 
         // Get tenant info
         $tenantInfo = \App\Middleware\TenantMiddleware::getTenantInfo();
+        $tenantId = $tenantInfo['id'] ?? null;
 
-        // Aktivitas terbaru dari tenant database (audit log)
-        $stmt = $pdo->prepare("SELECT a.action, a.entity, a.entity_id, a.created_at, u.name AS user_name FROM audit_logs a LEFT JOIN users u ON a.user_id = u.id ORDER BY a.created_at DESC LIMIT 5");
-        $stmt->execute();
+        if (!$tenantId) {
+            // Fallback to admin dashboard if no tenant context
+            $this->adminDashboard();
+            return;
+        }
+
+        // Tenant-specific metrics with tenant filtering
+        $stmt = $pdo->prepare("SELECT COALESCE(SUM(amount),0) AS total FROM loans WHERE tenant_id = ? AND status IN ('approved','disbursed')");
+        $stmt->execute([$tenantId]);
+        $outstanding = (float)$stmt->fetch()['total'];
+
+        // Active members for this tenant
+        $stmt = $pdo->prepare("SELECT COUNT(*) AS cnt FROM members WHERE tenant_id = ? AND status='active'");
+        $stmt->execute([$tenantId]);
+        $activeMembers = (int)$stmt->fetch()['cnt'];
+
+        // Running loans for this tenant
+        $stmt = $pdo->prepare("SELECT COUNT(*) AS cnt FROM loans WHERE tenant_id = ? AND status IN ('draft','survey','review','approved','disbursed')");
+        $stmt->execute([$tenantId]);
+        $runningLoans = (int)$stmt->fetch()['cnt'];
+
+        // NPL calculation for this tenant
+        $stmt = $pdo->prepare("SELECT SUM(status='default') AS npl, COUNT(*) AS total FROM loans WHERE tenant_id = ?");
+        $stmt->execute([$tenantId]);
+        $row = $stmt->fetch();
+        $nplPct = ($row['total'] ?? 0) > 0 ? round(($row['npl'] / $row['total']) * 100, 1) : 0;
+
+        $metrics = [
+            ['label' => 'Outstanding', 'value' => $outstanding, 'type' => 'currency'],
+            ['label' => 'Anggota Aktif', 'value' => $activeMembers, 'type' => 'number'],
+            ['label' => 'Pinjaman Berjalan', 'value' => $runningLoans, 'type' => 'number'],
+            ['label' => 'NPL', 'value' => $nplPct, 'type' => 'percent'],
+        ];
+
+        // Tenant-specific audit logs
+        $stmt = $pdo->prepare("SELECT a.action, a.entity, a.entity_id, a.created_at, u.name AS user_name FROM audit_logs a LEFT JOIN users u ON a.user_id = u.id WHERE a.tenant_id = ? ORDER BY a.created_at DESC LIMIT 5");
+        $stmt->execute([$tenantId]);
         $activities = $stmt->fetchAll();
 
         // Server-rendered tenant dashboard view
