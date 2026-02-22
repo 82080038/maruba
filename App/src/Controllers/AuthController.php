@@ -11,6 +11,24 @@ class AuthController
 
     public function login(): void
     {
+        verify_csrf();
+
+        // Simple rate limiting: max 5 attempts per 5 minutes per username/IP
+        $usernameKey = strtolower(trim($_POST['username'] ?? '')) ?: 'unknown';
+        $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        $bucket = $usernameKey . '|' . $ip;
+        $now = time();
+        $_SESSION['login_attempts'] = $_SESSION['login_attempts'] ?? [];
+        $attempt = $_SESSION['login_attempts'][$bucket] ?? ['count' => 0, 'first' => $now];
+        if ($now - $attempt['first'] > 300) {
+            $attempt = ['count' => 0, 'first' => $now];
+        }
+        if ($attempt['count'] >= 5) {
+            $_SESSION['error'] = 'Terlalu banyak percobaan login. Coba lagi setelah beberapa menit.';
+            header('Location: /maruba/index.php/login');
+            return;
+        }
+
         $username = $_POST['username'] ?? '';
         $password = $_POST['password'] ?? '';
 
@@ -51,9 +69,16 @@ class AuthController
             // 7. Log successful login with session clearing
             error_log("User {$username} logged in - Session cleared and all caches reset");
 
+            // Reset rate-limit bucket
+            unset($_SESSION['login_attempts'][$bucket]);
+
             header('Location: /maruba/index.php/dashboard');
             return;
         }
+
+        // Increment rate limit counter on failure
+        $attempt['count'] += 1;
+        $_SESSION['login_attempts'][$bucket] = $attempt;
 
         $_SESSION['error'] = 'Login gagal. Periksa username/password.';
         header('Location: /maruba/index.php/');

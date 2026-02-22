@@ -1,8 +1,8 @@
-# Penjelasan Aplikasi KSP LAM GABE JAYA
+# Penjelasan Aplikasi KOPERASI APP
 
 ## Tentang Aplikasi
 
-Aplikasi KSP LAM GABE JAYA adalah sistem informasi terintegrasi yang dirancang khusus untuk mengelola operasional koperasi simpan pinjaman (KSP) secara digital dan modern. Aplikasi ini menggabungkan teknologi web dan mobile untuk memberikan pengalaman yang optimal bagi anggota, pengurus, dan petugas lapangan.
+Aplikasi KOPERASI APP adalah sistem informasi terintegrasi yang dirancang khusus untuk mengelola operasional koperasi simpan pinjaman (KSP) secara digital dan modern. Aplikasi ini menggabungkan teknologi web dan mobile untuk memberikan pengalaman yang optimal bagi anggota, pengurus, dan petugas lapangan.
 
 ## Fitur Utama
 
@@ -355,7 +355,7 @@ A: Tidak ada biaya untuk anggota. Beberapa fitur mungkin berbayar untuk layanan 
 
 ## Informasi Kontak
 
-**KSP LAM GABE JAYA**
+**KOPERASI APP**
 Alamat: Jl. Contoh No. 123, Kelurahan Contoh, Kecamatan Contoh, Kota Contoh, Provinsi Contoh 12345
 Telepon: (0734) 123-4567
 Email: info@ksp-lamgabejaya.id
@@ -368,7 +368,7 @@ Sabtu: 09:00 - 12:00
 **Media Sosial**
 Facebook: @ksp-lamgabejaya
 Instagram: @ksp-lamgabejaya
-YouTube: KSP LAM GABE JAYA Official
+YouTube: KOPERASI APP Official
 
 ---
 

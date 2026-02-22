@@ -1,6 +1,6 @@
 <?php
-// Test script for KSP LAM GABE JAYA Application
-echo "=== APLIKASI KSP Application Test Suite ===\n\n";
+// Test script for KOPERASI APP Application
+echo "=== KOPERASI APP Test Suite ===\n\n";
 
 // Test 1: Database Connection
 echo "1. Testing Database Connection...\n";

@@ -377,6 +377,10 @@ if (!empty($_GET['partial'])) {
     </style>
 </head>
 <body>
+    <!-- Development status banner -->
+    <div style="background:#fef3c7;color:#92400e;padding:10px 16px;text-align:center;font-weight:600;border-bottom:1px solid #fcd34d;">
+        ⚠️ Aplikasi masih dalam tahap pengembangan / preview. Fitur, data, dan keamanan dapat berubah sewaktu-waktu.
+    </div>
     <!-- Loading Spinner -->
     <div class="loading-spinner" id="loadingSpinner">
         <div class="spinner-border text-primary" role="status">

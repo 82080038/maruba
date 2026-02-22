@@ -1,4 +1,4 @@
-# Rencana Pengembangan Aplikasi KSP LAM GABE JAYA
+# Rencana Pengembangan Aplikasi KOPERASI APP
 *Berdasarkan AD/ART, dokumen internal, regulasi umum, dan praktik industri KSP*
 
 ---
@@ -836,7 +836,7 @@
   - **Interview Video**: AO lakukan wawancara singkat via video call.
 - **Keamanan Data**:
   - **Enkripsi**: Dokumen dienkripsi di storage; akses per role.
-  - **Watermark**: Tambah watermark "KSP LAM GABE JAYA" pada foto.
+  - **Watermark**: Tambah watermark "KOPERASI APP" pada foto.
   - **Hash Verification**: Hash file untuk cek duplikat dan integritas.
   - **Retention**: Hapus dokumen lama setelah periode tertentu (sesuai kebijakan).
 - **UI/UX untuk Pengajuan**:
@@ -1176,7 +1176,7 @@
 ---
 
 ### Catatan Tambahan
-- **AD/ART**: Semua fitur harus konsisten dengan AD/ART KSP LAM GABE JAYA.
+- **AD/ART**: Semua fitur harus konsisten dengan AD/ART KOPERASI APP.
 - **Template Dokumen**: Gunakan `plan/surat.md` untuk SKB otomatis.
 - **Lokalisasi**: Bahasa Indonesia untuk semua UI/label.
 - **Partial Load**: Pastikan semua view baru pakai `#dynamicContent`.

@@ -44,4 +44,4 @@ ob_start();
 </div>
 <?php
 $content = ob_get_clean();
-include view_path('layout_admin');
+include view_path('layout_dashboard');

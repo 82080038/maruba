@@ -21,19 +21,12 @@ storage/framework/
 storage/logs/
 
 # App secrets & runtime
-App/.env
-App/.env.local
-App/.env.production
-App/.env.staging
 App/public/uploads/
 App/public/storage/
 App/storage/
 storage/
 
 # Database files
-*.sql
-*.sqlite
-*.db
 
 # Local scripts and credentials (do NOT commit)
 sudo_pass.txt

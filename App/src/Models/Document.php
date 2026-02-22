@@ -34,7 +34,7 @@ class Document extends Model
             'member_name' => $member['name'],
             'member_address' => $member['address'],
             'member_nik' => $member['nik'],
-            'cooperative_name' => $tenant['name'] ?? 'KSP LAM GABE JAYA',
+            'cooperative_name' => $tenant['name'] ?? 'KOPERASI APP',
             'loan_amount' => number_format($loan['principal_amount'], 0, ',', '.'),
             'loan_amount_text' => $this->numberToWords($loan['principal_amount']),
             'interest_rate' => $loan['interest_rate'],
@@ -92,7 +92,7 @@ class Document extends Model
             'loan_amount' => number_format($loan['principal_amount'], 0, ',', '.'),
             'loan_amount_text' => $this->numberToWords($loan['principal_amount']),
             'agreement_date' => date('d F Y'),
-            'cooperative_name' => $_SESSION['tenant']['name'] ?? 'KSP LAM GABE JAYA'
+            'cooperative_name' => $_SESSION['tenant']['name'] ?? 'KOPERASI APP'
         ];
 
         $template = $this->getTemplateByType('skb');
@@ -154,7 +154,7 @@ class Document extends Model
             'due_date' => date('d F Y', strtotime($overdue['due_date'] ?? 'now')),
             'days_overdue' => $overdue['days_overdue'] ?? 0,
             'warning_date' => date('d F Y'),
-            'cooperative_name' => $_SESSION['tenant']['name'] ?? 'KSP LAM GABE JAYA'
+            'cooperative_name' => $_SESSION['tenant']['name'] ?? 'KOPERASI APP'
         ];
 
         $template = $this->getTemplateByType('somasi');
@@ -206,7 +206,7 @@ class Document extends Model
             'payment_date' => date('d F Y', strtotime($repayment['paid_date'])),
             'amount_paid' => number_format($repayment['amount_paid'], 0, ',', '.'),
             'installment_number' => $repayment['installment_number'],
-            'cooperative_name' => $_SESSION['tenant']['name'] ?? 'KSP LAM GABE JAYA',
+            'cooperative_name' => $_SESSION['tenant']['name'] ?? 'KOPERASI APP',
             'received_by' => $_SESSION['user']['name'] ?? 'Admin'
         ];
 

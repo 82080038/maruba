@@ -402,7 +402,7 @@ class Compliance extends Model
         <html lang="id">
         <head>
             <meta charset="UTF-8">
-            <title>Laporan Kepatutan - KSP LAM GABE JAYA</title>
+            <title>Laporan Kepatutan - KOPERASI APP</title>
             <style>
                 body { font-family: Arial, sans-serif; margin: 20px; }
                 .header { text-align: center; margin-bottom: 30px; }

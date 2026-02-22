@@ -1,4 +1,4 @@
-// Dashboard JavaScript - Modern Frontend for KSP LAM GABE JAYA
+// Dashboard JavaScript - Modern Frontend for KOPERASI APP
 class DashboardApp {
     constructor() {
         this.apiBase = '/maruba/api';

@@ -1,4 +1,8 @@
-# 🚀 **KSP LAM GABE JAYA - MODERN SAAS PLATFORM UNTUK KOPERASI INDONESIA**
+# 🚧 STATUS: DEVELOPMENT PREVIEW
+
+Platform masih dalam tahap pengembangan/eksperimen. Fitur, data model, dan keamanan dapat berubah sewaktu-waktu. Jangan gunakan di produksi tanpa review dan hardening tambahan.
+
+# 🚀 **KOPERASI APP - MODERN SAAS PLATFORM UNTUK KOPERASI INDONESIA**
 
 *Sistem Informasi Koperasi Simpan Pinjam (KSP) terintegrasi dengan arsitektur multi-tenant SaaS modern, dilengkapi fitur-fitur digital terdepan untuk transformasi koperasi Indonesia.*
 

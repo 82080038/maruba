@@ -11,6 +11,7 @@ ob_start();
           <p class="text-muted small">Silakan login untuk melanjutkan</p>
         </div>
         <form method="post" action="/maruba/index.php/login" id="loginForm">
+          <?= csrf_field(); ?>
           <div class="mb-3" id="usernameField">
             <label class="form-label" for="username">
               <i class="bi bi-person me-1"></i> Nama pengguna
@@ -36,10 +37,8 @@ ob_start();
             </button>
           </div>
         </form>
-        <div class="text-center mt-3">
-          <small class="text-muted">
-            Demo: username <strong>admin</strong>, password <strong>admin</strong>
-          </small>
+        <div class="text-center mt-3 text-muted small">
+          Keamanan: jangan bagikan kredensial Anda.
         </div>
       </div>
     </div>

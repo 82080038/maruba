@@ -245,7 +245,7 @@ class Notification
      */
     public static function sendLoanApprovalNotification(array $loan, array $member): array
     {
-        $subject = 'Pengajuan Pinjaman Disetujui - KSP LAM GABE JAYA';
+        $subject = 'Pengajuan Pinjaman Disetujui - KOPERASI APP';
         $message = self::getLoanApprovalMessage($loan, $member);
 
         $channels = [];
@@ -272,7 +272,7 @@ class Notification
      */
     public static function sendPaymentReminder(array $repayment, array $member): array
     {
-        $subject = 'Pengingat Pembayaran Angsuran - KSP LAM GABE JAYA';
+        $subject = 'Pengingat Pembayaran Angsuran - KOPERASI APP';
         $message = self::getPaymentReminderMessage($repayment, $member);
 
         $channels = [];
@@ -299,7 +299,7 @@ class Notification
      */
     public static function sendSurveyCompletionNotification(array $survey, array $loan, array $member): array
     {
-        $subject = 'Survey Pinjaman Selesai - KSP LAM GABE JAYA';
+        $subject = 'Survey Pinjaman Selesai - KOPERASI APP';
         $message = self::getSurveyCompletionMessage($survey, $loan, $member);
 
         return self::send('whatsapp', $member, $subject, $message, [
@@ -334,19 +334,19 @@ class Notification
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>KSP LAM GABE JAYA</title>
+            <title>KOPERASI APP</title>
         </head>
         <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
             <div style="max-width: 600px; margin: 0 auto; background-color: white;">
                 <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center;">
-                    <img src="{logo}" alt="KSP LAM GABE JAYA" style="max-width: 200px; height: auto;">
+                    <img src="{logo}" alt="KOPERASI APP" style="max-width: 200px; height: auto;">
                 </div>
                 <div style="padding: 30px;">
                     {message}
                 </div>
                 <div style="background-color: #f8f9fa; padding: 20px; text-align: center; border-top: 1px solid #dee2e6;">
                     <p style="margin: 0; color: #6c757d; font-size: 14px;">
-                        © {year} KSP LAM GABE JAYA. Semua hak dilindungi.
+                        © {year} KOPERASI APP. Semua hak dilindungi.
                     </p>
                     <p style="margin: 5px 0 0 0; color: #6c757d; font-size: 12px;">
                         Email ini dikirim secara otomatis, mohon tidak membalas email ini.
@@ -393,7 +393,7 @@ Detail Pinjaman:
 Silakan datang ke kantor koperasi untuk proses pencairan.
 
 Terima kasih,
-KSP LAM GABE JAYA";
+KOPERASI APP";
     }
 
     /**
@@ -414,7 +414,7 @@ Jatuh Tempo: {$dueDate}
 Mohon segera lakukan pembayaran untuk menghindari denda.
 
 Terima kasih,
-KSP LAM GABE JAYA";
+KOPERASI APP";
     }
 
     /**
@@ -429,7 +429,7 @@ Survey untuk pengajuan pinjaman Anda telah selesai dengan skor {$survey['score']
 Status pinjaman Anda akan segera diperbarui.
 
 Terima kasih,
-KSP LAM GABE JAYA";
+KOPERASI APP";
     }
 
     /**

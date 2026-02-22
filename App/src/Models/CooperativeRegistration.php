@@ -6,7 +6,7 @@ class CooperativeRegistration extends Model
     protected string $table = 'cooperative_registrations';
     protected array $fillable = [
         'cooperative_name', 'slug', 'legal_type', 'registration_number',
-        'description', 'address', 'province', 'city', 'postal_code',
+        'description', 'address', 'province', 'city', 'district', 'postal_code',
         'phone', 'email', 'website', 'established_date',
         'chairman_name', 'chairman_phone', 'chairman_email',
         'manager_name', 'manager_phone', 'manager_email',

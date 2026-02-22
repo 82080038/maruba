@@ -2,7 +2,7 @@
 
 ## Konsep Biaya Tenant
 
-Sistem multi-koperasi dirancang untuk memberikan skalabilitas dan efisiensi biaya bagi koperasi yang menggunakan aplikasi KSP LAM GABE JAYA. Setiap koperasi (tenant) akan dikenakan biaya berdasarkan penggunaan, fitur yang digunakan, dan volume transaksi.
+Sistem multi-koperasi dirancang untuk memberikan skalabilitas dan efisiensi biaya bagi koperasi yang menggunakan aplikasi KOPERASI APP. Setiap koperasi (tenant) akan dikenakan biaya berdasarkan penggunaan, fitur yang digunakan, dan volume transaksi.
 
 ## Model Biaya
 
@@ -246,9 +246,9 @@ class TenantCostCalculator {
 ### Metode Pembayaran
 
 #### 1. Transfer Bank
-- **Bank BCA**: 123-456-7890 (PT. KSP LAM GABE JAYA)
-- **Bank Mandiri**: 123-000-456-789 (PT. KSP LAM GABE JAYA)
-- **Bank BNI**: 456-789-0123 (PT. KSP LAM GABE JAYA)
+- **Bank BCA**: 123-456-7890 (PT. KOPERASI APP)
+- **Bank Mandiri**: 123-000-456-789 (PT. KOPERASI APP)
+- **Bank BNI**: 456-789-0123 (PT. KOPERASI APP)
 
 #### 2. Virtual Account
 - **BCA Virtual Account**: 88608-1234567890

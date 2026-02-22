@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# KSP LAM GABE JAYA Application Deployment Script
-echo "=== APLIKASI KSP Deployment Script ==="
+# KOPERASI APP Deployment Script
+echo "=== KOPERASI APP Deployment Script ==="
 echo
 
 # Check if we're in the right directory
@@ -56,7 +56,7 @@ DB_USER=root
 DB_PASS=root
 
 # Application Configuration
-APP_NAME=KSP LAM GABE JAYA
+APP_NAME=KOPERASI APP
 APP_ENV=production
 APP_DEBUG=false
 APP_URL=http://localhost/maruba
@@ -70,7 +70,7 @@ SMTP_PORT=587
 SMTP_USERNAME=
 SMTP_PASSWORD=
 SMTP_FROM_EMAIL=noreply@ksp-lamgabejaya.id
-SMTP_FROM_NAME=KSP LAM GABE JAYA
+SMTP_FROM_NAME=KOPERASI APP
 
 # WhatsApp Business API (optional)
 WHATSAPP_API_KEY=
