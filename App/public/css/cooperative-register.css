@@ -1,0 +1,101 @@
+.registration-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+}
+.registration-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+.form-section {
+    border-bottom: 1px solid #e9ecef;
+    padding: 2rem;
+}
+.form-section:last-child {
+    border-bottom: none;
+}
+.section-title {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+}
+.section-title i {
+    margin-right: 0.5rem;
+    color: #667eea;
+}
+.document-upload {
+    border: 2px dashed #dee2e6;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+.document-upload:hover {
+    border-color: #667eea;
+    background: #f0f2ff;
+}
+.document-upload.dragover {
+    border-color: #667eea;
+    background: #e7e9ff;
+}
+.file-list {
+    margin-top: 1rem;
+}
+.file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem;
+    background: white;
+    border-radius: 5px;
+    margin-bottom: 0.5rem;
+}
+.progress-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+.progress-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+}
+.progress-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background: #dee2e6;
+    z-index: 1;
+}
+.progress-step.completed:not(:last-child)::after {
+    background: #28a745;
+}
+.progress-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #dee2e6;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.5rem;
+    font-size: 0.8rem;
+    position: relative;
+    z-index: 2;
+}
+.progress-step.completed .progress-circle {
+    background: #28a745;
+}
+.progress-step.active .progress-circle {
+    background: #667eea;
+}

@@ -1,3 +1,6 @@
+<?php
+ob_start();
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -6,109 +9,7 @@
     <title>Pendaftaran Koperasi - <?php echo APP_NAME; ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .registration-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 3rem 0;
-            margin-bottom: 2rem;
-        }
-        .registration-card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-        .form-section {
-            border-bottom: 1px solid #e9ecef;
-            padding: 2rem;
-        }
-        .form-section:last-child {
-            border-bottom: none;
-        }
-        .section-title {
-            color: #495057;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-        }
-        .section-title i {
-            margin-right: 0.5rem;
-            color: #667eea;
-        }
-        .document-upload {
-            border: 2px dashed #dee2e6;
-            border-radius: 10px;
-            padding: 2rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
-        }
-        .document-upload:hover {
-            border-color: #667eea;
-            background: #f0f2ff;
-        }
-        .document-upload.dragover {
-            border-color: #667eea;
-            background: #e7e9ff;
-        }
-        .file-list {
-            margin-top: 1rem;
-        }
-        .file-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.5rem;
-            background: white;
-            border-radius: 5px;
-            margin-bottom: 0.5rem;
-        }
-        .progress-indicator {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-        }
-        .progress-step {
-            flex: 1;
-            text-align: center;
-            position: relative;
-        }
-        .progress-step:not(:last-child)::after {
-            content: '';
-            position: absolute;
-            top: 15px;
-            left: 50%;
-            width: 100%;
-            height: 2px;
-            background: #dee2e6;
-            z-index: 1;
-        }
-        .progress-step.completed:not(:last-child)::after {
-            background: #28a745;
-        }
-        .progress-circle {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: #dee2e6;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 0.5rem;
-            font-size: 0.8rem;
-            position: relative;
-            z-index: 2;
-        }
-        .progress-step.completed .progress-circle {
-            background: #28a745;
-        }
-        .progress-step.active .progress-circle {
-            background: #667eea;
-        }
-    </style>
+    <link href="<?= asset_url('css/cooperative-register.css') ?>" rel="stylesheet">
 </head>
 <body class="bg-light">
     <!-- Header -->
@@ -148,7 +49,8 @@
         <div class="row justify-content-center">
             <div class="col-lg-10">
                 <div class="registration-card">
-                    <form id="registrationForm" enctype="multipart/form-data">
+                    <form id="registrationForm" method="post" action="<?= route_url('register/cooperative') ?>" enctype="multipart/form-data">
+                        <?= csrf_field(); ?>
                         <!-- Basic Information -->
                         <div class="form-section">
                             <h3 class="section-title">
@@ -197,6 +99,10 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="city" class="form-label">Kota/Kabupaten *</label>
                                     <input type="text" class="form-control" id="city" name="city" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="district" class="form-label">Kecamatan *</label>
+                                    <input type="text" class="form-control" id="district" name="district" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="postal_code" class="form-label">Kode Pos *</label>
@@ -342,6 +248,31 @@
                             </div>
                         </div>
 
+                        <!-- Admin Account -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-user-shield"></i>Akun Admin Koperasi
+                            </h3>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="admin_name" class="form-label">Nama Admin *</label>
+                                    <input type="text" class="form-control" id="admin_name" name="admin_name" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="admin_username" class="form-label">Username Admin *</label>
+                                    <input type="text" class="form-control" id="admin_username" name="admin_username" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="admin_password" class="form-label">Kata Sandi *</label>
+                                    <input type="password" class="form-control" id="admin_password" name="admin_password" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="admin_password_confirm" class="form-label">Konfirmasi Kata Sandi *</label>
+                                    <input type="password" class="form-control" id="admin_password_confirm" name="admin_password_confirm" required>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Terms and Submit -->
                         <div class="form-section">
                             <div class="row">
@@ -371,110 +302,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        let draftId = null;
-
-        // Handle file uploads
-        document.querySelectorAll('input[type="file"]').forEach(input => {
-            input.addEventListener('change', function(e) {
-                handleFileSelect(e.target);
-            });
-        });
-
-        function handleFileSelect(input) {
-            const file = input.files[0];
-            if (!file) return;
-
-            const fileList = document.getElementById(input.id + '_list');
-
-            // Validate file size (10MB)
-            if (file.size > 10 * 1024 * 1024) {
-                alert('File terlalu besar. Maksimal 10MB.');
-                input.value = '';
-                return;
-            }
-
-            // Validate file type
-            const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
-            if (!allowedTypes.includes(file.type)) {
-                alert('Format file tidak didukung. Gunakan PDF, JPG, atau PNG.');
-                input.value = '';
-                return;
-            }
-
-            // Show file in list
-            fileList.innerHTML = `
-                <div class="file-item">
-                    <div>
-                        <i class="fas fa-file me-2"></i>
-                        ${file.name}
-                        <small class="text-muted">(${(file.size / 1024 / 1024).toFixed(2)} MB)</small>
-                    </div>
-                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeFile('${input.id}')">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            `;
-        }
-
-        function removeFile(inputId) {
-            document.getElementById(inputId).value = '';
-            document.getElementById(inputId + '_list').innerHTML = '';
-        }
-
-        // Save draft
-        function saveDraft() {
-            const formData = new FormData(document.getElementById('registrationForm'));
-
-            fetch('/cooperative/save-draft', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    draftId = data.registration_id;
-                    alert('Draft berhasil disimpan!');
-                } else {
-                    alert('Error: ' + data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Terjadi kesalahan saat menyimpan draft.');
-            });
-        }
-
-        // Handle form submission
-        document.getElementById('registrationForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const formData = new FormData(this);
-
-            fetch('/cooperative/submit', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert(data.message);
-                    window.location.href = '/cooperative/register?success=1';
-                } else {
-                    alert('Error: ' + (data.errors ? data.errors.join('\n') : data.error));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Terjadi kesalahan saat mengirim pendaftaran.');
-            });
-        });
-
-        // Check for success parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('success') === '1') {
-            alert('Pendaftaran berhasil diajukan! Kami akan memverifikasi dalam 3-5 hari kerja.');
-        }
-    </script>
 </body>
 </html>
+<?php
+$content = ob_get_clean();
+include view_path('layout');

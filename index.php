@@ -21,6 +21,7 @@ use App\Controllers\AuditController;
 use App\Controllers\DisbursementController;
 use App\Controllers\ApiController;
 use App\Controllers\SuratController;
+use App\Controllers\RegisterController;
 
 $router = new Router();
 
@@ -72,6 +73,13 @@ $router->get('/', function() {
 $router->get('/login', [AuthController::class, 'showLogin']);
 $router->post('/login', [AuthController::class, 'login']);
 $router->get('/logout', [AuthController::class, 'logout']);
+
+// Registration routes
+$router->get('/register', [RegisterController::class, 'showRegisterForm']);
+$router->post('/register', [RegisterController::class, 'registerUser']);
+$router->get('/register/cooperative', [RegisterController::class, 'showCooperativeForm']);
+$router->post('/register/cooperative', [RegisterController::class, 'registerCooperative']);
+$router->get('/api/register/cooperatives', [RegisterController::class, 'cooperativesJson']);
 
 // Dashboard route
 $router->get('/dashboard', [DashboardController::class, 'index']);
