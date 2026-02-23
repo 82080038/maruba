@@ -281,7 +281,7 @@ class RLSPolicyManager
     {
         // Set session variables for RLS functions
         $this->db->exec("SET @current_tenant_id = {$tenantId}");
-        $this->db->exec("SET @client_ip = '{$_SERVER['REMOTE_ADDR'] ?? 'unknown'}'");
+        $this->db->exec("SET @client_ip = '" . ($_SERVER['REMOTE_ADDR'] ?? 'unknown') . "'");
         $this->db->exec("SET @user_agent = '" . addslashes($_SERVER['HTTP_USER_AGENT'] ?? 'unknown') . "'");
     }
 

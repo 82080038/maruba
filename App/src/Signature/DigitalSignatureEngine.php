@@ -517,7 +517,7 @@ class DigitalSignatureEngine
         return $pdfPath;
     }
 
-    private function get db()
+    private function getDb()
     {
         return \App\Database::getConnection();
     }

@@ -9,8 +9,7 @@ class Tenant extends Model
         'board_members', 'registration_number', 'tax_id', 'business_license',
         'chairman_details', 'manager_details', 'secretary_details', 'treasurer_details',
         'address_details', 'operating_hours', 'social_media', 'last_profile_update',
-        'profile_completion_percentage',
-        'province', 'city', 'district'
+        'profile_completion_percentage'
     ];
     protected array $casts = [
         'trial_ends_at' => 'datetime',

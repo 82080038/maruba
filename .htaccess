@@ -1,29 +1,61 @@
+# Development .htaccess - Relaxed Security for Debugging
+
+# Basic routing
 RewriteEngine On
-RewriteBase /maruba
 
-# Lewati assets/uploads di App/public
-RewriteCond %{REQUEST_URI} ^/maruba/App/public/assets/ [NC]
-RewriteRule ^ - [L]
-RewriteCond %{REQUEST_URI} ^/maruba/App/public/uploads/ [NC]
-RewriteRule ^ - [L]
+# PHP Handler
+<FilesMatch "\.php$">
+    SetHandler application/x-httpd-php
+    AddHandler application/x-httpd-php .php
+</FilesMatch>
 
-# Lewati file yang ada (assets, images, css, js)
-RewriteCond %{REQUEST_FILENAME} -f [NC]
-RewriteRule ^ - [L]
+# Development Error Display
+php_flag display_errors On
+php_flag log_errors On
+php_value error_reporting E_ALL
+php_value error_log /opt/lampp/htdocs/maruba/logs/php_errors.log
 
-# Lewati direktori yang ada
-RewriteCond %{REQUEST_FILENAME} -d [NC]
-RewriteRule ^ - [L]
+# Development PHP Settings
+php_value memory_limit 512M
+php_value max_execution_time 300
+php_value upload_max_filesize 10M
+php_value post_max_size 10M
 
-# Handle index.php requests (legacy support)
-RewriteCond %{REQUEST_URI} ^/maruba/index\.php(/.*)?$ [NC]
-RewriteRule ^index\.php/(.*)$ index.php/$1 [QSA,L]
+# Basic Security (Development - Relaxed)
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options DENY
+    Header always set X-Content-Type-Options nosniff
+    Header always set X-XSS-Protection "1; mode=block"
+</IfModule>
 
-# Handle root URL specifically
-RewriteCond %{REQUEST_URI} ^/maruba/?$ [NC]
-RewriteRule ^$ index.php/ [QSA,L]
+# Hide sensitive files
+<FilesMatch "\.(env|log|conf|key|pem|crt|sql)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
 
-# Clean URL routing - semua request ke index.php
-RewriteCond %{REQUEST_URI} !^/maruba/index\.php [NC]
-RewriteCond %{REQUEST_URI} !^/maruba/?$ [NC]
-RewriteRule ^(.*)$ index.php/$1 [QSA,L]
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Front Controller - Route all requests to index.php
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
+
+# Development - Allow directory listing for debugging
+Options +Indexes
+
+# Development - No caching for immediate changes
+<IfModule mod_expires.c>
+    ExpiresActive Off
+</IfModule>
+
+# Development - No compression for debugging
+<IfModule mod_deflate.c>
+    # Disabled for development
+</IfModule>

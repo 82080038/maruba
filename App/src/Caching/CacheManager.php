@@ -390,12 +390,10 @@ class CacheManager
     /**
      * Get tenant cache key (private version)
      */
-    private function getTenantCacheKey(string $key): string
+    private function getTenantCacheKeyPrivate(string $key): string
     {
-        $tenantId = TenantMiddleware::hasTenant() ?
-            TenantMiddleware::getTenantSlug() : 'system';
-
-        return "tenant:{$tenantId}:{$key}";
+        $tenantId = $this->getCurrentTenantId();
+        return $tenantId ? "tenant_{$tenantId}:{$key}" : $key;
     }
 }
 

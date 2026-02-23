@@ -1,0 +1,82 @@
+
+##teamcity[testCount count='16' flowId='13454']
+
+##teamcity[testSuiteStarted name='Unit' flowId='13454']
+
+##teamcity[testSuiteStarted name='Unit\Helpers\SecurityHelperTest' locationHint='php_qn:///opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php::\Unit\Helpers\SecurityHelperTest' flowId='13454']
+
+##teamcity[testStarted name='testValidateDate' locationHint='php_qn:///opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php::\Unit\Helpers\SecurityHelperTest::testValidateDate' flowId='13454']
+
+##teamcity[testFinished name='testValidateDate' duration='5' flowId='13454']
+
+##teamcity[testStarted name='testValidatePhone' locationHint='php_qn:///opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php::\Unit\Helpers\SecurityHelperTest::testValidatePhone' flowId='13454']
+
+##teamcity[testFailed name='testValidatePhone' message='Failed asserting that true is false.' details=' /opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php:42|n ' duration='1' flowId='13454']
+
+##teamcity[testFinished name='testValidatePhone' duration='1' flowId='13454']
+
+##teamcity[testStarted name='testGenerateSecurePassword' locationHint='php_qn:///opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php::\Unit\Helpers\SecurityHelperTest::testGenerateSecurePassword' flowId='13454']
+
+##teamcity[testFailed name='testGenerateSecurePassword' message='Failed asserting that 1 is true.' details=' /opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php:161|n ' duration='1' flowId='13454']
+
+##teamcity[testFinished name='testGenerateSecurePassword' duration='1' flowId='13454']
+
+##teamcity[testStarted name='testDetectSQLInjection' locationHint='php_qn:///opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php::\Unit\Helpers\SecurityHelperTest::testDetectSQLInjection' flowId='13454']
+
+##teamcity[testFailed name='testDetectSQLInjection' message='Failed asserting that false is true.' details=' /opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php:176|n ' duration='1' flowId='13454']
+
+##teamcity[testFinished name='testDetectSQLInjection' duration='1' flowId='13454']
+
+##teamcity[testStarted name='testGenerateToken' locationHint='php_qn:///opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php::\Unit\Helpers\SecurityHelperTest::testGenerateToken' flowId='13454']
+
+##teamcity[testFailed name='testGenerateToken' message='Failed asserting that 1 is true.' details=' /opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php:80|n ' duration='1' flowId='13454']
+
+##teamcity[testFinished name='testGenerateToken' duration='1' flowId='13454']
+
+##teamcity[testStarted name='testSanitizeFilename' locationHint='php_qn:///opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php::\Unit\Helpers\SecurityHelperTest::testSanitizeFilename' flowId='13454']
+
+##teamcity[testFinished name='testSanitizeFilename' duration='0' flowId='13454']
+
+##teamcity[testStarted name='testHashPassword' locationHint='php_qn:///opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php::\Unit\Helpers\SecurityHelperTest::testHashPassword' flowId='13454']
+
+##teamcity[testFinished name='testHashPassword' duration='1808' flowId='13454']
+
+##teamcity[testStarted name='testSanitize' locationHint='php_qn:///opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php::\Unit\Helpers\SecurityHelperTest::testSanitize' flowId='13454']
+
+##teamcity[testFinished name='testSanitize' duration='0' flowId='13454']
+
+##teamcity[testStarted name='testValidateEmail' locationHint='php_qn:///opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php::\Unit\Helpers\SecurityHelperTest::testValidateEmail' flowId='13454']
+
+##teamcity[testFinished name='testValidateEmail' duration='13' flowId='13454']
+
+##teamcity[testStarted name='testValidateNIK' locationHint='php_qn:///opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php::\Unit\Helpers\SecurityHelperTest::testValidateNIK' flowId='13454']
+
+##teamcity[testFinished name='testValidateNIK' duration='0' flowId='13454']
+
+##teamcity[testStarted name='testValidateAmount' locationHint='php_qn:///opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php::\Unit\Helpers\SecurityHelperTest::testValidateAmount' flowId='13454']
+
+##teamcity[testFinished name='testValidateAmount' duration='0' flowId='13454']
+
+##teamcity[testStarted name='testCSRFToken' locationHint='php_qn:///opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php::\Unit\Helpers\SecurityHelperTest::testCSRFToken' flowId='13454']
+
+##teamcity[testFinished name='testCSRFToken' duration='0' flowId='13454']
+
+##teamcity[testStarted name='testValidateNumeric' locationHint='php_qn:///opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php::\Unit\Helpers\SecurityHelperTest::testValidateNumeric' flowId='13454']
+
+##teamcity[testFinished name='testValidateNumeric' duration='0' flowId='13454']
+
+##teamcity[testStarted name='testDetectXSS' locationHint='php_qn:///opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php::\Unit\Helpers\SecurityHelperTest::testDetectXSS' flowId='13454']
+
+##teamcity[testFinished name='testDetectXSS' duration='1' flowId='13454']
+
+##teamcity[testStarted name='testRateLimit' locationHint='php_qn:///opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php::\Unit\Helpers\SecurityHelperTest::testRateLimit' flowId='13454']
+
+##teamcity[testFinished name='testRateLimit' duration='0' flowId='13454']
+
+##teamcity[testStarted name='testLogSecurityEvent' locationHint='php_qn:///opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php::\Unit\Helpers\SecurityHelperTest::testLogSecurityEvent' flowId='13454']
+
+##teamcity[testFinished name='testLogSecurityEvent' duration='0' flowId='13454']
+
+##teamcity[testSuiteFinished name='Unit\Helpers\SecurityHelperTest' flowId='13454']
+
+##teamcity[testSuiteFinished name='Unit' flowId='13454']

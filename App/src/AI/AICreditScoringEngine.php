@@ -156,7 +156,7 @@ class AICreditScoringEngine
         if ($totalLoans > 0) {
             $paymentRatio = $onTimePayments / $totalLoans;
             $score += ($paymentRatio - 0.5) * 40; // +/- 40 points based on payment history
-            $factors[] = "Payment history: {$onTimePayments}/{$totalLoans} loans on-time ({$paymentRatio*100}%)";
+            $factors[] = "Payment history: {$onTimePayments}/{$totalLoans} loans on-time (" . ($paymentRatio*100) . "%)";
         }
 
         // Check member age (tenure with cooperative)
@@ -528,7 +528,7 @@ class AICreditScoringEngine
         return (float)$stmt->fetch()['total_debt'];
     }
 
-    private function get db()
+    private function getDb()
     {
         return \App\Database::getConnection();
     }

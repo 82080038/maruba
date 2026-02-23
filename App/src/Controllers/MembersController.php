@@ -278,6 +278,237 @@ class MembersController
         include view_path('members/pending_verifications');
     }
 
+    public function edit(): void
+    {
+        require_login();
+        AuthHelper::requirePermission('members', 'edit');
+        
+        $id = (int)($_GET['id'] ?? 0);
+        if (!$id) {
+            $_SESSION['error'] = 'ID anggota tidak valid.';
+            header('Location: ' . route_url('members'));
+            return;
+        }
+        
+        $memberModel = new \App\Models\Member();
+        $member = $memberModel->find($id);
+        
+        if (!$member) {
+            $_SESSION['error'] = 'Anggota tidak ditemukan.';
+            header('Location: ' . route_url('members'));
+            return;
+        }
+        
+        // Check tenant ownership
+        $tenantId = $this->getCurrentTenantId();
+        if ($tenantId !== null && $member['tenant_id'] != $tenantId) {
+            $_SESSION['error'] = 'Akses ditolak.';
+            header('Location: ' . route_url('members'));
+            return;
+        }
+        
+        include view_path('members/edit');
+    }
+    
+    public function update(): void
+    {
+        require_login();
+        AuthHelper::requirePermission('members', 'edit');
+        verify_csrf();
+        
+        $id = (int)($_POST['id'] ?? 0);
+        if (!$id) {
+            $_SESSION['error'] = 'ID anggota tidak valid.';
+            header('Location: ' . route_url('members'));
+            return;
+        }
+        
+        $memberModel = new \App\Models\Member();
+        $member = $memberModel->find($id);
+        
+        if (!$member) {
+            $_SESSION['error'] = 'Anggota tidak ditemukan.';
+            header('Location: ' . route_url('members'));
+            return;
+        }
+        
+        // Check tenant ownership
+        $tenantId = $this->getCurrentTenantId();
+        if ($tenantId !== null && $member['tenant_id'] != $tenantId) {
+            $_SESSION['error'] = 'Akses ditolak.';
+            header('Location: ' . route_url('members'));
+            return;
+        }
+        
+        $data = [
+            'name' => trim($_POST['name'] ?? ''),
+            'nik' => trim($_POST['nik'] ?? ''),
+            'phone' => trim($_POST['phone'] ?? ''),
+            'email' => trim($_POST['email'] ?? ''),
+            'address' => trim($_POST['address'] ?? ''),
+            'occupation' => trim($_POST['occupation'] ?? ''),
+            'monthly_income' => (float)($_POST['monthly_income'] ?? 0),
+            'emergency_contact_name' => trim($_POST['emergency_contact_name'] ?? ''),
+            'emergency_contact_phone' => trim($_POST['emergency_contact_phone'] ?? ''),
+            'status' => $_POST['status'] ?? 'pending',
+            'verification_status' => $_POST['verification_status'] ?? 'pending',
+            'latitude' => (float)($_POST['latitude'] ?? 0),
+            'longitude' => (float)($_POST['longitude'] ?? 0),
+            'updated_at' => date('Y-m-d H:i:s')
+        ];
+        
+        // Add verified_at if status is verified
+        if ($data['verification_status'] === 'verified' && !$member['verified_at']) {
+            $data['verified_at'] = date('Y-m-d H:i:s');
+            $data['verified_by'] = current_user()['id'];
+        }
+        
+        // Validation
+        if (empty($data['name']) || empty($data['nik']) || empty($data['phone']) || empty($data['address'])) {
+            $_SESSION['error'] = 'Nama, NIK, telepon, dan alamat wajib diisi.';
+            header('Location: ' . route_url('members/edit') . '?id=' . $id);
+            return;
+        }
+        
+        // Validate NIK format
+        if (!preg_match('/^[0-9]{16}$/', $data['nik'])) {
+            $_SESSION['error'] = 'NIK harus 16 digit angka.';
+            header('Location: ' . route_url('members/edit') . '?id=' . $id);
+            return;
+        }
+        
+        // Validate phone format
+        if (!preg_match('/^[0-9]{10,13}$/', $data['phone'])) {
+            $_SESSION['error'] = 'Format telepon tidak valid.';
+            header('Location: ' . route_url('members/edit') . '?id=' . $id);
+            return;
+        }
+        
+        // Check for duplicate NIK
+        $existingMember = $memberModel->findByNik($data['nik']);
+        if ($existingMember && $existingMember['id'] != $id) {
+            $_SESSION['error'] = 'NIK sudah digunakan oleh anggota lain.';
+            header('Location: ' . route_url('members/edit') . '?id=' . $id);
+            return;
+        }
+        
+        try {
+            $success = $memberModel->update($id, $data);
+            
+            if ($success) {
+                $_SESSION['success'] = 'Data anggota berhasil diperbarui.';
+                header('Location: ' . route_url('members/show') . '?id=' . $id);
+            } else {
+                $_SESSION['error'] = 'Gagal memperbarui data anggota.';
+                header('Location: ' . route_url('members/edit') . '?id=' . $id);
+            }
+        } catch (\Exception $e) {
+            $_SESSION['error'] = 'Gagal memperbarui data anggota: ' . $e->getMessage();
+            header('Location: ' . route_url('members/edit') . '?id=' . $id);
+        }
+    }
+    
+    public function show(): void
+    {
+        require_login();
+        AuthHelper::requirePermission('members', 'view');
+        
+        $id = (int)($_GET['id'] ?? 0);
+        if (!$id) {
+            $_SESSION['error'] = 'ID anggota tidak valid.';
+            header('Location: ' . route_url('members'));
+            return;
+        }
+        
+        $memberModel = new \App\Models\Member();
+        $member = $memberModel->find($id);
+        
+        if (!$member) {
+            $_SESSION['error'] = 'Anggota tidak ditemukan.';
+            header('Location: ' . route_url('members'));
+            return;
+        }
+        
+        // Check tenant ownership
+        $tenantId = $this->getCurrentTenantId();
+        if ($tenantId !== null && $member['tenant_id'] != $tenantId) {
+            $_SESSION['error'] = 'Akses ditolak.';
+            header('Location: ' . route_url('members'));
+            return;
+        }
+        
+        // Get member transactions
+        $transactions = $memberModel->getTransactionHistory($id, 10);
+        
+        include view_path('members/show');
+    }
+    
+    public function delete(): void
+    {
+        require_login();
+        AuthHelper::requirePermission('members', 'delete');
+        verify_csrf();
+        
+        $id = (int)($_POST['id'] ?? 0);
+        if (!$id) {
+            $_SESSION['error'] = 'ID anggota tidak valid.';
+            header('Location: ' . route_url('members'));
+            return;
+        }
+        
+        $memberModel = new \App\Models\Member();
+        $member = $memberModel->find($id);
+        
+        if (!$member) {
+            $_SESSION['error'] = 'Anggota tidak ditemukan.';
+            header('Location: ' . route_url('members'));
+            return;
+        }
+        
+        // Check tenant ownership
+        $tenantId = $this->getCurrentTenantId();
+        if ($tenantId !== null && $member['tenant_id'] != $tenantId) {
+            $_SESSION['error'] = 'Akses ditolak.';
+            header('Location: ' . route_url('members'));
+            return;
+        }
+        
+        // Check if member has active loans
+        $loanModel = new \App\Models\Loan();
+        $activeLoans = $loanModel->getActiveLoansByMember($id);
+        
+        if (!empty($activeLoans)) {
+            $_SESSION['error'] = 'Anggota tidak dapat dihapus karena masih memiliki pinjaman aktif.';
+            header('Location: ' . route_url('members/show') . '?id=' . $id);
+            return;
+        }
+        
+        // Check if member has savings balance
+        $savingsModel = new \App\Models\SavingsAccount();
+        $savingsBalance = $savingsModel->getTotalBalanceByMember($id);
+        
+        if ($savingsBalance > 0) {
+            $_SESSION['error'] = 'Anggota tidak dapat dihapus karena masih memiliki saldo simpanan.';
+            header('Location: ' . route_url('members/show') . '?id=' . $id);
+            return;
+        }
+        
+        try {
+            $success = $memberModel->delete($id);
+            
+            if ($success) {
+                $_SESSION['success'] = 'Anggota berhasil dihapus.';
+                header('Location: ' . route_url('members'));
+            } else {
+                $_SESSION['error'] = 'Gagal menghapus anggota.';
+                header('Location: ' . route_url('members/show') . '?id=' . $id);
+            }
+        } catch (\Exception $e) {
+            $_SESSION['error'] = 'Gagal menghapus anggota: ' . $e->getMessage();
+            header('Location: ' . route_url('members/show') . '?id=' . $id);
+        }
+    }
+    
     public function store(): void
     {
         require_login();

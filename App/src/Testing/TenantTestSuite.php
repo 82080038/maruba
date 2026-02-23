@@ -588,7 +588,7 @@ class TestRunnerCLI
         echo "- Total: {$results['summary']['total']}\n";
         echo "- Passed: {$results['summary']['passed']}\n";
         echo "- Failed: {$results['summary']['failed']}\n";
-        echo "- Errors: {$results['summary']['error'] ?? 0}\n";
+        echo "- Errors: " . ($results['summary']['error'] ?? 0) . "\n";
         echo "- Skipped: {$results['summary']['skipped']}\n\n";
 
         if (!empty($results['tests'])) {
@@ -716,7 +716,7 @@ class CITestRunner
         $report .= "- **Total Tests:** {$results['summary']['total']}\n";
         $report .= "- **Passed:** {$results['summary']['passed']}\n";
         $report .= "- **Failed:** {$results['summary']['failed']}\n";
-        $report .= "- **Errors:** {$results['summary']['error'] ?? 0}\n\n";
+        $report .= "- **Errors:** " . ($results['summary']['error'] ?? 0) . "\n\n";
 
         if (!$ciResults['ci_passed']) {
             $report .= "## 🚫 Deployment Blocked\n\n";

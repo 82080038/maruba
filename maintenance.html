@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>System Maintenance</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 100px 20px; background: #f5f5f5; }
+        .maintenance-icon { font-size: 72px; color: #f39c12; }
+        .maintenance-title { font-size: 36px; color: #333; margin: 20px 0; }
+        .maintenance-message { font-size: 18px; color: #666; margin: 20px 0; }
+        .progress-bar { width: 300px; height: 20px; background: #ddd; border-radius: 10px; margin: 20px auto; overflow: hidden; }
+        .progress-fill { height: 100%; background: #4CAF50; width: 75%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { width: 75%; } 50% { width: 85%; } 100% { width: 75%; } }
+    </style>
+</head>
+<body>
+    <div class="maintenance-icon">🔧</div>
+    <div class="maintenance-title">System Under Maintenance</div>
+    <div class="maintenance-message">We're currently performing maintenance. Please try again later.</div>
+    <div class="progress-bar">
+        <div class="progress-fill"></div>
+    </div>
+    <div class="maintenance-message">Estimated completion: 2 hours</div>
+</body>
+</html>

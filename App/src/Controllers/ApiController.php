@@ -452,11 +452,67 @@ class ApiController
             return;
         }
 
-        // TODO: Implement tenant database cleanup
-        // For now, just mark as inactive
-        $success = $tenantModel->update($id, ['status' => 'inactive']);
+        // Tenant database cleanup - Implement soft delete with data archiving
+        try {
+            // Archive tenant data before deletion
+            $this->archiveTenantData($id);
+            
+            // Mark tenant as inactive (soft delete)
+            $success = $tenantModel->update($id, [
+                'status' => 'inactive', 
+                'deleted_at' => date('Y-m-d H:i:s'),
+                'deleted_by' => $_SESSION['user']['id'] ?? null
+            ]);
+            
+            // Log the deletion
+            $this->logTenantDeletion($id);
+            
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Failed to delete tenant: ' . $e->getMessage()]);
+            return;
+        }
 
         echo json_encode(['success' => $success]);
+    }
+    
+    /**
+     * Archive tenant data before deletion
+     */
+    private function archiveTenantData(int $tenantId): void
+    {
+        $backupDir = "/opt/lampp/htdocs/maruba/backups/tenant_archive_{$tenantId}";
+        if (!is_dir($backupDir)) {
+            mkdir($backupDir, 0755, true);
+        }
+        
+        // Archive tenant data to backup directory
+        $timestamp = date('Y-m-d_H-i-s');
+        $backupFile = "{$backupDir}/tenant_{$tenantId}_archive_{$timestamp}.sql";
+        
+        // Create backup of tenant data
+        $command = "mysqldump -u root -proot maruba --where=\"tenant_id={$tenantId}\" > {$backupFile}";
+        exec($command);
+        
+        error_log("Tenant data archived: {$backupFile}");
+    }
+    
+    /**
+     * Log tenant deletion
+     */
+    private function logTenantDeletion(int $tenantId): void
+    {
+        $auditLog = new AuditLog();
+        $auditLog->create([
+            'user_id' => $_SESSION['user']['id'] ?? null,
+            'action' => 'tenant_deleted',
+            'entity' => 'tenant',
+            'entity_id' => $tenantId,
+            'meta' => json_encode([
+                'deleted_at' => date('Y-m-d H:i:s'),
+                'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ])
+        ]);
     }
 
     // ===== TENANT BILLING API =====

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="" tests="16" assertions="64" errors="0" warnings="0" failures="4" skipped="0" time="1.830889">
+    <testsuite name="Unit" tests="16" assertions="64" errors="0" warnings="0" failures="4" skipped="0" time="1.830889">
+      <testsuite name="Unit\Helpers\SecurityHelperTest" file="/opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php" tests="16" assertions="64" errors="0" warnings="0" failures="4" skipped="0" time="1.830889">
+        <testcase name="testValidateDate" class="Unit\Helpers\SecurityHelperTest" classname="Unit.Helpers.SecurityHelperTest" file="/opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php" line="128" assertions="4" time="0.005011"/>
+        <testcase name="testValidatePhone" class="Unit\Helpers\SecurityHelperTest" classname="Unit.Helpers.SecurityHelperTest" file="/opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php" line="33" assertions="5" time="0.001030">
+          <failure type="PHPUnit\Framework\ExpectationFailedException">Unit\Helpers\SecurityHelperTest::testValidatePhone
+Failed asserting that true is false.
+
+/opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php:42</failure>
+        </testcase>
+        <testcase name="testGenerateSecurePassword" class="Unit\Helpers\SecurityHelperTest" classname="Unit.Helpers.SecurityHelperTest" file="/opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php" line="156" assertions="2" time="0.000792">
+          <failure type="PHPUnit\Framework\ExpectationFailedException">Unit\Helpers\SecurityHelperTest::testGenerateSecurePassword
+Failed asserting that 1 is true.
+
+/opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php:161</failure>
+        </testcase>
+        <testcase name="testDetectSQLInjection" class="Unit\Helpers\SecurityHelperTest" classname="Unit.Helpers.SecurityHelperTest" file="/opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php" line="172" assertions="2" time="0.000581">
+          <failure type="PHPUnit\Framework\ExpectationFailedException">Unit\Helpers\SecurityHelperTest::testDetectSQLInjection
+Failed asserting that false is true.
+
+/opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php:176</failure>
+        </testcase>
+        <testcase name="testGenerateToken" class="Unit\Helpers\SecurityHelperTest" classname="Unit.Helpers.SecurityHelperTest" file="/opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php" line="74" assertions="3" time="0.001373">
+          <failure type="PHPUnit\Framework\ExpectationFailedException">Unit\Helpers\SecurityHelperTest::testGenerateToken
+Failed asserting that 1 is true.
+
+/opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php:80</failure>
+        </testcase>
+        <testcase name="testSanitizeFilename" class="Unit\Helpers\SecurityHelperTest" classname="Unit.Helpers.SecurityHelperTest" file="/opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php" line="113" assertions="5" time="0.000217"/>
+        <testcase name="testHashPassword" class="Unit\Helpers\SecurityHelperTest" classname="Unit.Helpers.SecurityHelperTest" file="/opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php" line="91" assertions="4" time="1.807513"/>
+        <testcase name="testSanitize" class="Unit\Helpers\SecurityHelperTest" classname="Unit.Helpers.SecurityHelperTest" file="/opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php" line="12" assertions="1" time="0.000145"/>
+        <testcase name="testValidateEmail" class="Unit\Helpers\SecurityHelperTest" classname="Unit.Helpers.SecurityHelperTest" file="/opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php" line="21" assertions="5" time="0.012907"/>
+        <testcase name="testValidateNIK" class="Unit\Helpers\SecurityHelperTest" classname="Unit.Helpers.SecurityHelperTest" file="/opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php" line="50" assertions="4" time="0.000233"/>
+        <testcase name="testValidateAmount" class="Unit\Helpers\SecurityHelperTest" classname="Unit.Helpers.SecurityHelperTest" file="/opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php" line="61" assertions="6" time="0.000100"/>
+        <testcase name="testCSRFToken" class="Unit\Helpers\SecurityHelperTest" classname="Unit.Helpers.SecurityHelperTest" file="/opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php" line="102" assertions="3" time="0.000104"/>
+        <testcase name="testValidateNumeric" class="Unit\Helpers\SecurityHelperTest" classname="Unit.Helpers.SecurityHelperTest" file="/opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php" line="139" assertions="8" time="0.000088"/>
+        <testcase name="testDetectXSS" class="Unit\Helpers\SecurityHelperTest" classname="Unit.Helpers.SecurityHelperTest" file="/opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php" line="190" assertions="7" time="0.000541"/>
+        <testcase name="testRateLimit" class="Unit\Helpers\SecurityHelperTest" classname="Unit.Helpers.SecurityHelperTest" file="/opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php" line="204" assertions="4" time="0.000118"/>
+        <testcase name="testLogSecurityEvent" class="Unit\Helpers\SecurityHelperTest" classname="Unit.Helpers.SecurityHelperTest" file="/opt/lampp/htdocs/maruba/testing/Unit/Helpers/SecurityHelperTest.php" line="220" assertions="1" time="0.000137"/>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

@@ -6,7 +6,7 @@ class AuthController
     public function showLogin(): void
     {
         $title = 'Login Koperasi';
-        include view_path('auth/login');
+        include __DIR__ . '/../Views/auth/login.php';
     }
 
     public function login(): void

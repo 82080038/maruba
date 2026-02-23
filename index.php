@@ -19,6 +19,9 @@ use App\Controllers\ReportsController;
 use App\Controllers\UsersController;
 use App\Controllers\AuditController;
 use App\Controllers\DisbursementController;
+use App\Controllers\TenantController;
+use App\Controllers\TenantBackupController;
+use App\Controllers\TenantCustomizationController;
 use App\Controllers\ApiController;
 use App\Controllers\SuratController;
 use App\Controllers\RegisterController;
@@ -88,26 +91,43 @@ $router->get('/dashboard', [DashboardController::class, 'index']);
 $router->get('/loans', [LoanController::class, 'index']);
 $router->get('/loans/create', [LoanController::class, 'create']);
 $router->post('/loans/store', [LoanController::class, 'store']);
+$router->get('/loans/edit', [LoanController::class, 'edit']);
+$router->post('/loans/update', [LoanController::class, 'update']);
+$router->post('/loans/delete', [LoanController::class, 'delete']);
+$router->get('/loans/show', [LoanController::class, 'show']);
 
 // Member routes
 $router->get('/members', [MembersController::class, 'index']);
 $router->get('/members/create', [MembersController::class, 'create']);
 $router->post('/members/store', [MembersController::class, 'store']);
+$router->get('/members/edit', [MembersController::class, 'edit']);
+$router->post('/members/update', [MembersController::class, 'update']);
+$router->get('/members/show', [MembersController::class, 'show']);
+$router->post('/members/delete', [MembersController::class, 'delete']);
 
 // Product routes
 $router->get('/products', [ProductsController::class, 'index']);
 $router->get('/products/create', [ProductsController::class, 'create']);
 $router->post('/products/store', [ProductsController::class, 'store']);
+$router->get('/products/edit', [ProductsController::class, 'edit']);
+$router->post('/products/update', [ProductsController::class, 'update']);
+$router->post('/products/delete', [ProductsController::class, 'delete']);
 
 // Survey routes
 $router->get('/surveys', [SurveysController::class, 'index']);
 $router->get('/surveys/create', [SurveysController::class, 'create']);
 $router->post('/surveys/store', [SurveysController::class, 'store']);
+$router->get('/surveys/edit', [SurveysController::class, 'edit']);
+$router->post('/surveys/update', [SurveysController::class, 'update']);
+$router->post('/surveys/delete', [SurveysController::class, 'delete']);
 
 // Repayment routes
 $router->get('/repayments', [RepaymentsController::class, 'index']);
 $router->get('/repayments/create', [RepaymentsController::class, 'create']);
 $router->post('/repayments/store', [RepaymentsController::class, 'store']);
+$router->get('/repayments/edit', [RepaymentsController::class, 'edit']);
+$router->post('/repayments/update', [RepaymentsController::class, 'update']);
+$router->post('/repayments/delete', [RepaymentsController::class, 'delete']);
 
 // Report routes
 $router->get('/reports', [ReportsController::class, 'index']);
@@ -117,6 +137,9 @@ $router->get('/reports/export', [ReportsController::class, 'export']);
 $router->get('/users', [UsersController::class, 'index']);
 $router->get('/users/create', [UsersController::class, 'create']);
 $router->post('/users/store', [UsersController::class, 'store']);
+$router->get('/users/edit', [UsersController::class, 'edit']);
+$router->post('/users/update', [UsersController::class, 'update']);
+$router->post('/users/delete', [UsersController::class, 'delete']);
 
 // Audit route
 $router->get('/audit', [AuditController::class, 'index']);
@@ -125,6 +148,9 @@ $router->get('/audit', [AuditController::class, 'index']);
 $router->get('/disbursement', [DisbursementController::class, 'index']);
 $router->get('/disbursement/create', [DisbursementController::class, 'create']);
 $router->post('/disbursement/store', [DisbursementController::class, 'store']);
+$router->get('/disbursement/edit', [DisbursementController::class, 'edit']);
+$router->post('/disbursement/update', [DisbursementController::class, 'update']);
+$router->post('/disbursement/delete', [DisbursementController::class, 'delete']);
 
 // Surat routes
 $router->get('/surat', [SuratController::class, 'index']);
@@ -134,6 +160,27 @@ $router->get('/surat/daftar-sah', [SuratController::class, 'daftarSah']);
 $router->get('/surat/permohonan-pinjaman', [SuratController::class, 'permohonanPinjaman']);
 $router->get('/surat/skb', [SuratController::class, 'skb']);
 
+// Tenant Management routes
+$router->get('/tenant', [TenantController::class, 'index']);
+$router->get('/tenant/create', [TenantController::class, 'create']);
+$router->post('/tenant/store', [TenantController::class, 'store']);
+$router->get('/tenant/view/{id}', [TenantController::class, 'view']);
+$router->get('/tenant/edit/{id}', [TenantController::class, 'edit']);
+$router->post('/tenant/update/{id}', [TenantController::class, 'update']);
+$router->post('/tenant/delete/{id}', [TenantController::class, 'delete']);
+$router->get('/tenant/billing/{id}', [TenantController::class, 'billing']);
+
+// Tenant Backup routes
+$router->get('/tenant/backup', [TenantBackupController::class, 'index']);
+$router->post('/tenant/backup/create', [TenantBackupController::class, 'create']);
+$router->get('/tenant/backup/download/{id}', [TenantBackupController::class, 'download']);
+$router->post('/tenant/backup/restore', [TenantBackupController::class, 'restore']);
+
+// Tenant Customization routes
+$router->get('/tenant/customize', [TenantCustomizationController::class, 'index']);
+$router->post('/tenant/customize/update', [TenantCustomizationController::class, 'update']);
+$router->post('/tenant/customize/upload-logo', [TenantCustomizationController::class, 'uploadLogo']);
+
 // API endpoints
 $router->get('/api/members', [ApiController::class, 'members']);
 $router->get('/api/surveys', [ApiController::class, 'surveys']);
@@ -142,14 +189,14 @@ $router->post('/api/surveys/geo', [ApiController::class, 'updateSurveyGeo']);
 $router->get('/api/dashboard', [ApiController::class, 'dashboard']);
 $router->get('/api/tenants', [ApiController::class, 'getTenants']);
 
-// ===== SAVINGS SYSTEM =====
-use App\Controllers\SavingsController;
+// Savings routes
 $router->get('/savings', [SavingsController::class, 'index']);
 $router->get('/savings/create', [SavingsController::class, 'create']);
 $router->post('/savings/store', [SavingsController::class, 'store']);
-$router->get('/savings/accounts', [SavingsController::class, 'accounts']);
-$router->post('/savings/deposit', [SavingsController::class, 'deposit']);
-$router->post('/savings/withdraw', [SavingsController::class, 'withdraw']);
+$router->get('/savings/edit', [SavingsController::class, 'edit']);
+$router->post('/savings/update', [SavingsController::class, 'update']);
+$router->post('/savings/delete', [SavingsController::class, 'delete']);
+$router->get('/savings/show', [SavingsController::class, 'show']);
 
 // ===== SHU (SISA HASIL USAHA) SYSTEM =====
 use App\Controllers\SHUController;
@@ -159,14 +206,25 @@ $router->post('/shu/calculate', [SHUController::class, 'processCalculation']);
 $router->get('/shu/distribute', [SHUController::class, 'distribute']);
 $router->post('/shu/distribute', [SHUController::class, 'processDistribution']);
 
-// ===== ACCOUNTING SYSTEM =====
-use App\Controllers\AccountingController;
+// Accounting routes
 $router->get('/accounting', [AccountingController::class, 'index']);
 $router->get('/accounting/journal', [AccountingController::class, 'journal']);
 $router->get('/accounting/journal/create', [AccountingController::class, 'createJournal']);
 $router->post('/accounting/journal/store', [AccountingController::class, 'storeJournal']);
+$router->get('/accounting/journal/edit', [AccountingController::class, 'editJournal']);
+$router->post('/accounting/journal/update', [AccountingController::class, 'updateJournal']);
+$router->post('/accounting/journal/delete', [AccountingController::class, 'deleteJournal']);
 $router->get('/accounting/chart', [AccountingController::class, 'chartOfAccounts']);
+$router->get('/accounting/chart/create', [AccountingController::class, 'createAccount']);
+$router->post('/accounting/chart/store', [AccountingController::class, 'storeAccount']);
+$router->get('/accounting/chart/edit', [AccountingController::class, 'editAccount']);
+$router->post('/accounting/chart/update', [AccountingController::class, 'updateAccount']);
+$router->post('/accounting/chart/delete', [AccountingController::class, 'deleteAccount']);
 $router->get('/accounting/reports', [AccountingController::class, 'reports']);
+$router->get('/accounting/trial_balance', [AccountingController::class, 'trialBalance']);
+$router->get('/accounting/balance_sheet', [AccountingController::class, 'balanceSheet']);
+$router->get('/accounting/income_statement', [AccountingController::class, 'incomeStatement']);
+$router->get('/accounting/cash_flow', [AccountingController::class, 'cashFlow']);
 
 // ===== PAYMENT GATEWAY =====
 use App\Controllers\PaymentController;
@@ -202,11 +260,11 @@ $router->get('/compliance/reports', [ComplianceController::class, 'reports']);
 $router->post('/compliance/check', [ComplianceController::class, 'runCheck']);
 
 // ===== TENANT BACKUP MANAGEMENT =====
-use App\Controllers\TenantBackupController;
-$router->get('/backup', [TenantBackupController::class, 'index']);
-$router->post('/backup/create', [TenantBackupController::class, 'create']);
-$router->get('/backup/download', [TenantBackupController::class, 'download']);
-$router->post('/backup/restore', [TenantBackupController::class, 'restore']);
+use App\Controllers\TenantBackupController as BackupController;
+$router->get('/backup', [BackupController::class, 'index']);
+$router->post('/backup/create', [BackupController::class, 'create']);
+$router->get('/backup/download', [BackupController::class, 'download']);
+$router->post('/backup/restore', [BackupController::class, 'restore']);
 
 // ===== NAVIGATION MANAGEMENT =====
 use App\Controllers\NavigationController;

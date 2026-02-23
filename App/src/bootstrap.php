@@ -2,12 +2,14 @@
 // Basic bootstrap for the coop app
 
 // Production: Hide errors (uncomment for production)
-// ini_set('display_errors', '0');
-// error_reporting(0);
-
-// DEBUG: tampilkan error sementara (non-production)
-ini_set('display_errors', '1');
-error_reporting(E_ALL);
+if (defined('APP_ENV') && APP_ENV === 'production') {
+    ini_set('display_errors', '0');
+    error_reporting(0);
+} else {
+    // DEBUG: tampilkan error sementara (non-production)
+    ini_set("display_errors", "1");
+    error_reporting(E_ALL);
+}
 
 // BASE_URL untuk subdir /maruba
 if (!defined('BASE_URL')) {
@@ -17,11 +19,9 @@ if (!defined('PUBLIC_URL')) {
     define('PUBLIC_URL', BASE_URL . '/App/public');
 }
 
-// Load .env if present (root or App/.env)
-$envFiles = [__DIR__ . '/../.env', __DIR__ . '/../App/.env'];
-foreach ($envFiles as $envFile) {
-    if (!file_exists($envFile)) continue;
-    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+// Load environment variables
+if (file_exists(__DIR__ . '/../../.env')) {
+    $lines = file(__DIR__ . '/../../.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($lines as $line) {
         if (strpos($line, '#') === 0) continue;
         if (strpos($line, '=') === false) continue;
@@ -36,144 +36,170 @@ foreach ($envFiles as $envFile) {
     }
 }
 
-// Tentukan APP_NAME dengan fallback, hilangkan tanda kutip pembungkus jika ada
-if (!defined('APP_NAME')) {
-    $appNameEnv = $_ENV['APP_NAME'] ?? getenv('APP_NAME') ?? 'Koperasi App';
-    // trim kutip single/double di awal-akhir
-    $appNameEnv = trim($appNameEnv, "\"' ");
-    define('APP_NAME', $appNameEnv ?: 'Koperasi App');
+// Define constants from environment
+define('APP_NAME', $_ENV['APP_NAME'] ?? 'Maruba Koperasi');
+define('APP_ENV', $_ENV['APP_ENV'] ?? 'development');
+define('APP_DEBUG', $_ENV['APP_DEBUG'] ?? 'true');
+define('APP_URL', $_ENV['APP_URL'] ?? 'http://localhost/maruba');
+
+// Database constants
+define('DB_HOST', $_ENV['DB_HOST'] ?? 'localhost');
+define('DB_NAME', $_ENV['DB_NAME'] ?? 'maruba');
+define('DB_USER', $_ENV['DB_USER'] ?? 'root');
+define('DB_PASS', $_ENV['DB_PASS'] ?? 'root');
+
+// Security constants
+define('JWT_SECRET', $_ENV['JWT_SECRET'] ?? 'default_jwt_secret');
+define('CSRF_TOKEN_SECRET', $_ENV['CSRF_TOKEN_SECRET'] ?? 'default_csrf_secret');
+
+// Session configuration
+ini_set('session.cookie_secure', APP_ENV === 'production');
+ini_set('session.cookie_httponly', true);
+ini_set('session.cookie_samesite', 'Strict');
+ini_set('session.gc_maxlifetime', 7200);
+
+// Error reporting
+if (APP_DEBUG === 'false') {
+    ini_set('display_errors', '0');
+    error_reporting(0);
+} else {
+    ini_set('display_errors', '1');
+    error_reporting(E_ALL);
 }
 
-// Simple PSR-4-like autoloader for App namespace
+// Timezone
+date_default_timezone_set('Asia/Jakarta');
+
+// Register autoloader
 spl_autoload_register(function ($class) {
+    // Convert namespace to file path
     $prefix = 'App\\';
-    $baseDir = __DIR__ . '/';
-    if (strncmp($prefix, $class, strlen($prefix)) !== 0) {
+    $base_dir = __DIR__ . '/';
+    
+    $len = strlen($prefix);
+    if (strncmp($prefix, $class, $len) !== 0) {
         return;
     }
-    $relativeClass = substr($class, strlen($prefix));
-    $file = $baseDir . str_replace('\\', '/', $relativeClass) . '.php';
+    
+    $relative_class = substr($class, $len);
+    $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+    
     if (file_exists($file)) {
-        require $file;
+        require_once $file;
     }
 });
 
-// Convenience aliases
-use App\Helpers\UiHelper;
-use App\Middleware\TenantMiddleware;
+// Include necessary files
+require_once __DIR__ . '/Database.php';
+require_once __DIR__ . '/Router.php';
+require_once __DIR__ . '/Helpers/AuthHelper.php';
 
-// Start session for auth
+// Start session
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Basic helpers
-function view_path(string $view, string $layout = 'layout'): string
-{
-    return __DIR__ . '/Views/' . $view . '.php';
+// Set security headers
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('X-XSS-Protection: 1; mode=block');
+
+// CORS headers for API
+if (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '/api/') !== false) {
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
 }
 
-// UI helper wrappers
-function t(string $key): string { return UiHelper::t($key); }
-function format_number($value, int $decimals = 0): string { return UiHelper::formatNumber($value, $decimals); }
-function format_currency($value): string { return UiHelper::formatRupiah($value); }
-function format_date_id($dateString, bool $withDay = false): string { return UiHelper::formatDateId($dateString, $withDay); }
-function format_phone(string $phone): string { return UiHelper::formatPhone($phone); }
-function format_npwp(string $npwp): string { return UiHelper::formatNpwp($npwp); }
-
-function asset_url(string $path): string
-{
-    // Direct URL ke App/public (tanpa index.php)
-    return rtrim(PUBLIC_URL, '/') . '/' . ltrim($path, '/');
+// Handle preflight requests
+if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    exit(0);
 }
 
-// CSRF helpers
-function csrf_token(): string
-{
+// Load helper functions
+function view_path($view) {
+    return __DIR__ . '/../Views/' . $view . '.php';
+}
+
+function asset_url($asset) {
+    return BASE_URL . '/' . ltrim($asset, '/');
+}
+
+function route_url($route) {
+    return BASE_URL . '/' . ltrim($route, '/');
+}
+
+function current_user() {
+    return $_SESSION['user'] ?? null;
+}
+
+function require_login() {
+    if (!current_user()) {
+        header('Location: ' . route_url('auth/login'));
+        exit;
+    }
+}
+
+function verify_csrf() {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $token = $_POST['csrf_token'] ?? '';
+        if (!hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
+            die('CSRF token mismatch');
+        }
+    }
+}
+
+function csrf_field() {
+    $token = generate_csrf_token();
+    return '<input type="hidden" name="csrf_token" value="' . htmlspecialchars($token) . '">';
+}
+
+function generate_csrf_token() {
     if (empty($_SESSION['csrf_token'])) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     }
     return $_SESSION['csrf_token'];
 }
 
-function csrf_field(): string
-{
-    return '<input type="hidden" name="_token" value="' . htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') . '">';
-}
+// Initialize CSRF token
+generate_csrf_token();
 
-function verify_csrf(): void
-{
-    if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
-        return;
-    }
-    $token = $_POST['_token'] ?? '';
-    if (empty($token) || !hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
-        http_response_code(419);
-        exit('CSRF token mismatch');
-    }
-}
-
-function route_url(string $path = ''): string
-{
-    // Clean URL untuk SPA - tanpa index.php
-    $base = rtrim(BASE_URL, '/');
-    
-    // Handle special cases for legacy support
-    if ($path === '/') {
-        return $base . '/';
+// Error handler
+set_error_handler(function($severity, $message, $file, $line) {
+    if (!(error_reporting() & $severity)) {
+        return false;
     }
     
-    if ($path !== '') {
-        $url = $base . '/' . ltrim($path, '/');
+    if (APP_DEBUG === 'true') {
+        throw new ErrorException($message, 0, $severity, $file, $line);
+    }
+    
+    error_log("Error: $message in $file on line $line");
+    return true;
+});
+
+// Exception handler
+set_exception_handler(function($exception) {
+    if (APP_DEBUG === 'true') {
+        echo "Uncaught exception: " . $exception->getMessage() . " in " . $exception->getFile() . " on line " . $exception->getLine();
     } else {
-        $url = $base;
+        error_log("Exception: " . $exception->getMessage());
+        header('Location: ' . BASE_URL . '/error_pages/500.html');
     }
-    
-    return $url;
-}
+    exit;
+});
 
-// Legacy function for index.php URLs (deprecated)
-function legacy_route_url(string $path = ''): string
-{
-    $base = rtrim(BASE_URL, '/');
-    $url = $base . '/index.php';
-    if ($path !== '') {
-        $url .= '/' . ltrim($path, '/');
+// Shutdown function
+register_shutdown_function(function() {
+    $error = error_get_last();
+    if ($error && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
+        if (APP_DEBUG === 'true') {
+            echo "Fatal error: " . $error['message'] . " in " . $error['file'] . " on line " . $error['line'];
+        } else {
+            error_log("Fatal error: " . $error['message'] . " in " . $error['file'] . " on line " . $error['line']);
+            header('Location: ' . BASE_URL . '/error_pages/500.html');
+        }
     }
-    return $url;
-}
+});
 
-// Auth helpers
-function current_user(): ?array
-{
-    return $_SESSION['user'] ?? null;
-}
-
-function user_role(): ?string
-{
-    return current_user()['role'] ?? null;
-}
-
-function is_logged_in(): bool
-{
-    return !empty($_SESSION['user']);
-}
-
-function require_login(): void
-{
-    if (!is_logged_in()) {
-        header('Location: ' . route_url(''));
-        exit;
-    }
-}
-
-function require_role(string $role): void
-{
-    require_login();
-    if (user_role() !== $role) {
-        http_response_code(403);
-        echo 'Akses ditolak.';
-        exit;
-    }
-}
-
+?>

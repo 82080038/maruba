@@ -348,7 +348,7 @@ class OnlineBankingService
     // HELPER METHODS
     // =========================================
 
-    private function get db()
+    private function getDb()
     {
         return \App\Database::getConnection();
     }
