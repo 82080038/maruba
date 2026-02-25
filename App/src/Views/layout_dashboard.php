@@ -579,7 +579,9 @@ if (!empty($_GET['partial'])) {
         
         function initializeApplication() {
             $(document).ready(function() {
+    $(document).ready(function() {
                 console.log('=== KSP LGJ Single Page Application ===');
+});
                 
                 // Initialize components
                 initializeDateTime();
@@ -628,7 +630,9 @@ if (!empty($_GET['partial'])) {
 
         // Initialize application
         $(document).ready(function() {
+    $(document).ready(function() {
             console.log('=== KSP LGJ Single Page Application ===');
+});
             
             // Initialize components
             initializeDateTime();
@@ -677,7 +681,9 @@ if (!empty($_GET['partial'])) {
                     minute: '2-digit',
                     second: '2-digit'
                 });
-                $('#timeDisplay').text(timeString);
+                $(document).ready(function() {
+    $('#timeDisplay').text(timeString);
+});
                 
                 // Update date
                 const dateString = now.toLocaleDateString('id-ID', {
@@ -686,7 +692,9 @@ if (!empty($_GET['partial'])) {
                     month: 'long',
                     day: 'numeric'
                 });
-                $('#dateDisplay').text(dateString);
+                $(document).ready(function() {
+    $('#dateDisplay').text(dateString);
+});
             }
             
             // Update immediately
@@ -783,47 +791,85 @@ if (!empty($_GET['partial'])) {
         
         // Initialize mobile menu
         function initializeMobileMenu() {
-            $('#mobileMenuToggle').on('click', function() {
+            $(document).ready(function() {
+    $('#mobileMenuToggle').on('click', function() {
                 $('#mainSidenav').toggleClass('show');
+});
             });
             
             // Close sidenav when clicking outside
-            $(document).on('click', function(e) {
+            $(document).ready(function() {
+    $(document).on('click', function(e) {
                 const $target = $(e.target);
+});
                 const isMobile = window.innerWidth < 992;
                 
                 if (isMobile && !$target.closest('#mainSidenav').length && !$target.closest('#mobileMenuToggle').length) {
-                    $('#mainSidenav').removeClass('show');
+                    $(document).ready(function() {
+    $(document).ready(function() {
+    $(document).ready(function() {
+    $(document).ready(function() {
+    $(document).ready(function() {
+    $('#mainSidenav').removeClass('show');
+});
+});
+});
+});
+});
                 }
             });
         }
         
         // Initialize navigation
         function initializeNavigation() {
-            $(document).on('click', '.menu-item[data-page]', function(e) {
-                if (serverRendered) return; // allow normal navigation for server-rendered mode
+            $(document).ready(function() {
+    $(document).on('click', '.menu-item[data-page]', function(e) {
+                if (serverRendered) return;
+}); // allow normal navigation for server-rendered mode
                 e.preventDefault();
                 
-                const page = $(this).data('page');
-                const href = $(this).data('href');
+                const page = $(document).ready(function() {
+    $(this).data('page');
+});
+                const href = $(document).ready(function() {
+    $(this).data('href');
+});
                 
                 // Update active state
-                $('.menu-item').removeClass('active');
-                $(this).addClass('active');
+                $(document).ready(function() {
+    $(document).ready(function() {
+    $('.menu-item').removeClass('active');
+});
+});
+                $(document).ready(function() {
+    $(this).addClass('active');
+});
                 
                 // Load page
                 loadPage(page, href);
                 
                 // Close mobile menu
                 if (window.innerWidth < 992) {
-                    $('#mainSidenav').removeClass('show');
+                    $(document).ready(function() {
+    $(document).ready(function() {
+    $(document).ready(function() {
+    $(document).ready(function() {
+    $(document).ready(function() {
+    $('#mainSidenav').removeClass('show');
+});
+});
+});
+});
+});
                 }
             
             // Server-rendered: intercept sidebar nav to avoid full reload (jaga fullscreen)
             if (serverRendered) {
                 // Intercept sidebar links
-                $(document).on('click', '#sidenavMenu a', function(e) {
+                $(document).ready(function() {
+    $(document).on('click', '#sidenavMenu a', function(e) {
                     const href = this.getAttribute('href');
+});
                     // Abaikan klik dengan modifier/target baru
                     if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
                     if (this.getAttribute('target') === '_blank') return;
@@ -833,21 +879,53 @@ if (!empty($_GET['partial'])) {
                     // Jika target sama dengan halaman sekarang, cukup tutup sidenav di mobile
                     const clean = (u) => u.replace(/[#?].*$/, '');
                     if (clean(href) === clean(window.location.href)) {
-                        if (window.innerWidth < 992) $('#mainSidenav').removeClass('show');
+                        if (window.innerWidth < 992) $(document).ready(function() {
+    $(document).ready(function() {
+    $(document).ready(function() {
+    $(document).ready(function() {
+    $(document).ready(function() {
+    $('#mainSidenav').removeClass('show');
+});
+});
+});
+});
+});
                         return;
                     }
                     e.preventDefault();
                     loadPartialPage(href, this);
-                    if (window.innerWidth < 992) $('#mainSidenav').removeClass('show');
+                    if (window.innerWidth < 992) $(document).ready(function() {
+    $(document).ready(function() {
+    $(document).ready(function() {
+    $(document).ready(function() {
+    $(document).ready(function() {
+    $('#mainSidenav').removeClass('show');
+});
+});
+});
+});
+});
                 });
                 // Intercept header brand (logo) to avoid full reload
-                $(document).on('click', '.header-brand', function(e) {
+                $(document).ready(function() {
+    $(document).on('click', '.header-brand', function(e) {
                     const href = this.getAttribute('href');
+});
                     if (!href) return;
                     if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
                     e.preventDefault();
                     loadPartialPage(href, null);
-                    if (window.innerWidth < 992) $('#mainSidenav').removeClass('show');
+                    if (window.innerWidth < 992) $(document).ready(function() {
+    $(document).ready(function() {
+    $(document).ready(function() {
+    $(document).ready(function() {
+    $(document).ready(function() {
+    $('#mainSidenav').removeClass('show');
+});
+});
+});
+});
+});
                 });
                 
                 // Handle browser back/forward
@@ -857,33 +935,57 @@ if (!empty($_GET['partial'])) {
                 });
             }
             
-            $(document).on('click', '.menu-item', function() {
+            $(document).ready(function() {
+    $(document).on('click', '.menu-item', function() {
                 centerMenuItem(this);
+});
             });
-            $(document).on('click', '.menu-section', function() {
+            $(document).ready(function() {
+    $(document).on('click', '.menu-section', function() {
                 centerMenuItem(this);
+});
             });
         }
 
         $(document).ready(function() {
+    $(document).ready(function() {
             // Load partial page content (server-rendered) tanpa reload penuh
             function loadPartialPage(url, triggerEl) {
-                $('#loadingSpinner').addClass('show');
+                $(document).ready(function() {
+    $('#loadingSpinner').addClass('show');
+});
+});
                 const injectPartial = function (html) {
-                    const $doc = $('<div>').append($.parseHTML(html));
+                    const $doc = $(document).ready(function() {
+    $('<div>').append($.parseHTML(html));
+});
                     const $wrap = $doc.find('#dynamicContent').first();
                     const inner = $wrap.length ? $wrap.html() : html;
-                    $('#dynamicContent').empty().html(inner);
-                    const len = $('#dynamicContent').children().length;
+                    $(document).ready(function() {
+    $('#dynamicContent').empty().html(inner);
+});
+                    const len = $(document).ready(function() {
+    $('#dynamicContent').children().length;
+});
                     if (url.indexOf('/dashboard') !== -1) {
                         // Dashboard specific logic
                     }
                     return len > 0;
                 };
                 const onSuccess = function(pushUrl){
-                    if (triggerEl) { $('.menu-item').removeClass('active'); $(triggerEl).addClass('active'); }
+                    if (triggerEl) { $(document).ready(function() {
+    $(document).ready(function() {
+    $('.menu-item').removeClass('active');
+});
+}); $(document).ready(function() {
+    $(triggerEl).addClass('active');
+}); }
                     window.history.pushState({}, '', pushUrl);
-                    $('#loadingSpinner').removeClass('show');
+                    $(document).ready(function() {
+    $(document).ready(function() {
+    $('#loadingSpinner').removeClass('show');
+});
+});
                     initializeDropdowns();
                 };
                 const ajaxUrl = url + (url.indexOf('?') === -1 ? '?partial=1' : '&partial=1');
@@ -891,27 +993,47 @@ if (!empty($_GET['partial'])) {
                     if (injectPartial(html)) { onSuccess(url); return; }
                     // Jika kosong, coba ulang tanpa ?partial=1 dan ekstraksi biasa
                     $.get(url).done(function(htmlFull){
-                        const $docFull = $('<div>').append($.parseHTML(htmlFull));
+                        const $docFull = $(document).ready(function() {
+    $('<div>').append($.parseHTML(htmlFull));
+});
                         const sels = ['#dynamicContent','#mainContent #dynamicContent','#mainContent .content-card','.content-card','main'];
                         let found = false;
                         for (let i=0;i<sels.length;i++){
                             const $f = $docFull.find(sels[i]).first();
                             if ($f.length && $.trim($f.html()).length){
-                                $('#dynamicContent').empty().html($f.html());
+                                $(document).ready(function() {
+    $(document).ready(function() {
+    $(document).ready(function() {
+    $('#dynamicContent').empty().html($f.html());
+});
+});
+});
                                 found = true; break;
                             }
                         }
                         if (!found && $docFull.find('#dashboardMetrics').length){
                             const $dash = $docFull.find('#dashboardMetrics').closest('.row');
                             const $f = $dash.length ? $dash.parent() : $docFull.find('#dashboardMetrics');
-                            $('#dynamicContent').empty().html($f.html());
+                            $(document).ready(function() {
+    $(document).ready(function() {
+    $(document).ready(function() {
+    $('#dynamicContent').empty().html($f.html());
+});
+});
+});
                             found = true; break;
                         }
                     }
                     if (!found && $docFull.find('#dashboardMetrics').length){
                         const $dash = $docFull.find('#dashboardMetrics').closest('.row');
                         const $f = $dash.length ? $dash.parent() : $docFull.find('#dashboardMetrics');
-                        $('#dynamicContent').empty().html($f.html());
+                        $(document).ready(function() {
+    $(document).ready(function() {
+    $(document).ready(function() {
+    $('#dynamicContent').empty().html($f.html());
+});
+});
+});
                         found = true;
                     }
                     if (found) { onSuccess(url); return; }
@@ -955,7 +1077,9 @@ if (!empty($_GET['partial'])) {
             currentPage = page;
             
             // Show loading spinner
-            $('#loadingSpinner').addClass('show');
+            $(document).ready(function() {
+    $('#loadingSpinner').addClass('show');
+});
             
             // Update URL without page reload
             if (href && !serverRendered) {
@@ -967,7 +1091,11 @@ if (!empty($_GET['partial'])) {
                 loadPageContent(page);
                 
                 // Hide loading spinner
-                $('#loadingSpinner').removeClass('show');
+                $(document).ready(function() {
+    $(document).ready(function() {
+    $('#loadingSpinner').removeClass('show');
+});
+});
                 isLoading = false;
             }, 500);
         }
@@ -1148,11 +1276,17 @@ if (!empty($_GET['partial'])) {
             const config = pageConfig[page] || pageConfig.dashboard;
             
             // Update page header
-            $('#pageTitle').text(config.title);
-            $('#pageSubtitle').text(config.subtitle);
+            $(document).ready(function() {
+    $('#pageTitle').text(config.title);
+});
+            $(document).ready(function() {
+    $('#pageSubtitle').text(config.subtitle);
+});
             
             // Update content
-            $('#dynamicContent').html(config.content);
+            $(document).ready(function() {
+    $('#dynamicContent').html(config.content);
+});
             
             // Load actual data for the page
             loadPageData(page);
@@ -1198,16 +1332,24 @@ if (!empty($_GET['partial'])) {
                             
                             switch(metric.label) {
                                 case 'Anggota Aktif':
-                                    $('#totalMembers').text(value);
+                                    $(document).ready(function() {
+    $('#totalMembers').text(value);
+});
                                     break;
                                 case 'Pinjaman Berjalan':
-                                    $('#activeLoans').text(value);
+                                    $(document).ready(function() {
+    $('#activeLoans').text(value);
+});
                                     break;
                                 case 'Outstanding':
-                                    $('#totalOutstanding').text(value);
+                                    $(document).ready(function() {
+    $('#totalOutstanding').text(value);
+});
                                     break;
                                 case 'NPL':
-                                    $('#nplRate').text(value);
+                                    $(document).ready(function() {
+    $('#nplRate').text(value);
+});
                                     break;
                             }
                         });
@@ -1228,20 +1370,34 @@ if (!empty($_GET['partial'])) {
                                 </div>
                             `;
                         });
-                        $('#recentActivities').html(activitiesHtml || '<p>Tidak ada aktivitas terkini.</p>');
+                        $(document).ready(function() {
+    $('#recentActivities').html(activitiesHtml || '<p>Tidak ada aktivitas terkini.</p>');
+});
                     }
                     
                     if (response.user) {
-                        $('#currentUser').text(response.user.name);
-                        $('#currentUserRole').text(response.user.role);
-                        $('#loginTime').text(formatDateTime(new Date()));
+                        $(document).ready(function() {
+    $('#currentUser').text(response.user.name);
+});
+                        $(document).ready(function() {
+    $('#currentUserRole').text(response.user.role);
+});
+                        $(document).ready(function() {
+    $('#loginTime').text(formatDateTime(new Date()));
+});
                     }
                     
-                    $('#serverTime').text(formatDateTime(new Date()));
+                    $(document).ready(function() {
+    $('#serverTime').text(formatDateTime(new Date()));
+});
                 },
                 error: function() {
-                    $('#dashboardMetrics').html('<div class="alert alert-danger">Gagal memuat data dashboard.</div>');
-                    $('#recentActivities').html('<div class="alert alert-danger">Gagal memuat aktivitas terkini.</div>');
+                    $(document).ready(function() {
+    $('#dashboardMetrics').html('<div class="alert alert-danger">Gagal memuat data dashboard.</div>');
+});
+                    $(document).ready(function() {
+    $('#recentActivities').html('<div class="alert alert-danger">Gagal memuat aktivitas terkini.</div>');
+});
                 }
             });
         }
@@ -1273,7 +1429,9 @@ if (!empty($_GET['partial'])) {
                     `;
                 });
                 
-                $('#loansTableBody').html(loansHtml || '<tr><td colspan="6" class="text-center">Tidak ada data pinjaman.</td></tr>');
+                $(document).ready(function() {
+    $('#loansTableBody').html(loansHtml || '<tr><td colspan="6" class="text-center">Tidak ada data pinjaman.</td></tr>');
+});
             }, 1000);
         }
 
@@ -1299,7 +1457,9 @@ if (!empty($_GET['partial'])) {
                     `;
                 });
 
-                $('#repaymentsTableBody').html(repaymentsHtml || '<tr><td colspan="5" class="text-center">Tidak ada data angsuran.</td></tr>');
+                $(document).ready(function() {
+    $('#repaymentsTableBody').html(repaymentsHtml || '<tr><td colspan="5" class="text-center">Tidak ada data angsuran.</td></tr>');
+});
             }, 300);
         }
         
@@ -1334,7 +1494,9 @@ if (!empty($_GET['partial'])) {
                     `;
                 });
                 
-                $('#membersGrid').html(membersHtml || '<div class="col-12 text-center">Tidak ada data anggota.</div>');
+                $(document).ready(function() {
+    $('#membersGrid').html(membersHtml || '<div class="col-12 text-center">Tidak ada data anggota.</div>');
+});
             }, 1000);
         }
         
