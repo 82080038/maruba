@@ -262,7 +262,6 @@ class PaymentController
         // For member portal - show their payment history
         if (!$this->isMemberLoggedIn()) {
             header('Location: ' . route_url('member/login'));
-            exit;
         }
 
         $member = $_SESSION['member'];
@@ -278,7 +277,6 @@ class PaymentController
     {
         if (!$this->isMemberLoggedIn()) {
             header('Location: ' . route_url('member/login'));
-            exit;
         }
 
         $type = $_GET['type'] ?? '';

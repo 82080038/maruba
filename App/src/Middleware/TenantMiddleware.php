@@ -147,7 +147,6 @@ class TenantMiddleware
             'error' => 'Tenant not found',
             'message' => "Koperasi '{$slug}' tidak ditemukan"
         ]);
-        exit;
     }
 
     /**
@@ -160,7 +159,6 @@ class TenantMiddleware
             'error' => 'Tenant inactive',
             'message' => 'Koperasi sedang tidak aktif'
         ]);
-        exit;
     }
 
     /**
@@ -174,7 +172,6 @@ class TenantMiddleware
             'message' => 'Langganan koperasi telah berakhir. Silakan perpanjang langganan.',
             'tenant' => $tenant['name']
         ]);
-        exit;
     }
 
     /**
@@ -187,7 +184,6 @@ class TenantMiddleware
             'error' => 'Tenant error',
             'message' => 'Terjadi kesalahan sistem'
         ]);
-        exit;
     }
 
     /**

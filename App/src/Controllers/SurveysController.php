@@ -284,6 +284,5 @@ class SurveysController
         }
 
         fclose($output);
-        exit;
     }
 }

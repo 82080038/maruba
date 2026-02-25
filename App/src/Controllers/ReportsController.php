@@ -179,7 +179,6 @@ class ReportsController
         }
 
         fclose($output);
-        exit;
     }
 
     private function exportLoansPdf(array $loans): void
@@ -187,7 +186,6 @@ class ReportsController
         // PDF export using a library like TCPDF or FPDF
         // For now, redirect to CSV
         header('Location: ?type=loans&format=csv');
-        exit;
     }
 
     private function exportMembers(string $format): void
@@ -225,7 +223,6 @@ class ReportsController
         }
 
         fclose($output);
-        exit;
     }
 
     private function exportRepayments(string $format): void
@@ -261,7 +258,6 @@ class ReportsController
         }
 
         fclose($output);
-        exit;
     }
 
     // ===== API ENDPOINTS =====

@@ -164,7 +164,6 @@ class MultiTenantAnalyticsController
         }
 
         echo $reportData;
-        exit;
     }
 
     // ===== API ENDPOINTS =====

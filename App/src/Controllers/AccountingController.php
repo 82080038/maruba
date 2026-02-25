@@ -335,7 +335,6 @@ class AccountingController
         }
 
         fclose($output);
-        exit;
     }
 
     public function exportGeneralLedger(): void
@@ -378,6 +377,5 @@ class AccountingController
         }
 
         fclose($output);
-        exit;
     }
 }

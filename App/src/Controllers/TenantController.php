@@ -27,14 +27,12 @@ class TenantController
         if (!isset($data['name']) || !isset($data['slug'])) {
             $_SESSION['error'] = 'Name and slug are required';
             header('Location: ' . route_url('tenant/create'));
-            exit;
         }
         
         // Validate slug format
         if (!preg_match('/^[a-z0-9-]+$/', $data['slug'])) {
             $_SESSION['error'] = 'Slug must contain only lowercase letters, numbers, and hyphens';
             header('Location: ' . route_url('tenant/create'));
-            exit;
         }
         
         $tenantModel = new Tenant();
@@ -57,7 +55,6 @@ class TenantController
         if (!$tenant) {
             $_SESSION['error'] = 'Tenant not found';
             header('Location: ' . route_url('tenant'));
-            exit;
         }
         
         include view_path('tenant/view');
@@ -71,7 +68,6 @@ class TenantController
         if (!$tenant) {
             $_SESSION['error'] = 'Tenant not found';
             header('Location: ' . route_url('tenant'));
-            exit;
         }
         
         include view_path('tenant/edit');
@@ -117,7 +113,6 @@ class TenantController
         if (!$tenant) {
             $_SESSION['error'] = 'Tenant not found';
             header('Location: ' . route_url('tenant'));
-            exit;
         }
         
         include view_path('tenant/billing');

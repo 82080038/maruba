@@ -505,7 +505,6 @@ class AuthMiddleware
     {
         $returnUrl = urlencode($_SERVER['REQUEST_URI']);
         header("Location: /login?return_url={$returnUrl}");
-        exit;
     }
 
     /**
@@ -518,7 +517,6 @@ class AuthMiddleware
             'error' => 'access_denied',
             'message' => $message
         ]);
-        exit;
     }
 
     /**
@@ -570,7 +568,6 @@ class AuthMiddleware
 
    // Validate in controllers:
    if (!$auth->validateCsrfToken($_POST['_token'])) {
-       die('CSRF token validation failed');
    }
 */
 

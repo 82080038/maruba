@@ -21,7 +21,6 @@ class AuthHelper
         if (!self::can($module, $action)) {
             http_response_code(403);
             echo 'Akses ditolak.';
-            exit;
         }
     }
 

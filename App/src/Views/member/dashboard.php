@@ -25,7 +25,6 @@ ob_start();
         }
 
         .navbar-custom {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
@@ -42,7 +41,6 @@ ob_start();
         }
 
         .metric-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border-radius: 15px;
             padding: 1.5rem;
@@ -72,7 +70,6 @@ ob_start();
 
         .nav-link:hover,
         .nav-link.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
 

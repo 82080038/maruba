@@ -372,6 +372,5 @@ class RepaymentsController
         }
 
         fclose($output);
-        exit;
     }
 }

@@ -295,7 +295,6 @@ class SavingsController
         }
 
         fclose($output);
-        exit;
     }
 
     public function getSavingsStatsApi(): void

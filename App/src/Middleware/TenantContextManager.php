@@ -488,7 +488,6 @@ class TenantContextMiddleware
             // Redirect to error page or login
             if (!headers_sent()) {
                 header('Location: /login?error=context_failed');
-                exit;
             }
         }
     }

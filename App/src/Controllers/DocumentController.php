@@ -283,7 +283,6 @@ class DocumentController
         header('Content-Length: ' . filesize($filePath));
 
         readfile($filePath);
-        exit;
     }
 
     public function updateStatus(): void

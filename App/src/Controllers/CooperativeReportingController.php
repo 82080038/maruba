@@ -155,7 +155,6 @@ class CooperativeReportingController
         header('Content-Type: text/html');
         header('Content-Disposition: attachment; filename="' . $report['report_type'] . '_' . $report['report_year'] . '.html"');
         echo $html;
-        exit;
     }
 
     /**

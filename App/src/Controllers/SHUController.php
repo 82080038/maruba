@@ -34,7 +34,6 @@ class SHUController
         if (!empty($existing)) {
             $_SESSION['error'] = 'SHU untuk tahun ' . $currentYear . ' sudah dihitung.';
             header('Location: ' . route_url('shu'));
-            exit;
         }
 
         include view_path('shu/create');
@@ -51,7 +50,6 @@ class SHUController
         if ($percentage <= 0 || $percentage > 100) {
             $_SESSION['error'] = 'Persentase SHU harus antara 1-100%.';
             header('Location: ' . route_url('shu/create'));
-            exit;
         }
 
         $shuModel = new SHUCalculation();
@@ -220,7 +218,6 @@ class SHUController
         }
 
         fclose($output);
-        exit;
     }
 
     public function printSHUCertificate(): void
@@ -295,6 +292,5 @@ class SHUController
         </body>
         </html>
         ';
-        exit;
     }
 }

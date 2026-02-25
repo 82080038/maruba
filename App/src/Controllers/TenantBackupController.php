@@ -122,7 +122,6 @@ class TenantBackupController
 
         // Output file
         readfile($fullPath);
-        exit;
     }
 
     /**

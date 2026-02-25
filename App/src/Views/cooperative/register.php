@@ -1,19 +1,9 @@
-<?php
+$title = 'Pendaftaran Koperasi - ' . APP_NAME;
 ob_start();
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pendaftaran Koperasi - <?php echo APP_NAME; ?></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="<?= asset_url('css/cooperative-register.css') ?>" rel="stylesheet">
-</head>
-<body class="bg-light">
-    <!-- Header -->
-    <div class="registration-header">
+<link href="<?= asset_url('css/cooperative-register.css') ?>" rel="stylesheet">
+
+<div class="registration-header">
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 mx-auto text-center">
@@ -211,21 +201,6 @@ ob_start();
                                         <i class="fas fa-stamp fa-3x text-success mb-3"></i>
                                         <h6>SK Menkumham</h6>
                                         <p class="text-muted small">Upload surat keputusan pengesahan</p>
-                                        <input type="file" id="sk_menkumham" name="sk_menkumham" accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
-                                    </div>
-                                    <div id="sk_menkumham_list" class="file-list"></div>
-                                </div>
-
-                                <div class="col-md-6 mb-4">
-                                    <div class="document-upload" onclick="document.getElementById('anggaran_dasar').click()">
-                                        <i class="fas fa-book fa-3x text-warning mb-3"></i>
-                                        <h6>Anggaran Dasar & ART</h6>
-                                        <p class="text-muted small">Upload AD/ART koperasi</p>
-                                        <input type="file" id="anggaran_dasar" name="anggaran_dasar" accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
-                                    </div>
-                                    <div id="anggaran_dasar_list" class="file-list"></div>
-                                </div>
-
                                 <div class="col-md-6 mb-4">
                                     <div class="document-upload" onclick="document.getElementById('ktp_ketua').click()">
                                         <i class="fas fa-id-card fa-3x text-info mb-3"></i>
@@ -297,13 +272,9 @@ ob_start();
                         </div>
                     </form>
                 </div>
-            </div>
-        </div>
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+
 <?php
 $content = ob_get_clean();
 include view_path('layout');

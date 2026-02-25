@@ -187,7 +187,6 @@ class ComplianceController
 
         // Output as HTML
         echo $reportHtml;
-        exit;
     }
 
     // ===== API ENDPOINTS =====

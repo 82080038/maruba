@@ -515,7 +515,6 @@ ob_start();
 
 .bar-fill {
     width: 40px;
-    background: linear-gradient(to top, #6f42c1, #9561e2);
     border-radius: 4px 4px 0 0;
     transition: height 0.3s ease;
 }

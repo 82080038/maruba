@@ -181,7 +181,6 @@ class PayrollController
         // Generate and output salary slip
         $slipHtml = $payrollModel->generateSalarySlip($id);
         echo $slipHtml;
-        exit;
     }
 
     public function myPayroll(): void
@@ -285,7 +284,6 @@ class PayrollController
         }
 
         fclose($output);
-        exit;
     }
 
     public function bulkApprove(): void

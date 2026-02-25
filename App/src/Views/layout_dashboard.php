@@ -2,7 +2,6 @@
 // Check if user is logged in
 if (empty($_SESSION['user'])) {
     header('Location: ' . route_url(''));
-    exit;
 }
 
 $serverRendered = isset($content);
@@ -119,7 +118,6 @@ if (!empty($_GET['partial'])) {
             width: 220px;
             height: calc(100vh - 64px);
             /* Samakan warna dengan header */
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             overflow-y: auto;
             transition: transform 0.3s ease;
@@ -401,9 +399,12 @@ if (!empty($_GET['partial'])) {
             </div>
             
             <div class="header-info">
+                <!-- Language Toggle -->
+                <?php echo \App\Helpers\LanguageHelper::getLanguageToggle(); ?>
+                
                 <div class="datetime-display">
                     <div class="time-display" id="timeDisplay">00:00:00</div>
-                    <div class="date-display" id="dateDisplay"><?= t('loading') ?></div>
+                    <div class="date-display" id="dateDisplay"><?= __('loading') ?></div>
                 </div>
                 <button class="header-icon-btn" id="fullscreenToggle" type="button" aria-label="Toggle fullscreen" title="Layar penuh">
                     <i class="bi bi-arrows-fullscreen fs-5" id="fullscreenIcon"></i>
@@ -618,7 +619,6 @@ if (!empty($_GET['partial'])) {
             function updateIcon() {
                 const on = isFullscreen();
                 icon.classList.toggle('bi-arrows-fullscreen', !on);
-                icon.classList.toggle('bi-fullscreen-exit', on);
             }
             function requestFs(el) {
                 if (el.requestFullscreen) return el.requestFullscreen();
@@ -627,7 +627,6 @@ if (!empty($_GET['partial'])) {
                 if (el.msRequestFullscreen) return el.msRequestFullscreen();
             }
             function exitFs() {
-                if (document.exitFullscreen) return document.exitFullscreen();
                 if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
                 if (document.mozCancelFullScreen) return document.mozCancelFullScreen();
                 if (document.msExitFullscreen) return document.msExitFullscreen();
@@ -635,7 +634,6 @@ if (!empty($_GET['partial'])) {
 
             btn.addEventListener('click', function() {
                 if (isFullscreen()) {
-                    exitFs();
                 } else {
                     requestFs(document.documentElement);
                 }
@@ -1283,12 +1281,28 @@ if (!empty($_GET['partial'])) {
             }
         });
         
-        // Handle window resize
-        $(window).on('resize', function() {
-            if (window.innerWidth >= 992) {
-                $('#mainSidenav').removeClass('show');
-            }
-        });
+        // Language switching function
+        function changeLanguage(langCode) {
+            fetch('/change-language', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ language: langCode })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Reload the page to apply new language
+                    window.location.reload();
+                } else {
+                    alert('Failed to change language: ' + (data.message || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                alert('Error changing language: ' + error.message);
+            });
+        }
     </script>
 </body>
 </html>
