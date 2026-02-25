@@ -56,8 +56,8 @@ class SuratController
             $pdf = new \TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
             
             // Set document info
-            $pdf->SetCreator('KSP Lam Gabe Jaya');
-            $pdf->SetAuthor('KSP Lam Gabe Jaya');
+            $pdf->SetCreator('KOPERASI APP');
+            $pdf->SetAuthor('KOPERASI APP');
             $pdf->SetTitle($title);
             
             // Add a page
@@ -103,7 +103,7 @@ class SuratController
             <p style="text-align: center; font-weight: bold;">SURAT LAMARAN KERJA</p>
             <br>
             
-            <p>Kepada Yth. Pengurus KSP Lam Gabe Jaya<br>di Tempat</p>
+            <p>Kepada Yth. Pengurus KOPERASI APP<br>di Tempat</p>
             
             <p><strong>Hal: Lamaran Kerja</strong></p>
             <br>
@@ -119,7 +119,7 @@ class SuratController
             </table>
             <br>
             
-            <p>Dengan ini mengajukan lamaran kerja pada KSP Lam Gabe Jaya. Sebagai bahan pertimbangan, saya lampirkan:</p>
+            <p>Dengan ini mengajukan lamaran kerja pada KOPERASI APP. Sebagai bahan pertimbangan, saya lampirkan:</p>
             <ol>
                 <li>Fotokopi KTP</li>
                 <li>CV/Daftar Riwayat Hidup</li>
@@ -149,7 +149,7 @@ class SuratController
             <p style="text-align: center; font-weight: bold;">SURAT PERMOHONAN MENJADI ANGGOTA</p>
             <br>
             
-            <p>Kepada Yth. Pengurus KSP Lam Gabe Jaya<br>di Tempat</p>
+            <p>Kepada Yth. Pengurus KOPERASI APP<br>di Tempat</p>
             
             <p><strong>Hal: Permohonan Menjadi Anggota</strong></p>
             <br>
@@ -164,7 +164,7 @@ class SuratController
             </table>
             <br>
             
-            <p>Mengajukan permohonan menjadi anggota KSP Lam Gabe Jaya dan bersedia:</p>
+            <p>Mengajukan permohonan menjadi anggota KOPERASI APP dan bersedia:</p>
             <ul>
                 <li>Mematuhi AD/ART dan peraturan koperasi.</li>
                 <li>Membayar simpanan pokok, wajib, dan ketentuan lain yang berlaku.</li>
@@ -255,7 +255,7 @@ class SuratController
             <p style="text-align: center; font-weight: bold;">SURAT PERMOHONAN PINJAMAN DANA</p>
             <br>
             
-            <p>Kepada Yth. Pengurus KSP Lam Gabe Jaya<br>di Tempat</p>
+            <p>Kepada Yth. Pengurus KOPERASI APP<br>di Tempat</p>
             
             <p><strong>Hal: Permohonan Pinjaman Dana</strong></p>
             <br>
@@ -311,7 +311,7 @@ class SuratController
             <p>Pada hari ini …………… tanggal …………… bertempat di ……………, kami yang bertanda tangan di bawah ini:</p>
             <br>
             
-            <p><strong>1. Nama       : ……………………………</strong> (perwakilan KSP Lam Gabe Jaya)<br>
+            <p><strong>1. Nama       : ……………………………</strong> (perwakilan KOPERASI APP)<br>
                Jabatan    : ……………………………<br>
                Alamat KSP : Jl. Pulo Samosir, Pangururan, Samosir</p>
             <br>

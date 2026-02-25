@@ -89,6 +89,7 @@ class DashboardController
         $activities = $stmt->fetchAll();
 
         // Server-rendered dashboard view
+        $serverRendered = true;
         include view_path('dashboard/index');
     }
 
@@ -141,6 +142,7 @@ class DashboardController
         $activities = $stmt->fetchAll();
 
         // Server-rendered tenant dashboard view
+        $serverRendered = true;
         include view_path('dashboard/tenant');
     }
 
@@ -185,6 +187,8 @@ class DashboardController
         $stmt->execute($tenantParam);
         $recentTransactions = $stmt->fetchAll();
 
+        // Server-rendered kasir dashboard view
+        $serverRendered = true;
         include view_path('dashboard/kasir');
     }
 
@@ -229,6 +233,8 @@ class DashboardController
         $stmt->execute($tenantParam);
         $recentMembers = $stmt->fetchAll();
 
+        // Server-rendered teller dashboard view
+        $serverRendered = true;
         include view_path('dashboard/teller');
     }
 
@@ -275,6 +281,8 @@ class DashboardController
         $stmt->execute([$currentUser['id']]);
         $recentSurveys = $stmt->fetchAll();
 
+        // Server-rendered surveyor dashboard view
+        $serverRendered = true;
         include view_path('dashboard/surveyor');
     }
 
@@ -320,6 +328,8 @@ class DashboardController
         $stmt->execute($tenantParam);
         $collectionList = $stmt->fetchAll();
 
+        // Server-rendered collector dashboard view
+        $serverRendered = true;
         include view_path('dashboard/collector');
     }
 
@@ -369,6 +379,8 @@ class DashboardController
         $stmt->execute($tenantParam);
         $activities = $stmt->fetchAll();
 
+        // Server-rendered manajer dashboard view
+        $serverRendered = true;
         include view_path('dashboard/manajer');
     }
 
@@ -413,6 +425,8 @@ class DashboardController
         $stmt->execute($tenantParam);
         $recentEntries = $stmt->fetchAll();
 
+        // Server-rendered akuntansi dashboard view
+        $serverRendered = true;
         include view_path('dashboard/akuntansi');
     }
 
@@ -451,6 +465,8 @@ class DashboardController
         $stmt->execute();
         $systemLogs = $stmt->fetchAll();
 
+        // Server-rendered creator dashboard view
+        $serverRendered = true;
         include view_path('dashboard/creator');
     }
 }

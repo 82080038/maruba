@@ -1,11 +1,33 @@
 <?php
+// Ensure bootstrap is loaded
+if (!function_exists('current_user')) {
+    require_once __DIR__ . '/../../bootstrap.php';
+}
+
 ob_start();
 ?>
 <?php
+  // Check if user is logged in
+  if (!is_logged_in()) {
+    header('Location: ' . route_url(''));
+    exit();
+  }
+  
   $u = current_user();
   $displayName = $u['name'] ?? ($u['username'] ?? 'User');
   $role = user_role() ?: ($u['role'] ?? '-');
-  $appName = $_ENV['APP_NAME'] ?? getenv('APP_NAME') ?? 'KSP Lam Gabe Jaya';
+  $appName = $_ENV['APP_NAME'] ?? getenv('APP_NAME') ?? 'KOPERASI APP';
+
+  // Initialize variables with safe defaults
+  $metrics = $metrics ?? [
+    'total_members' => 0,
+    'active_loans' => 0,
+    'total_outstanding' => 0,
+    'npl_ratio' => 0
+  ];
+  $activities = $activities ?? [];
+  $user = $user ?? $_SESSION['user'] ?? null;
+  $tenant = $tenant ?? null;
 
   // Sapaan waktu dalam bahasa Indonesia
   $h = (int) date('G'); // 0-23
@@ -24,8 +46,9 @@ ob_start();
     <!-- Dashboard Header -->
     <div class="dashboard-header">
         <div>
-            <h1 class="h3 mb-4">Dashboard <?php echo APP_NAME; ?></h1>
+            <h1 class="h3 mb-4">Dashboard <?= htmlspecialchars(APP_NAME) ?></h1>
             <p class="text-muted">Selamat <?= htmlspecialchars($sapaan) ?>, <?= htmlspecialchars($displayName) ?> (<?= htmlspecialchars($role) ?>)</p>
+            <small class="text-muted">Login: <?= date('H:i:s', $u['login_time']) ?> | Aktif: <?= date('H:i:s', $u['last_activity']) ?></small>
         </div>
         <div class="header-actions">
             <button id="refresh-dashboard" class="btn btn-primary">
@@ -141,7 +164,7 @@ $tenant = $_SESSION['tenant'] ?? null;
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <h6 class="card-title text-muted mb-1"><?php echo IndonesianFormat::translate('total_members'); ?></h6>
+                            <h6 class="card-title text-muted mb-1"><?php echo class_exists('IndonesianFormat') ? IndonesianFormat::translate('total_members') : 'Total Anggota'; ?></h6>
                             <h4 class="card-text mb-0 fw-bold" data-format-type="number">
                                 <?php echo $metrics['total_members'] ?? 0; ?>
                             </h4>
@@ -160,7 +183,7 @@ $tenant = $_SESSION['tenant'] ?? null;
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <h6 class="card-title text-muted mb-1"><?php echo IndonesianFormat::translate('active_loans'); ?></h6>
+                            <h6 class="card-title text-muted mb-1"><?php echo class_exists('IndonesianFormat') ? IndonesianFormat::translate('active_loans') : 'Pinjaman Aktif'; ?></h6>
                             <h4 class="card-text mb-0 fw-bold" data-format-type="number">
                                 <?php echo $metrics['active_loans'] ?? 0; ?>
                             </h4>
@@ -179,7 +202,7 @@ $tenant = $_SESSION['tenant'] ?? null;
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <h6 class="card-title text-muted mb-1"><?php echo IndonesianFormat::translate('total_outstanding'); ?></h6>
+                            <h6 class="card-title text-muted mb-1"><?php echo class_exists('IndonesianFormat') ? IndonesianFormat::translate('total_outstanding') : 'Total Outstanding'; ?></h6>
                             <h4 class="card-text mb-0 fw-bold" data-format-type="currency">
                                 <?php echo $metrics['total_outstanding'] ?? 0; ?>
                             </h4>
@@ -219,13 +242,13 @@ $tenant = $_SESSION['tenant'] ?? null;
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-0">
                     <h6 class="card-title mb-0 fw-bold">
-                        <i class="bi bi-activity me-2 text-primary"></i><?php echo IndonesianFormat::translate('recent_activities'); ?>
+                        <i class="bi bi-activity me-2 text-primary"></i><?php echo class_exists('IndonesianFormat') ? IndonesianFormat::translate('recent_activities') : 'Aktivitas Terkini'; ?>
                     </h6>
                 </div>
                 <div class="card-body">
                     <div id="recentActivities" class="activity-list">
                         <?php if (empty($activities)): ?>
-                            <p class="text-muted mb-0"><?php echo IndonesianFormat::translate('no_recent_activities'); ?></p>
+                            <p class="text-muted mb-0"><?php echo class_exists('IndonesianFormat') ? IndonesianFormat::translate('no_recent_activities') : 'Belum ada aktivitas.'; ?></p>
                         <?php else: ?>
                             <?php foreach (array_slice($activities, 0, 10) as $activity): ?>
                                 <div class="d-flex align-items-center mb-3">
@@ -245,7 +268,7 @@ $tenant = $_SESSION['tenant'] ?? null;
                                                 </p>
                                             </div>
                                             <small class="text-muted" data-timestamp="<?php echo $activity['created_at']; ?>">
-                                                <?php echo IndonesianFormat::timeAgo($activity['created_at']); ?>
+                                                <?php echo class_exists('IndonesianFormat') ? IndonesianFormat::timeAgo($activity['created_at']) : date('d/m/Y H:i', strtotime($activity['created_at'])); ?>
                                             </small>
                                         </div>
                                     </div>
@@ -262,29 +285,28 @@ $tenant = $_SESSION['tenant'] ?? null;
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-0">
                     <h6 class="card-title mb-0 fw-bold">
-                        <i class="bi bi-info-circle me-2 text-primary"></i><?php echo IndonesianFormat::translate('system_info'); ?>
+                        <i class="bi bi-info-circle me-2 text-primary"></i><?php echo class_exists('IndonesianFormat') ? IndonesianFormat::translate('system_info') : 'Informasi Sistem'; ?>
                     </h6>
                 </div>
                 <div class="card-body">
-                    <div class="mb-3">
-                        <strong><?php echo IndonesianFormat::translate('user'); ?>:</strong><br>
+                        <strong><?php echo class_exists('IndonesianFormat') ? IndonesianFormat::translate('user') : 'User'; ?>:</strong><br>
                         <span class="text-primary"><?php echo htmlspecialchars($user['name'] ?? '-'); ?></span>
                     </div>
                     <div class="mb-3">
-                        <strong><?php echo IndonesianFormat::translate('role'); ?>:</strong><br>
+                        <strong><?php echo class_exists('IndonesianFormat') ? IndonesianFormat::translate('role') : 'Role'; ?>:</strong><br>
                         <span class="text-muted"><?php echo htmlspecialchars($user['role'] ?? '-'); ?></span>
                     </div>
                     <div class="mb-3">
-                        <strong><?php echo IndonesianFormat::translate('login_time'); ?>:</strong><br>
-                        <span class="text-muted" id="loginTime"><?php echo IndonesianFormat::timeAgo($user['last_login'] ?? date('Y-m-d H:i:s')); ?></span>
+                        <strong><?php echo class_exists('IndonesianFormat') ? IndonesianFormat::translate('login_time') : 'Login Time'; ?>:</strong><br>
+                        <span class="text-muted" id="loginTime"><?php echo class_exists('IndonesianFormat') ? IndonesianFormat::timeAgo($user['last_login'] ?? date('Y-m-d H:i:s')) : date('H:i:s', strtotime($user['last_login'] ?? date('Y-m-d H:i:s'))); ?></span>
                     </div>
                     <div class="mb-3">
-                        <strong><?php echo IndonesianFormat::translate('current_time'); ?>:</strong><br>
-                        <span class="text-muted" id="serverTime"><?php echo IndonesianFormat::now(); ?></span>
+                        <strong><?php echo class_exists('IndonesianFormat') ? IndonesianFormat::translate('current_time') : 'Current Time'; ?>:</strong><br>
+                        <span class="text-muted" id="serverTime"><?php echo class_exists('IndonesianFormat') ? IndonesianFormat::now() : date('H:i:s'); ?></span>
                     </div>
                     <?php if ($tenant): ?>
                         <div class="mb-3">
-                            <strong><?php echo IndonesianFormat::translate('cooperative'); ?>:</strong><br>
+                            <strong><?php echo class_exists('IndonesianFormat') ? IndonesianFormat::translate('cooperative') : 'Cooperative'; ?>:</strong><br>
                             <span class="text-success"><?php echo htmlspecialchars($tenant['name'] ?? '-'); ?></span>
                         </div>
                     <?php endif; ?>
@@ -295,19 +317,19 @@ $tenant = $_SESSION['tenant'] ?? null;
             <div class="card border-0 shadow-sm mt-3">
                 <div class="card-header bg-white border-0">
                     <h6 class="card-title mb-0 fw-bold">
-                        <i class="bi bi-lightning me-2 text-warning"></i><?php echo IndonesianFormat::translate('quick_actions'); ?>
+                        <i class="bi bi-lightning me-2 text-warning"></i><?php echo class_exists('IndonesianFormat') ? IndonesianFormat::translate('quick_actions') : 'Quick Actions'; ?>
                     </h6>
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
-                        <button class="btn btn-primary btn-sm" onclick="KSP.Components.createMemberModal()">
-                            <i class="bi bi-person-plus me-1"></i><?php echo IndonesianFormat::translate('add_member'); ?>
+                        <button class="btn btn-primary btn-sm" onclick="alert('<?php echo class_exists('IndonesianFormat') ? IndonesianFormat::translate('add_member') : 'Tambah Anggota'; ?> - Fitur sedang dalam pengembangan')">
+                            <i class="bi bi-person-plus me-1"></i><?php echo class_exists('IndonesianFormat') ? IndonesianFormat::translate('add_member') : 'Tambah Anggota'; ?>
                         </button>
-                        <button class="btn btn-success btn-sm" onclick="KSP.Components.createLoanModal()">
-                            <i class="bi bi-plus-circle me-1"></i><?php echo IndonesianFormat::translate('create_loan'); ?>
+                        <button class="btn btn-success btn-sm" onclick="alert('<?php echo class_exists('IndonesianFormat') ? IndonesianFormat::translate('create_loan') : 'Buat Pinjaman'; ?> - Fitur sedang dalam pengembangan')">
+                            <i class="bi bi-plus-circle me-1"></i><?php echo class_exists('IndonesianFormat') ? IndonesianFormat::translate('create_loan') : 'Buat Pinjaman'; ?>
                         </button>
                         <button class="btn btn-info btn-sm" onclick="window.location.href='/reports'">
-                            <i class="bi bi-graph-up me-1"></i><?php echo IndonesianFormat::translate('view_reports'); ?>
+                            <i class="bi bi-graph-up me-1"></i><?php echo class_exists('IndonesianFormat') ? IndonesianFormat::translate('view_reports') : 'Lihat Laporan'; ?>
                         </button>
                     </div>
                 </div>
@@ -321,7 +343,7 @@ $tenant = $_SESSION['tenant'] ?? null;
 $(document).ready(function() {
     // Update times every minute
     setInterval(function() {
-        $('#serverTime').text(IndonesianFormat.now());
+        $('#serverTime').text(typeof IndonesianFormat !== 'undefined' ? IndonesianFormat.now() : new Date().toLocaleTimeString('id-ID'));
     }, 60000);
 
     // Update login time ago
@@ -330,7 +352,10 @@ $(document).ready(function() {
             const $element = $(this);
             const timestamp = $element.data('timestamp');
             if (timestamp) {
-                $element.text(IndonesianFormat.timeAgo(timestamp));
+                const timeAgo = typeof IndonesianFormat !== 'undefined' ? 
+                    IndonesianFormat.timeAgo(timestamp) : 
+                    new Date(timestamp).toLocaleString('id-ID');
+                $element.text(timeAgo);
             }
         });
     }, 60000);

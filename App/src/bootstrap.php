@@ -21,7 +21,7 @@ if (file_exists(__DIR__ . '/../../.env')) {
 // Define constants from environment
 define('APP_ENV', $_ENV['APP_ENV'] ?? 'development');
 define('APP_DEBUG', $_ENV['APP_DEBUG'] ?? 'true');
-define('APP_NAME', $_ENV['APP_NAME'] ?? 'Maruba Koperasi');
+define('APP_NAME', $_ENV['APP_NAME'] ?? 'KOPERASI APP');
 define('APP_URL', $_ENV['APP_URL'] ?? 'http://localhost/maruba');
 
 // Production: Hide errors (uncomment for production)
@@ -128,20 +128,31 @@ function user_role() {
     return $user['role'] ?? null;
 }
 
-function legacy_route_url($route = '') {
-    return BASE_URL . '/' . ltrim($route, '/');
+function is_logged_in() {
+    return !empty($_SESSION['user']);
 }
 
 function require_login() {
-    if (!current_user()) {
-        header('Location: ' . route_url('auth/login'));
+    if (!is_logged_in()) {
+        $_SESSION['error'] = 'Please login to continue.';
+        header('Location: ' . route_url(''));
+        exit();
     }
+}
+
+function legacy_route_url($route = '') {
+    return BASE_URL . '/' . ltrim($route, '/');
 }
 
 function verify_csrf() {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $token = $_POST['csrf_token'] ?? '';
         if (!hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
+            // Add proper error handling
+            $_SESSION['error'] = 'Invalid CSRF token. Please try again.';
+            error_log('CSRF token validation failed for IP: ' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
+            header('Location: ' . route_url(''));
+            exit();
         }
     }
 }

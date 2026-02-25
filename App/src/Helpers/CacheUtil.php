@@ -92,16 +92,34 @@ class CacheUtil
      */
     public static function clearSessionCache(): void
     {
-        // Clear all session variables except user data
-        $user_backup = $_SESSION['user'] ?? null;
+        // Clear all session variables except user data and critical data
+        $userBackup = $_SESSION['user'] ?? null;
+        $csrfBackup = $_SESSION['csrf_token'] ?? null;
+        $loginAttemptsBackup = $_SESSION['login_attempts'] ?? [];
 
         $_SESSION = array();
 
-        if ($user_backup) {
-            $_SESSION['user'] = $user_backup;
+        // Restore critical data
+        if ($userBackup) {
+            $_SESSION['user'] = $userBackup;
         }
+        if ($csrfBackup) {
+            $_SESSION['csrf_token'] = $csrfBackup;
+        }
+        $_SESSION['login_attempts'] = $loginAttemptsBackup;
 
-        error_log('Session cache cleared (user data preserved)');
+        error_log('Session cache cleared (user and critical data preserved)');
+    }
+
+    /**
+     * Clear all session data (for logout)
+     */
+    public static function clearAllSessionData(): void
+    {
+        // Clear everything
+        $_SESSION = array();
+        
+        error_log('All session data cleared');
     }
 
     /**

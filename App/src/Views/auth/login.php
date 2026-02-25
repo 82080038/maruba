@@ -1,4 +1,9 @@
 <?php
+// Ensure bootstrap is loaded
+if (!function_exists('current_user')) {
+    require_once __DIR__ . '/../../bootstrap.php';
+}
+
 $title = 'Login Koperasi';
 ob_start();
 ?>
@@ -46,8 +51,16 @@ ob_start();
           <p class="text-muted small mb-0">Silakan login untuk melanjutkan</p>
         </div>
 
-        <form method="post" action="/maruba/index.php/login" id="loginForm">
-          <input type="hidden" name="csrf_token" value="<?= bin2hex(random_bytes(32)) ?>">
+        <form method="post" action="<?= route_url('index.php/login') ?>" id="loginForm">
+            <?= csrf_field() ?>
+            
+            <?php if (isset($_SESSION['error'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i><?= htmlspecialchars($_SESSION['error']) ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <?php unset($_SESSION['error']); ?>
+            <?php endif; ?>
 
           <div class="mb-3">
             <label class="form-label" for="username">
@@ -98,7 +111,7 @@ ob_start();
         <div class="row g-2">
           <div class="col-6">
             <button class="btn btn-outline-primary btn-sm w-100 quick-login-btn" 
-                    data-username="admin" data-password="admin123" data-role="Admin">
+                    data-username="admin" data-password="admin" data-role="Admin">
               <i class="bi bi-person-gear me-1"></i> Admin
             </button>
           </div>
@@ -155,6 +168,25 @@ ob_start();
 </div>
 
 <script>
+// HSTS Cache Clearing for Development
+(function() {
+    // Only run in development mode
+    const isDevelopment = '<?= APP_ENV ?>' === 'development';
+    
+    if (isDevelopment) {
+        // Check if we're on localhost and using HTTPS when we shouldn't
+        const isLocalhost = window.location.hostname === 'localhost' || 
+                          window.location.hostname === '127.0.0.1' ||
+                          window.location.hostname.includes('localhost');
+        
+        // If we're on localhost but using HTTPS, redirect to HTTP
+        if (isLocalhost && window.location.protocol === 'https:') {
+            console.log('🔧 Development mode: Clearing HSTS cache, redirecting to HTTP');
+            window.location.replace('http://' + window.location.hostname + window.location.pathname + window.location.search);
+            return; // Stop execution
+        }
+    }
+})();
 // Basic validation for non-jQuery usage (failsafe)
 document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('loginForm');
@@ -165,6 +197,13 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             alert('Username dan password wajib diisi');
             return false;
+        }
+        
+        // Show loading state
+        const submitBtn = document.getElementById('loginBtn');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Masuk...';
         }
     });
 });
@@ -236,6 +275,7 @@ document.addEventListener('DOMContentLoaded', function() {
             $('#password').val(password);
 
             // Clear any previous errors
+            $('.alert').remove();
             $('.invalid-feedback').hide();
             $('.form-control').removeClass('is-invalid');
 
@@ -248,6 +288,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 $('#loginForm').submit();
             }, 400);
         });
+        
+        // Auto-focus username field
+        $('#username').focus();
+        
+        // Clear errors on input
+        $('#username, #password').on('input', function() {
+            $(this).removeClass('is-invalid');
+            $(this).siblings('.invalid-feedback').hide();
+        });
+
     });
 })(jQuery);
 </script>

@@ -39,22 +39,25 @@ class AuthController
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user['password_hash'])) {
-            // === SESSION & CACHE CLEARING ===
-            // 1. Clear all existing session data
-            $_SESSION = array();
-
+            // === IMPROVED SESSION MANAGEMENT ===
+            // 1. Preserve important session data before clearing
+            $csrfToken = $_SESSION['csrf_token'] ?? null;
+            $loginAttempts = $_SESSION['login_attempts'] ?? [];
+            
             // 2. Regenerate session ID for security
             session_regenerate_id(true);
+            
+            // 3. Restore important data
+            if ($csrfToken) {
+                $_SESSION['csrf_token'] = $csrfToken;
+            }
+            $_SESSION['login_attempts'] = $loginAttempts;
 
-            // 3. Clear any previous error messages
+            // 4. Clear any previous error messages
             unset($_SESSION['error']);
 
-            // 4. Clear all caches using CacheUtil
-            require_once __DIR__ . '/../Helpers/CacheUtil.php';
-            \CacheUtil::clearAll();
-
-            // 5. Clear browser cache headers to ensure fresh content
-            \CacheUtil::clearBrowserCache();
+            // 5. Clear only specific caches (not all caches)
+            $this->clearLoginCaches();
 
             // 6. Set fresh session data
             $_SESSION['user'] = [
@@ -62,12 +65,13 @@ class AuthController
                 'name' => $user['name'],
                 'username' => $user['username'],
                 'role' => $user['role_name'],
-                'login_time' => time(), // Track login time
-                'session_fresh' => true, // Mark as fresh session
+                'login_time' => time(),
+                'session_fresh' => true,
+                'last_activity' => time(),
             ];
 
-            // 7. Log successful login with session clearing
-            error_log("User {$username} logged in - Session cleared and all caches reset");
+            // 7. Log successful login
+            error_log("User {$username} logged in successfully from IP: {$ip}");
 
             // Reset rate-limit bucket
             unset($_SESSION['login_attempts'][$bucket]);
@@ -81,20 +85,24 @@ class AuthController
         $_SESSION['login_attempts'][$bucket] = $attempt;
 
         $_SESSION['error'] = 'Login gagal. Periksa username/password.';
+        error_log("Login failed for username: {$username} from IP: {$ip}");
         header('Location: /maruba/index.php/');
     }
 
     public function logout(): void
     {
-        // Log logout action
         $username = $_SESSION['user']['username'] ?? 'unknown';
-        error_log("User {$username} logged out - Clearing session and cache");
+        $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        
+        // Log logout action
+        error_log("User {$username} logged out from IP: {$ip}");
 
-        // Clear all caches using CacheUtil
-        require_once __DIR__ . '/../Helpers/CacheUtil.php';
-        \CacheUtil::clearAll();
-        \CacheUtil::clearBrowserCache();
+        // Clear only specific caches (not all caches)
+        $this->clearLogoutCaches();
 
+        // Clear session data but preserve some info for logging
+        $userBackup = $_SESSION['user'] ?? null;
+        
         // Clear all session data
         $_SESSION = array();
 
@@ -104,7 +112,36 @@ class AuthController
         }
         session_destroy();
 
+        // Clear browser cache headers
+        header('Cache-Control: no-cache, no-store, must-revalidate');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+
         header('Location: ' . route_url('/'));
+    }
+
+    /**
+     * Clear caches specific to login process
+     */
+    private function clearLoginCaches(): void
+    {
+        // Clear only session-related caches
+        if (class_exists('CacheUtil')) {
+            \CacheUtil::clearSessionCache();
+            \CacheUtil::clearBrowserCache();
+        }
+    }
+
+    /**
+     * Clear caches specific to logout process
+     */
+    private function clearLogoutCaches(): void
+    {
+        // Clear session and browser caches
+        if (class_exists('CacheUtil')) {
+            \CacheUtil::clearSessionCache();
+            \CacheUtil::clearBrowserCache();
+        }
     }
 
     /**

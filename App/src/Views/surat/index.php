@@ -18,7 +18,7 @@ ob_start();
             <small class="text-muted">Format surat lamaran karyawan</small>
           </div>
         </div>
-        <p class="card-text small">Surat lamaran kerja untuk calon karyawan KSP Lam Gabe Jaya dengan kelengkapan dokumen yang diperlukan.</p>
+        <p class="card-text small">Surat lamaran kerja untuk calon karyawan KOPERASI APP dengan kelengkapan dokumen yang diperlukan.</p>
         <a href="<?= route_url('index.php/surat/lamaran-kerja') ?>" class="btn btn-primary btn-sm">
           <i class="bi bi-download"></i> Unduh PDF
         </a>

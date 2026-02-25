@@ -2,6 +2,49 @@
 // Front controller - SINGLE ENTRY POINT
 require_once __DIR__ . '/App/src/bootstrap.php';
 
+// Handle static assets directly (bypass MVC framework)
+$requestUri = $_SERVER['REQUEST_URI'] ?? '';
+
+if (preg_match('#^/maruba/(assets|App/public/assets)/(.+\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot))$#', $requestUri, $matches)) {
+    $assetPath = __DIR__ . '/' . $matches[1] . '/' . $matches[2];
+
+    if (file_exists($assetPath)) {
+        // Set correct content type
+        $extension = strtolower($matches[3]);
+        $contentTypes = [
+            'css' => 'text/css',
+            'js' => 'application/javascript',
+            'png' => 'image/png',
+            'jpg' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'gif' => 'image/gif',
+            'ico' => 'image/x-icon',
+            'svg' => 'image/svg+xml',
+            'woff' => 'font/woff',
+            'woff2' => 'font/woff2',
+            'ttf' => 'font/ttf',
+            'eot' => 'application/vnd.ms-fontobject'
+        ];
+
+        if (isset($contentTypes[$extension])) {
+            header('Content-Type: ' . $contentTypes[$extension]);
+        }
+
+        // Disable caching for development
+        header('Cache-Control: no-cache, no-store, must-revalidate');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+
+        // Serve the file
+        readfile($assetPath);
+        exit;
+    }
+}
+
+// Apply security headers based on environment
+use App\Middleware\SecurityMiddleware;
+SecurityMiddleware::applySecurityHeaders();
+
 use App\Router;
 use App\Controllers\AuthController;
 use App\Controllers\DashboardController;

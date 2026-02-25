@@ -1,7 +1,16 @@
 # Development .htaccess - Relaxed Security for Debugging
 
-# Basic routing
+# Static Assets - Bypass PHP processing completely
 RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^assets/(.*)$ - [L]
+RewriteRule ^App/public/assets/(.*)$ - [L]
+
+# Front Controller - Route PHP requests to index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
 
 # PHP Handler
 <FilesMatch "\.php$">
@@ -23,10 +32,21 @@ php_value post_max_size 10M
 
 # Basic Security (Development - Relaxed)
 <IfModule mod_headers.c>
-    Header always set X-Frame-Options DENY
-    Header always set X-Content-Type-Options nosniff
-    Header always set X-XSS-Protection "1; mode=block"
+    # Header always set X-Frame-Options DENY
+    # Header always set X-Content-Type-Options nosniff
+    # Header always set X-XSS-Protection "1; mode=block"
 </IfModule>
+
+# Force correct content types for assets
+<FilesMatch "\.css$">
+    ForceType text/css
+    Header set Content-Type "text/css"
+</FilesMatch>
+
+<FilesMatch "\.js$">
+    ForceType application/javascript
+    Header set Content-Type "application/javascript"
+</FilesMatch>
 
 # Hide sensitive files
 <FilesMatch "\.(env|log|conf|key|pem|crt|sql)$">
@@ -38,14 +58,6 @@ php_value post_max_size 10M
     Order allow,deny
     Deny from all
 </FilesMatch>
-
-# Front Controller - Route all requests to index.php
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.php [QSA,L]
-</IfModule>
 
 # Development - Allow directory listing for debugging
 Options +Indexes
