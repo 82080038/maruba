@@ -233,7 +233,7 @@ class ComplianceManager
         // Check loan balance consistency
         $stmt = $db->query("
             SELECT COUNT(*) as count FROM loans
-            WHERE outstanding_balance < 0 OR outstanding_balance > principal_amount
+            WHERE amount < 0 OR amount > principal_amount
         ");
         $invalidBalances = $stmt->fetch()['count'];
 

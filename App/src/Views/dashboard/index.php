@@ -108,7 +108,7 @@ ob_start();
 </div>
 
 <?php
-require_once __DIR__ . '/../IndonesianFormat.php';
+require_once __DIR__ . '/../../IndonesianFormat.php';
 
 // Get dashboard data
 $metrics = $metrics ?? [];
@@ -338,10 +338,6 @@ $(document).ready(function() {
     console.log('🇮🇩 Dashboard loaded with Indonesian formatting');
 });
 </script>
-
-<!-- Load CSS and JS -->
-<link rel="stylesheet" href="<?= asset_url('css/dashboard.css') ?>">
-<script src="<?= asset_url('js/dashboard.js') ?>"></script>
 
 <?php
 $content = ob_get_clean();

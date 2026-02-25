@@ -166,7 +166,7 @@ class Member extends Model
                 'loan' as type,
                 'repayment' as transaction_type,
                 lr.amount_paid as amount,
-                l.outstanding_balance as balance,
+                l.amount as balance,
                 lr.notes,
                 lr.payment_reference as reference_number,
                 lr.created_at
@@ -206,7 +206,7 @@ class Member extends Model
         $stmt = $this->db->prepare("
             SELECT
                 COUNT(*) as total_loans,
-                SUM(outstanding_balance) as total_outstanding,
+                SUM(amount) as total_outstanding,
                 COUNT(CASE WHEN status = 'active' THEN 1 END) as active_loans
             FROM loans
             WHERE member_id = ?

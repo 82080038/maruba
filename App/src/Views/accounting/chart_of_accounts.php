@@ -7,10 +7,10 @@
                 <div class="card-header">
                     <h4 class="card-title mb-0">Chart of Accounts - FIXED VERSION</h4>
                     <div class="card-tools">
-                        <a href="<?= route_url('accounting/chart/create') ?>" class="btn btn-primary">
+                        <a href="<?= route_url('index.php/accounting/chart/create') ?>" class="btn btn-primary">
                             <i class="fas fa-plus"></i> Add Account
                         </a>
-                        <a href="<?= route_url('accounting/chart/export') ?>" class="btn btn-success ml-2">
+                        <a href="<?= route_url('index.php/accounting/chart/export') ?>" class="btn btn-success ml-2">
                             <i class="fas fa-download"></i> Export CSV
                         </a>
                     </div>

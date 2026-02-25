@@ -10,7 +10,7 @@ ob_start();
           <h5 class="card-title mt-2">Daftar Pengguna</h5>
           <p class="text-muted small">Pilih koperasi berdasarkan provinsi/kota/kecamatan atau daftarkan koperasi baru</p>
         </div>
-        <div id="register-config" data-coops-url="<?= route_url('/api/register/cooperatives') ?>"></div>
+        <div id="register-config" data-coops-url="<?= route_url('index.php//api/register/cooperatives') ?>"></div>
         <form method="post" action="<?= route_url('register') ?>" id="registerForm">
           <?= csrf_field(); ?>
           <div class="row g-3">
@@ -75,7 +75,7 @@ ob_start();
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="<?= asset_url('js/register.js') ?>"></script>
+<script src="<?= asset_url('assets/js/register.js') ?>"></script>
 <?php
 $content = ob_get_clean();
 include view_path('layout');

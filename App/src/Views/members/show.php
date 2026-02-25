@@ -7,13 +7,13 @@
                 <div class="card-header">
                     <h4 class="card-title mb-0">Detail Anggota</h4>
                     <div class="card-tools">
-                        <a href="<?= route_url('members') ?>" class="btn btn-secondary">
+                        <a href="<?= route_url('index.php/members') ?>" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> Kembali
                         </a>
-                        <a href="<?= route_url('members/edit') ?>?id=<?= $member['id'] ?>" class="btn btn-primary">
+                        <a href="<?= route_url('index.php/members/edit') ?>?id=<?= $member['id'] ?>" class="btn btn-primary">
                             <i class="fas fa-edit"></i> Edit
                         </a>
-                        <a href="<?= route_url('members/delete') ?>?id=<?= $member['id'] ?>" class="btn btn-danger" 
+                        <a href="<?= route_url('index.php/members/delete') ?>?id=<?= $member['id'] ?>" class="btn btn-danger" 
                            onclick="return confirm('Apakah Anda yakin ingin menghapus anggota ini?')">
                             <i class="fas fa-trash"></i> Hapus
                         </a>

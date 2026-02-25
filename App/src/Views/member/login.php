@@ -66,7 +66,7 @@ ob_start();
                             <?php unset($_SESSION['member_login_error']); ?>
                         <?php endif; ?>
 
-                        <form method="POST" action="<?php echo route_url('member/authenticate'); ?>">
+                        <form method="POST" action="<?php echo route_url('index.php/member/authenticate'); ?>">
                             <div class="mb-3">
                                 <label for="nik" class="form-label">
                                     <i class="bi bi-person-badge me-1"></i>Nomor Induk Kependudukan (NIK)

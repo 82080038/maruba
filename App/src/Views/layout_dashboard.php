@@ -24,7 +24,15 @@ if (!empty($_GET['partial'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <meta name="csrf-token" content="<?= $_SESSION['csrf_token'] ?? '' ?>">
     <title><?php echo APP_NAME; ?> - <?php echo $title ?? 'Dashboard'; ?></title>
-        }
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="<?= asset_url('assets/css/dashboard.css') ?>">
+    
+    <style>
 
         .header-brand .brand-text {
             display: block;
@@ -372,6 +380,26 @@ if (!empty($_GET['partial'])) {
             height: 3rem;
             border-width: 0.3em;
         }
+        
+        /* Logout button styling */
+        .logout-btn {
+            background-color: #dc3545 !important;
+            color: white !important;
+            border-radius: 8px;
+            padding: 12px 16px !important;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            background-color: #c82333 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+        }
+        
+        .logout-btn i {
+            font-size: 1.1em;
+        }
     </style>
 </head>
 <body>
@@ -382,7 +410,7 @@ if (!empty($_GET['partial'])) {
     <!-- Loading Spinner -->
     <div class="loading-spinner" id="loadingSpinner">
         <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden"><?= t('loading') ?></span>
+            <span class="visually-hidden">Loading...</span>
         </div>
     </div>
 
@@ -399,12 +427,9 @@ if (!empty($_GET['partial'])) {
             </div>
             
             <div class="header-info">
-                <!-- Language Toggle -->
-                <?php echo \App\Helpers\LanguageHelper::getLanguageToggle(); ?>
-                
                 <div class="datetime-display">
                     <div class="time-display" id="timeDisplay">00:00:00</div>
-                    <div class="date-display" id="dateDisplay"><?= __('loading') ?></div>
+                    <div class="date-display" id="dateDisplay">Loading...</div>
                 </div>
                 <button class="header-icon-btn" id="fullscreenToggle" type="button" aria-label="Toggle fullscreen" title="Layar penuh">
                     <i class="bi bi-arrows-fullscreen fs-5" id="fullscreenIcon"></i>
@@ -417,17 +442,22 @@ if (!empty($_GET['partial'])) {
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="<?= route_url('profile') ?>">
-                            <i class="bi bi-person me-2"></i> <?= t('profile') ?>
+                            <i class="bi bi-person me-2"></i> Profile
                         </a></li>
                         <li><a class="dropdown-item" href="<?= route_url('settings') ?>">
-                            <i class="bi bi-gear me-2"></i> <?= t('settings') ?>
+                            <i class="bi bi-gear me-2"></i> Settings
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="<?= route_url('logout') ?>">
-                            <i class="bi bi-box-arrow-right me-2"></i> <?= t('logout') ?>
+                        <li><a class="dropdown-item text-danger" href="<?= route_url('index.php/logout') ?>">
+                            <i class="bi bi-box-arrow-right me-2"></i> <strong>Logout</strong>
                         </a></li>
                     </ul>
                 </div>
+                
+                <!-- Quick Logout Button -->
+                <button class="btn btn-outline-light btn-sm ms-2" onclick="confirmLogout()" title="Keluar">
+                    <i class="bi bi-power"></i>
+                </button>
             </div>
         </div>
     </header>
@@ -454,9 +484,10 @@ if (!empty($_GET['partial'])) {
             ?>
 
             <!-- Logout item -->
-            <div class="menu-section">
-                <a href="<?= route_url('logout') ?>" class="menu-item">
-                    <i class="bi bi-box-arrow-right"></i> Logout
+            <div class="menu-section mt-3">
+                <a href="<?= route_url('index.php/logout') ?>" class="menu-item logout-btn" onclick="return confirm('Apakah Anda yakin ingin keluar?')">
+                    <i class="bi bi-box-arrow-right text-danger"></i> 
+                    <span class="text-danger">Logout</span>
                 </a>
             </div>
         </div>
@@ -508,12 +539,18 @@ if (!empty($_GET['partial'])) {
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        // Fallback if CDN fails
+        if (typeof jQuery === 'undefined') {
+            document.write('<script src="<?= asset_url('assets/js/jquery-3.7.1.min.js') ?>"><\/script>');
+        }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?= asset_url('assets/js/helpers-id.js') ?>"></script>
     <script src="<?= asset_url('assets/js/dom-helpers.js') ?>"></script>
-    <script src="/assets/js/ksp-ui-library.js"></script>
-    <script src="/assets/js/ksp-components.js"></script>
-    <script src="/assets/js/indonesian-format.js"></script>
+    <script src="<?= asset_url('assets/js/ksp-ui-library.js') ?>"></script>
+    <script src="<?= asset_url('assets/js/ksp-components.js') ?>"></script>
+    <script src="<?= asset_url('assets/js/indonesian-format.js') ?>"></script>
 
     <?php if (isset($scripts)): ?>
         <?php foreach ($scripts as $script): ?>
@@ -528,6 +565,48 @@ if (!empty($_GET['partial'])) {
         const LEGACY_BASE_URL_JS = '<?= rtrim(legacy_route_url(''), '/') ?>';
         let currentPage = 'dashboard';
         let isLoading = false;
+        
+        // Wait for jQuery to be loaded
+        function waitForjQuery() {
+            if (typeof jQuery !== 'undefined') {
+                // jQuery is loaded, initialize the application
+                initializeApplication();
+            } else {
+                // jQuery not loaded yet, wait a bit and try again
+                setTimeout(waitForjQuery, 100);
+            }
+        }
+        
+        function initializeApplication() {
+            $(document).ready(function() {
+                console.log('=== KSP LGJ Single Page Application ===');
+                
+                // Initialize components
+                initializeDateTime();
+                initializeMobileMenu();
+                initializeNavigation();
+                initializeFullscreenToggle();
+                initializeDropdowns();
+                
+                // Center active menu item on load
+                centerMenuItem($('.menu-item.active')[0]);
+
+                // Initial page load
+                if (!serverRendered) {
+                    initializeSidenav();
+                    // Load initial page only for SPA mode
+                    loadPage('dashboard');
+                }
+                // Always center the active menu item on load (server-rendered or SPA)
+                const activeItem = document.querySelector('#sidenavMenu .menu-item.active');
+                if (activeItem) {
+                    // Defer to ensure layout is ready
+                    setTimeout(function(){ centerMenuItem(activeItem); }, 0);
+                }
+                
+                console.log('Application initialized successfully');
+            });
+        }
         
         function initializeDropdowns() {
             const dropdownTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
@@ -575,7 +654,17 @@ if (!empty($_GET['partial'])) {
             }
             
             console.log('Application initialized successfully');
-        });
+            });
+        
+        // Start the application when jQuery is ready
+        waitForjQuery();
+        
+        // Logout confirmation
+        function confirmLogout() {
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                window.location.href = '<?= route_url('index.php/logout') ?>';
+            }
+        }
         
         // Initialize date and time display
         function initializeDateTime() {
@@ -729,7 +818,7 @@ if (!empty($_GET['partial'])) {
                 if (window.innerWidth < 992) {
                     $('#mainSidenav').removeClass('show');
                 }
-            });
+            
             // Server-rendered: intercept sidebar nav to avoid full reload (jaga fullscreen)
             if (serverRendered) {
                 // Intercept sidebar links
@@ -760,12 +849,14 @@ if (!empty($_GET['partial'])) {
                     loadPartialPage(href, null);
                     if (window.innerWidth < 992) $('#mainSidenav').removeClass('show');
                 });
+                
                 // Handle browser back/forward
                 window.addEventListener('popstate', function() {
                     // Reload current URL content into container
                     loadPartialPage(window.location.href, null);
                 });
             }
+            
             $(document).on('click', '.menu-item', function() {
                 centerMenuItem(this);
             });
@@ -774,36 +865,45 @@ if (!empty($_GET['partial'])) {
             });
         }
 
-        // Load partial page content (server-rendered) tanpa reload penuh
-        function loadPartialPage(url, triggerEl) {
-            $('#loadingSpinner').addClass('show');
-            const injectPartial = function (html) {
-                const $doc = $('<div>').append($.parseHTML(html));
-                const $wrap = $doc.find('#dynamicContent').first();
-                const inner = $wrap.length ? $wrap.html() : html;
-                $('#dynamicContent').empty().html(inner);
-                const len = $('#dynamicContent').children().length;
-                if (url.indexOf('/dashboard') !== -1) {
-                                    }
-                return len > 0;
-            };
-            const onSuccess = function(pushUrl){
-                if (triggerEl) { $('.menu-item').removeClass('active'); $(triggerEl).addClass('active'); }
-                window.history.pushState({}, '', pushUrl);
-                $('#loadingSpinner').removeClass('show');
-                initializeDropdowns();
-            };
-            const ajaxUrl = url + (url.indexOf('?') === -1 ? '?partial=1' : '&partial=1');
-            $.get(ajaxUrl).done(function(html){
-                if (injectPartial(html)) { onSuccess(url); return; }
-                // Jika kosong, coba ulang tanpa ?partial=1 dan ekstraksi biasa
-                $.get(url).done(function(htmlFull){
-                    const $docFull = $('<div>').append($.parseHTML(htmlFull));
-                    const sels = ['#dynamicContent','#mainContent #dynamicContent','#mainContent .content-card','.content-card','main'];
-                    let found = false;
-                    for (let i=0;i<sels.length;i++){
-                        const $f = $docFull.find(sels[i]).first();
-                        if ($f.length && $.trim($f.html()).length){
+        $(document).ready(function() {
+            // Load partial page content (server-rendered) tanpa reload penuh
+            function loadPartialPage(url, triggerEl) {
+                $('#loadingSpinner').addClass('show');
+                const injectPartial = function (html) {
+                    const $doc = $('<div>').append($.parseHTML(html));
+                    const $wrap = $doc.find('#dynamicContent').first();
+                    const inner = $wrap.length ? $wrap.html() : html;
+                    $('#dynamicContent').empty().html(inner);
+                    const len = $('#dynamicContent').children().length;
+                    if (url.indexOf('/dashboard') !== -1) {
+                        // Dashboard specific logic
+                    }
+                    return len > 0;
+                };
+                const onSuccess = function(pushUrl){
+                    if (triggerEl) { $('.menu-item').removeClass('active'); $(triggerEl).addClass('active'); }
+                    window.history.pushState({}, '', pushUrl);
+                    $('#loadingSpinner').removeClass('show');
+                    initializeDropdowns();
+                };
+                const ajaxUrl = url + (url.indexOf('?') === -1 ? '?partial=1' : '&partial=1');
+                $.get(ajaxUrl).done(function(html){
+                    if (injectPartial(html)) { onSuccess(url); return; }
+                    // Jika kosong, coba ulang tanpa ?partial=1 dan ekstraksi biasa
+                    $.get(url).done(function(htmlFull){
+                        const $docFull = $('<div>').append($.parseHTML(htmlFull));
+                        const sels = ['#dynamicContent','#mainContent #dynamicContent','#mainContent .content-card','.content-card','main'];
+                        let found = false;
+                        for (let i=0;i<sels.length;i++){
+                            const $f = $docFull.find(sels[i]).first();
+                            if ($f.length && $.trim($f.html()).length){
+                                $('#dynamicContent').empty().html($f.html());
+                                found = true; break;
+                            }
+                        }
+                        if (!found && $docFull.find('#dashboardMetrics').length){
+                            const $dash = $docFull.find('#dashboardMetrics').closest('.row');
+                            const $f = $dash.length ? $dash.parent() : $docFull.find('#dashboardMetrics');
                             $('#dynamicContent').empty().html($f.html());
                             found = true; break;
                         }
@@ -823,7 +923,8 @@ if (!empty($_GET['partial'])) {
                     $.get(alt + (alt.indexOf('?') === -1 ? '?partial=1' : '&partial=1')).done(function(html2){
                         if (injectPartial(html2)) { onSuccess(url); return; }
                         if (url.indexOf('/dashboard') !== -1) {
-                                                    }
+                            // Dashboard specific handling
+                        }
                         window.location.href = url; // terakhir
                     }).fail(function(){ window.location.href = url; });
                 } else {
@@ -836,7 +937,8 @@ if (!empty($_GET['partial'])) {
                     $.get(alt + (alt.indexOf('?') === -1 ? '?partial=1' : '&partial=1')).done(function(html2){
                         if (injectPartial(html2)) { onSuccess(url); return; }
                         if (url.indexOf('/dashboard') !== -1) {
-                                                    }
+                            // Dashboard specific handling
+                        }
                         window.location.href = url;
                     }).fail(function(){ window.location.href = url; });
                 } else {
@@ -1274,11 +1376,7 @@ if (!empty($_GET['partial'])) {
             alert('Create member modal - to be implemented');
         }
         
-        // Handle browser back/forward
-        window.addEventListener('popstate', function(e) {
-            if (e.state && e.state.page) {
-                loadPage(e.state.page);
-            }
+        // Note: popstate handled in jQuery ready section above
         });
         
         // Language switching function

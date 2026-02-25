@@ -6,7 +6,7 @@ ob_start();
     <div class="card shadow-sm" id="memberFormCard">
       <div class="card-body" id="memberFormBody">
         <h5 class="card-title mb-4" id="memberFormTitle">Tambah Anggota</h5>
-        <form method="post" action="<?= route_url('members/store') ?>" class="needs-validation" id="memberCreateForm" novalidate>
+        <form method="post" action="<?= route_url('index.php/members/store') ?>" class="needs-validation" id="memberCreateForm" novalidate>
           <div class="mb-3" id="nameField">
             <label class="form-label" for="memberName">Nama</label>
             <input type="text" name="name" class="form-control" id="memberName" required>

@@ -208,7 +208,7 @@ class TenantPerformanceMonitor
 
             // Total outstanding
             $stmt = $db->query("
-                SELECT COALESCE(SUM(outstanding_balance), 0) as total
+                SELECT COALESCE(SUM(amount), 0) as total
                 FROM loans
                 WHERE status IN ('approved', 'disbursed', 'active')
             ");

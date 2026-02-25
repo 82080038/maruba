@@ -50,7 +50,7 @@ class RealTimeDashboardEngine
 
             'total_outstanding' => [
                 'name' => 'Total Outstanding',
-                'query' => 'SELECT COALESCE(SUM(outstanding_balance), 0) as value FROM loans WHERE tenant_id = ? AND status IN ("active", "disbursed")',
+                'query' => 'SELECT COALESCE(SUM(amount), 0) as value FROM loans WHERE tenant_id = ? AND status IN ("active", "disbursed")',
                 'format' => 'currency',
                 'icon' => 'account_balance',
                 'color' => 'orange',
@@ -338,7 +338,7 @@ class RealTimeDashboardEngine
         );
 
         $overdueLoans = $this->executeKPIQuery(
-            'SELECT COUNT(*) as value FROM loans WHERE tenant_id = ? AND status = "active" AND outstanding_balance > 0',
+            'SELECT COUNT(*) as value FROM loans WHERE tenant_id = ? AND status = "active" AND amount > 0',
             $tenantId
         );
 

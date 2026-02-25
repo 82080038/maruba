@@ -74,7 +74,7 @@ class PaymentController
 
         if (empty($type) || !$referenceId || !$memberId || $amount <= 0) {
             $_SESSION['error'] = 'Data pembayaran tidak lengkap.';
-            header('Location: ' . route_url('payments/create') . '?type=' . $type . '&reference_id=' . $referenceId);
+            header('Location: ' . route_url('index.php/payments/create') . '?type=' . $type . '&reference_id=' . $referenceId);
             return;
         }
 
@@ -106,14 +106,14 @@ class PaymentController
 
             // Redirect to payment details or payment gateway
             if ($paymentMethod === 'virtual_account') {
-                header('Location: ' . route_url('payments/show') . '?id=' . $paymentId);
+                header('Location: ' . route_url('index.php/payments/show') . '?id=' . $paymentId);
             } else {
-                header('Location: ' . route_url('payments'));
+                header('Location: ' . route_url('index.php/payments'));
             }
 
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Gagal membuat pembayaran: ' . $e->getMessage();
-            header('Location: ' . route_url('payments/create') . '?type=' . $type . '&reference_id=' . $referenceId);
+            header('Location: ' . route_url('index.php/payments/create') . '?type=' . $type . '&reference_id=' . $referenceId);
         }
     }
 
@@ -192,7 +192,7 @@ class PaymentController
 
         if (!$id) {
             $_SESSION['error'] = 'ID pembayaran diperlukan.';
-            header('Location: ' . route_url('payments'));
+            header('Location: ' . route_url('index.php/payments'));
             return;
         }
 
@@ -213,7 +213,7 @@ class PaymentController
                     $proofPath = $uploadResult['path'];
                 } else {
                     $_SESSION['error'] = 'Gagal upload bukti pembayaran: ' . $uploadResult['error'];
-                    header('Location: ' . route_url('payments/confirm') . '?id=' . $id);
+                    header('Location: ' . route_url('index.php/payments/confirm') . '?id=' . $id);
                     return;
                 }
             }
@@ -253,7 +253,7 @@ class PaymentController
             $_SESSION['error'] = 'Error processing payment: ' . $e->getMessage();
         }
 
-        header('Location: ' . route_url('payments'));
+        header('Location: ' . route_url('index.php/payments'));
     }
 
     // ===== MEMBER PAYMENT METHODS =====
@@ -261,7 +261,7 @@ class PaymentController
     {
         // For member portal - show their payment history
         if (!$this->isMemberLoggedIn()) {
-            header('Location: ' . route_url('member/login'));
+            header('Location: ' . route_url('index.php/member/login'));
         }
 
         $member = $_SESSION['member'];
@@ -276,7 +276,7 @@ class PaymentController
     public function createMemberPayment(): void
     {
         if (!$this->isMemberLoggedIn()) {
-            header('Location: ' . route_url('member/login'));
+            header('Location: ' . route_url('index.php/member/login'));
         }
 
         $type = $_GET['type'] ?? '';

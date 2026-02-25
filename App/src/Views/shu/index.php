@@ -10,7 +10,7 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <a href="<?= route_url('shu/calculate') ?>" class="btn btn-primary">
+                            <a href="<?= route_url('index.php/shu/calculate') ?>" class="btn btn-primary">
                                 <i class="fas fa-calculator"></i> Hitung SHU Baru
                             </a>
                             <button class="btn btn-success ml-2" onclick="exportSHU()">
@@ -151,7 +151,7 @@ function filterByYear() {
 
 function viewSHU(shuId) {
     // Load SHU details via AJAX
-    fetch(`<?= route_url('api/shu') ?>/${shuId}`)
+    fetch(`<?= route_url('index.php/api/shu') ?>/${shuId}`)
         .then(response => response.json())
         .then(data => {
             document.getElementById('shuDetailContent').innerHTML = `
@@ -201,7 +201,7 @@ function viewSHU(shuId) {
 function approveSHU(shuId) {
     if (confirm('Apakah Anda yakin ingin menyetujui perhitungan SHU ini?')) {
         // Implement approval logic
-        fetch(`<?= route_url('api/shu/approve') ?>`, {
+        fetch(`<?= route_url('index.php/api/shu/approve') ?>`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -226,7 +226,7 @@ function approveSHU(shuId) {
 
 function exportSHU() {
     const year = document.getElementById('yearFilter').value;
-    const url = `<?= route_url('shu/export') ?>${year ? '?year=' + year : ''}`;
+    const url = `<?= route_url('index.php/shu/export') ?>${year ? '?year=' + year : ''}`;
     window.open(url, '_blank');
 }
 </script>

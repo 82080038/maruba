@@ -10,7 +10,7 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <a href="<?= route_url('payments/create') ?>" class="btn btn-primary">
+                            <a href="<?= route_url('index.php/payments/create') ?>" class="btn btn-primary">
                                 <i class="fas fa-plus"></i> Pembayaran Baru
                             </a>
                             <button class="btn btn-info ml-2" onclick="refreshStatus()">
@@ -255,7 +255,7 @@ function filterByStatus() {
 
 function refreshStatus() {
     // Refresh payment statuses from gateway
-    fetch('<?= route_url('api/payments/refresh') ?>', {
+    fetch('<?= route_url('index.php/api/payments/refresh') ?>', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -278,7 +278,7 @@ function refreshStatus() {
 
 function viewPayment(paymentId) {
     // Load payment details via AJAX
-    fetch(`<?= route_url('api/payments') ?>/${paymentId}`)
+    fetch(`<?= route_url('index.php/api/payments') ?>/${paymentId}`)
         .then(response => response.json())
         .then(data => {
             let statusBadge = '';
@@ -325,7 +325,7 @@ function viewPayment(paymentId) {
 
 function processPayment(paymentId) {
     if (confirm('Apakah Anda yakin ingin memproses pembayaran ini?')) {
-        fetch(`<?= route_url('api/payments/process') ?>`, {
+        fetch(`<?= route_url('index.php/api/payments/process') ?>`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -351,7 +351,7 @@ function processPayment(paymentId) {
 function cancelPayment(paymentId) {
     const reason = prompt('Masukkan alasan pembatalan:');
     if (reason !== null && reason.trim() !== '') {
-        fetch(`<?= route_url('api/payments/cancel') ?>`, {
+        fetch(`<?= route_url('index.php/api/payments/cancel') ?>`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -377,7 +377,7 @@ function cancelPayment(paymentId) {
 function refundPayment(paymentId) {
     const reason = prompt('Masukkan alasan refund:');
     if (reason !== null && reason.trim() !== '') {
-        fetch(`<?= route_url('api/payments/refund') ?>`, {
+        fetch(`<?= route_url('index.php/api/payments/refund') ?>`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

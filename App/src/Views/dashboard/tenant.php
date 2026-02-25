@@ -128,8 +128,6 @@ ob_start();
     </div>
 </div>
 
-<!-- Load CSS and JS -->
-<link rel="stylesheet" href="<?php echo asset_url('css/dashboard.css'); ?>">
 <script>
 // Tenant-specific dashboard JavaScript
 class TenantDashboardApp {

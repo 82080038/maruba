@@ -20,8 +20,8 @@ class RiskManagement extends Model
 
         // Concentration risk (largest borrower)
         $stmt = $this->db->prepare("
-            SELECT MAX(outstanding_balance) as largest_loan,
-                   (MAX(outstanding_balance) / ?) * 100 as concentration_ratio
+            SELECT MAX(amount) as largest_loan,
+                   (MAX(amount) / ?) * 100 as concentration_ratio
             FROM loans WHERE status IN ('disbursed', 'active')
         ");
         $stmt->execute([$outstandingBalance]);
@@ -30,8 +30,8 @@ class RiskManagement extends Model
         // Geographic concentration
         $stmt = $this->db->prepare("
             SELECT city, COUNT(*) as loan_count,
-                   SUM(outstanding_balance) as total_balance,
-                   (SUM(outstanding_balance) / ?) * 100 as percentage
+                   SUM(amount) as total_balance,
+                   (SUM(amount) / ?) * 100 as percentage
             FROM loans l
             JOIN members m ON l.member_id = m.id
             WHERE l.status IN ('disbursed', 'active')
@@ -45,8 +45,8 @@ class RiskManagement extends Model
         // Sector concentration
         $stmt = $this->db->prepare("
             SELECT m.occupation, COUNT(*) as loan_count,
-                   SUM(l.outstanding_balance) as total_balance,
-                   (SUM(l.outstanding_balance) / ?) * 100 as percentage
+                   SUM(l.amount) as total_balance,
+                   (SUM(l.amount) / ?) * 100 as percentage
             FROM loans l
             JOIN members m ON l.member_id = m.id
             WHERE l.status IN ('disbursed', 'active')

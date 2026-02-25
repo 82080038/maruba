@@ -10,13 +10,13 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-8">
-                            <a href="<?= route_url('accounting/journal/create') ?>" class="btn btn-primary">
+                            <a href="<?= route_url('index.php/accounting/journal/create') ?>" class="btn btn-primary">
                                 <i class="fas fa-plus"></i> Jurnal Baru
                             </a>
-                            <a href="<?= route_url('accounting/chart') ?>" class="btn btn-info ml-2">
+                            <a href="<?= route_url('index.php/accounting/chart') ?>" class="btn btn-info ml-2">
                                 <i class="fas fa-book"></i> Chart of Accounts
                             </a>
-                            <a href="<?= route_url('accounting/reports') ?>" class="btn btn-success ml-2">
+                            <a href="<?= route_url('index.php/accounting/reports') ?>" class="btn btn-success ml-2">
                                 <i class="fas fa-chart-bar"></i> Laporan Keuangan
                             </a>
                         </div>
@@ -190,7 +190,7 @@
 <script>
 function viewJournal(journalId) {
     // Load journal details via AJAX
-    fetch(`<?= route_url('api/accounting/journal') ?>/${journalId}`)
+    fetch(`<?= route_url('index.php/api/accounting/journal') ?>/${journalId}`)
         .then(response => response.json())
         .then(data => {
             let content = `
@@ -275,7 +275,7 @@ function viewJournal(journalId) {
 
 function postJournal(journalId) {
     if (confirm('Apakah Anda yakin ingin memposting jurnal ini? Setelah diposting, jurnal tidak dapat diubah.')) {
-        fetch(`<?= route_url('api/accounting/post') ?>`, {
+        fetch(`<?= route_url('index.php/api/accounting/post') ?>`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -300,7 +300,7 @@ function postJournal(journalId) {
 
 function cancelJournal(journalId) {
     if (confirm('Apakah Anda yakin ingin membatalkan jurnal ini?')) {
-        fetch(`<?= route_url('api/accounting/cancel') ?>`, {
+        fetch(`<?= route_url('index.php/api/accounting/cancel') ?>`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

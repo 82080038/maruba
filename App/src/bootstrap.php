@@ -123,6 +123,15 @@ function current_user() {
     return $_SESSION['user'] ?? null;
 }
 
+function user_role() {
+    $user = current_user();
+    return $user['role'] ?? null;
+}
+
+function legacy_route_url($route = '') {
+    return BASE_URL . '/' . ltrim($route, '/');
+}
+
 function require_login() {
     if (!current_user()) {
         header('Location: ' . route_url('auth/login'));

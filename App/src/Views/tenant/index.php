@@ -7,7 +7,7 @@
                 <div class="card-header">
                     <h4 class="card-title mb-0">Tenant Management</h4>
                     <div class="card-tools">
-                        <a href="<?= route_url('tenant/create') ?>" class="btn btn-primary">
+                        <a href="<?= route_url('index.php/tenant/create') ?>" class="btn btn-primary">
                             <i class="fas fa-plus"></i> Add Tenant
                         </a>
                     </div>

@@ -11,7 +11,7 @@ ob_start();
         <p><strong>Pinjaman:</strong> <span class="currency text-end d-inline-block"><?= format_currency($loan['amount']) ?></span></p>
         <p><strong>Tenor:</strong> <?= $loan['tenor_months'] ?> bulan</p>
         <hr>
-        <form method="post" action="<?= route_url('disbursement/store') ?>" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <form method="post" action="<?= route_url('index.php/disbursement/store') ?>" enctype="multipart/form-data" class="needs-validation" novalidate>
           <input type="hidden" name="loan_id" value="<?= $loan['id'] ?>">
           <div class="mb-3">
             <label class="form-label">Tanggal Pencairan</label>

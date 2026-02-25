@@ -10,7 +10,7 @@
                         <form method="get" class="d-inline-flex">
                             <input type="date" name="date" class="form-control form-control-sm" value="<?= htmlspecialchars($date ?? date('Y-m-d')) ?>" required>
                             <button type="submit" class="btn btn-primary btn-sm ml-2">Filter</button>
-                            <a href="<?= route_url('accounting/balance_sheet/export') ?>?date=<?= $date ?>" class="btn btn-success btn-sm ml-2">Export PDF</a>
+                            <a href="<?= route_url('index.php/accounting/balance_sheet/export') ?>?date=<?= $date ?>" class="btn btn-success btn-sm ml-2">Export PDF</a>
                         </form>
                     </div>
                 </div>

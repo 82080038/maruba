@@ -4,7 +4,7 @@ ob_start();
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h6 class="mb-0">Survei</h6>
   <?php if (\App\Helpers\AuthHelper::can('surveys', 'create')): ?>
-    <a href="<?= route_url('surveys/create') ?>" class="btn btn-primary">+ Tambah Survei</a>
+    <a href="<?= route_url('index.php/surveys/create') ?>" class="btn btn-primary">+ Tambah Survei</a>
   <?php endif; ?>
 </div>
 

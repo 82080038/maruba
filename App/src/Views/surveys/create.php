@@ -6,7 +6,7 @@ ob_start();
     <div class="card shadow-sm">
       <div class="card-body">
         <h5 class="card-title mb-4">Tambah Survei</h5>
-        <form method="post" action="<?= route_url('surveys/store') ?>" class="needs-validation" novalidate>
+        <form method="post" action="<?= route_url('index.php/surveys/store') ?>" class="needs-validation" novalidate>
           <div class="mb-3">
             <label class="form-label">Pinjaman (status draft/survey)</label>
             <select name="loan_id" class="form-select" required>

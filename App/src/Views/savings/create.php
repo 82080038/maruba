@@ -8,7 +8,7 @@
                     <h4 class="card-title mb-0">Buka Rekening Simpanan Baru</h4>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="<?= route_url('savings/store') ?>">
+                    <form method="POST" action="<?= route_url('index.php/savings/store') ?>">
                         <?= csrf_field() ?>
 
                         <div class="row">
@@ -66,7 +66,7 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save"></i> Buat Rekening
                             </button>
-                            <a href="<?= route_url('savings') ?>" class="btn btn-secondary ml-2">
+                            <a href="<?= route_url('index.php/savings') ?>" class="btn btn-secondary ml-2">
                                 <i class="fas fa-arrow-left"></i> Kembali
                             </a>
                         </div>

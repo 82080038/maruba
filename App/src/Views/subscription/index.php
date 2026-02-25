@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function loadSubscriptionInfo() {
-    fetch('<?= route_url('api/subscription/current') ?>')
+    fetch('<?= route_url('index.php/api/subscription/current') ?>')
         .then(response => response.json())
         .then(data => {
             document.getElementById('currentPlan').textContent = data.plan_name;
@@ -164,7 +164,7 @@ function loadSubscriptionInfo() {
 }
 
 function loadAvailablePlans() {
-    fetch('<?= route_url('api/subscription/plans') ?>')
+    fetch('<?= route_url('index.php/api/subscription/plans') ?>')
         .then(response => response.json())
         .then(data => {
             const container = document.getElementById('plansContainer');
@@ -203,7 +203,7 @@ function loadAvailablePlans() {
 }
 
 function loadBillingHistory() {
-    fetch('<?= route_url('api/subscription/billing') ?>')
+    fetch('<?= route_url('index.php/api/subscription/billing') ?>')
         .then(response => response.json())
         .then(data => {
             const container = document.getElementById('billingHistory');
@@ -230,7 +230,7 @@ function loadBillingHistory() {
 }
 
 function loadUsageStatistics() {
-    fetch('<?= route_url('api/subscription/usage') ?>')
+    fetch('<?= route_url('index.php/api/subscription/usage') ?>')
         .then(response => response.json())
         .then(data => {
             // Update usage bars
@@ -256,7 +256,7 @@ function loadUsageStatistics() {
 }
 
 function upgradeToPlan(planName) {
-    fetch(`<?= route_url('api/subscription/plans') ?>/${planName}`)
+    fetch(`<?= route_url('index.php/api/subscription/plans') ?>/${planName}`)
         .then(response => response.json())
         .then(plan => {
             document.getElementById('upgradeModalBody').innerHTML = `
@@ -292,7 +292,7 @@ function upgradeToPlan(planName) {
                     <small>Upgrade akan berlaku mulai billing period berikutnya</small>
                 </div>
 
-                <form method="POST" action="<?= route_url('subscription/upgrade') ?>">
+                <form method="POST" action="<?= route_url('index.php/subscription/upgrade') ?>">
                     <input type="hidden" name="plan_name" value="${plan.name}">
                     <div class="text-center">
                         <button type="button" class="btn btn-secondary mr-2" data-dismiss="modal">Batal</button>

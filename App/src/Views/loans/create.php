@@ -6,7 +6,7 @@ ob_start();
     <div class="card shadow-sm">
       <div class="card-body">
         <h5 class="card-title mb-4">Pengajuan Pinjaman</h5>
-        <form id="loanCreateForm" method="post" action="<?= route_url('loans/store') ?>" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <form id="loanCreateForm" method="post" action="<?= route_url('index.php/loans/store') ?>" enctype="multipart/form-data" class="needs-validation" novalidate>
           <?= csrf_field(); ?>
           <div class="mb-3">
             <label class="form-label">Anggota/Nasabah</label>

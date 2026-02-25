@@ -142,7 +142,7 @@ class SHU extends Model
     private function getMemberLoanWeight(int $memberId, int $year): float
     {
         $stmt = $this->db->prepare("
-            SELECT SUM(outstanding_balance) as total_outstanding
+            SELECT SUM(amount) as total_outstanding
             FROM loans
             WHERE member_id = ? AND status IN ('active', 'disbursed')
             AND YEAR(application_date) <= ?

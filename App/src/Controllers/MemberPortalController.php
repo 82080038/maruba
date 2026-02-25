@@ -359,7 +359,7 @@ class MemberPortalController
                 'tenor_months' => $tenor,
                 'monthly_installment' => $monthlyInstallment,
                 'total_amount' => $totalAmount,
-                'outstanding_balance' => $totalAmount,
+                'amount' => $totalAmount,
                 'purpose' => $purpose,
                 'status' => 'draft',
                 'application_date' => date('Y-m-d')

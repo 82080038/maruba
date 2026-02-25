@@ -156,7 +156,7 @@ class DashboardController
         $tenantParam = $tenantId ? [$tenantId] : [];
 
         // Cash flow hari ini
-        $stmt = $pdo->prepare("SELECT COALESCE(SUM(amount),0) AS total FROM repayments WHERE DATE(paid_date) = CURDATE() $tenantFilter");
+        $stmt = $pdo->prepare("SELECT COALESCE(SUM(amount_paid),0) AS total FROM repayments WHERE DATE(paid_date) = CURDATE() $tenantFilter");
         $stmt->execute($tenantParam);
         $cashToday = (float)$stmt->fetch()['total'];
 
@@ -181,7 +181,7 @@ class DashboardController
         ];
 
         // Recent transactions
-        $stmt = $pdo->prepare("SELECT r.*, m.name as member_name, l.amount as loan_amount FROM repayments r LEFT JOIN members m ON r.member_id = m.id LEFT JOIN loans l ON r.loan_id = l.id WHERE r.paid_date IS NOT NULL $tenantFilter ORDER BY r.paid_date DESC LIMIT 5");
+        $stmt = $pdo->prepare("SELECT r.*, m.name as member_name, l.amount as loan_amount FROM repayments r LEFT JOIN loans l ON r.loan_id = l.id LEFT JOIN members m ON l.member_id = m.id WHERE r.paid_date IS NOT NULL $tenantFilter ORDER BY r.paid_date DESC LIMIT 5");
         $stmt->execute($tenantParam);
         $recentTransactions = $stmt->fetchAll();
 
@@ -209,12 +209,10 @@ class DashboardController
         $stmt->execute($tenantParam);
         $registrationsToday = (int)$stmt->fetch()['cnt'];
 
-        // Deposit/withdrawal trends
-        $stmt = $pdo->prepare("SELECT COALESCE(SUM(CASE WHEN type = 'deposit' THEN amount ELSE 0 END),0) AS deposits, COALESCE(SUM(CASE WHEN type = 'withdraw' THEN amount ELSE 0 END),0) AS withdrawals FROM savings_transactions WHERE DATE(created_at) = CURDATE() $tenantFilter");
-        $stmt->execute($tenantParam);
-        $trends = $stmt->fetch();
-        $depositsToday = (float)$trends['deposits'];
-        $withdrawalsToday = (float)$trends['withdrawals'];
+        // Deposit/withdrawal trends (using available data)
+        $depositsToday = 0;
+        $withdrawalsToday = 0;
+        // TODO: Implement when savings_transactions table is available
 
         // Service queue status (simulated)
         $queueStatus = '3 customers waiting';

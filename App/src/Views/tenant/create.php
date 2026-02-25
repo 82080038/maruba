@@ -8,7 +8,7 @@
                     <h4 class="card-title mb-0">Create New Tenant</h4>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="<?= route_url('tenant/store') ?>">
+                    <form method="POST" action="<?= route_url('index.php/tenant/store') ?>">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -50,7 +50,7 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save"></i> Create Tenant
                             </button>
-                            <a href="<?= route_url('tenant') ?>" class="btn btn-secondary">
+                            <a href="<?= route_url('index.php/tenant') ?>" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i> Back
                             </a>
                         </div>

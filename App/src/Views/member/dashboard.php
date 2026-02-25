@@ -116,11 +116,11 @@ ob_start();
                             <i class="bi bi-person-circle me-1"></i><?php echo htmlspecialchars($member['name']); ?>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="<?php echo route_url('member/profile'); ?>">
+                            <li><a class="dropdown-item" href="<?php echo route_url('index.php/member/profile'); ?>">
                                 <i class="bi bi-person me-2"></i>Profil
                             </a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="<?php echo route_url('member/logout'); ?>">
+                            <li><a class="dropdown-item" href="<?php echo route_url('index.php/member/logout'); ?>">
                                 <i class="bi bi-box-arrow-right me-2"></i>Keluar
                             </a></li>
                         </ul>
@@ -136,16 +136,16 @@ ob_start();
             <div class="col-md-3 col-lg-2 px-0">
                 <div class="sidebar p-3">
                     <nav class="nav flex-column">
-                        <a class="nav-link active" href="<?php echo route_url('member/dashboard'); ?>">
+                        <a class="nav-link active" href="<?php echo route_url('index.php/member/dashboard'); ?>">
                             <i class="bi bi-house"></i> Dashboard
                         </a>
-                        <a class="nav-link" href="<?php echo route_url('member/loans'); ?>">
+                        <a class="nav-link" href="<?php echo route_url('index.php/member/loans'); ?>">
                             <i class="bi bi-cash-stack"></i> Pinjaman Saya
                         </a>
-                        <a class="nav-link" href="<?php echo route_url('member/repayments'); ?>">
+                        <a class="nav-link" href="<?php echo route_url('index.php/member/repayments'); ?>">
                             <i class="bi bi-receipt"></i> Pembayaran
                         </a>
-                        <a class="nav-link" href="<?php echo route_url('member/profile'); ?>">
+                        <a class="nav-link" href="<?php echo route_url('index.php/member/profile'); ?>">
                             <i class="bi bi-person"></i> Profil
                         </a>
                     </nav>
@@ -198,7 +198,7 @@ ob_start();
                         <div class="dashboard-card p-4">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="mb-0">Pinjaman Terbaru</h5>
-                                <a href="<?php echo route_url('member/loans'); ?>" class="btn btn-outline-primary btn-sm">
+                                <a href="<?php echo route_url('index.php/member/loans'); ?>" class="btn btn-outline-primary btn-sm">
                                     Lihat Semua
                                 </a>
                             </div>
@@ -227,7 +227,7 @@ ob_start();
                                                     </td>
                                                     <td><?php echo date('d/m/Y', strtotime($loan['created_at'])); ?></td>
                                                     <td>
-                                                        <a href="<?php echo route_url('member/loan-detail') . '?id=' . $loan['id']; ?>"
+                                                        <a href="<?php echo route_url('index.php/member/loan-detail') . '?id=' . $loan['id']; ?>"
                                                            class="btn btn-sm btn-outline-primary">
                                                             Detail
                                                         </a>

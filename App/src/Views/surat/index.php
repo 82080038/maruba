@@ -19,7 +19,7 @@ ob_start();
           </div>
         </div>
         <p class="card-text small">Surat lamaran kerja untuk calon karyawan KSP Lam Gabe Jaya dengan kelengkapan dokumen yang diperlukan.</p>
-        <a href="<?= route_url('surat/lamaran-kerja') ?>" class="btn btn-primary btn-sm">
+        <a href="<?= route_url('index.php/surat/lamaran-kerja') ?>" class="btn btn-primary btn-sm">
           <i class="bi bi-download"></i> Unduh PDF
         </a>
       </div>
@@ -39,7 +39,7 @@ ob_start();
           </div>
         </div>
         <p class="card-text small">Surat permohonan menjadi anggota koperasi beserta persyaratan dan kewajiban anggota.</p>
-        <a href="<?= route_url('surat/permohonan-anggota') ?>" class="btn btn-success btn-sm">
+        <a href="<?= route_url('index.php/surat/permohonan-anggota') ?>" class="btn btn-success btn-sm">
           <i class="bi bi-download"></i> Unduh PDF
         </a>
       </div>
@@ -59,7 +59,7 @@ ob_start();
           </div>
         </div>
         <p class="card-text small">Format daftar sah anggota koperasi yang dapat digunakan untuk administrasi internal.</p>
-        <a href="<?= route_url('surat/daftar-sah') ?>" class="btn btn-info btn-sm">
+        <a href="<?= route_url('index.php/surat/daftar-sah') ?>" class="btn btn-info btn-sm">
           <i class="bi bi-download"></i> Unduh PDF
         </a>
       </div>
@@ -79,7 +79,7 @@ ob_start();
           </div>
         </div>
         <p class="card-text small">Surat permohonan pinjaman dana dengan kelengkapan dokumen dan persyaratan yang diperlukan.</p>
-        <a href="<?= route_url('surat/permohonan-pinjaman') ?>" class="btn btn-warning btn-sm">
+        <a href="<?= route_url('index.php/surat/permohonan-pinjaman') ?>" class="btn btn-warning btn-sm">
           <i class="bi bi-download"></i> Unduh PDF
         </a>
       </div>
@@ -99,7 +99,7 @@ ob_start();
           </div>
         </div>
         <p class="card-text small">Surat kesepakatan bersama (SKB) antara nasabah dan koperasi untuk perjanjian pinjaman.</p>
-        <a href="<?= route_url('surat/skb') ?>" class="btn btn-danger btn-sm">
+        <a href="<?= route_url('index.php/surat/skb') ?>" class="btn btn-danger btn-sm">
           <i class="bi bi-download"></i> Unduh PDF
         </a>
       </div>

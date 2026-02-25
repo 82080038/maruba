@@ -242,7 +242,7 @@ class MobileApiController
                     'loan_number' => $loan['loan_number'],
                     'product_name' => $loan['product_name'] ?? 'Pinjaman',
                     'principal_amount' => $loan['principal_amount'],
-                    'outstanding_balance' => $loan['outstanding_balance'],
+                    'amount' => $loan['amount'],
                     'monthly_installment' => $loan['monthly_installment'],
                     'next_payment_date' => $this->getNextPaymentDate($loan['id']),
                     'status' => $this->formatLoanStatusForMobile($loan['status']),
@@ -669,7 +669,7 @@ class MobileApiController
     private function calculateLoanProgress(array $loan): int
     {
         $principal = $loan['principal_amount'] ?? 0;
-        $outstanding = $loan['outstanding_balance'] ?? 0;
+        $outstanding = $loan['amount'] ?? 0;
 
         if ($principal <= 0) return 0;
 

@@ -10,10 +10,10 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <a href="<?= route_url('savings/create') ?>" class="btn btn-primary">
+                            <a href="<?= route_url('index.php/savings/create') ?>" class="btn btn-primary">
                                 <i class="fas fa-plus"></i> Buka Rekening Baru
                             </a>
-                            <a href="<?= route_url('savings/accounts') ?>" class="btn btn-info ml-2">
+                            <a href="<?= route_url('index.php/savings/accounts') ?>" class="btn btn-info ml-2">
                                 <i class="fas fa-list"></i> Lihat Semua Rekening
                             </a>
                         </div>
@@ -107,7 +107,7 @@
                     <span>&times;</span>
                 </button>
             </div>
-            <form method="POST" action="<?= route_url('savings/deposit') ?>">
+            <form method="POST" action="<?= route_url('index.php/savings/deposit') ?>">
                 <?= csrf_field() ?>
                 <div class="modal-body">
                     <input type="hidden" name="account_id" id="depositAccountId">
@@ -143,7 +143,7 @@
                     <span>&times;</span>
                 </button>
             </div>
-            <form method="POST" action="<?= route_url('savings/withdraw') ?>">
+            <form method="POST" action="<?= route_url('index.php/savings/withdraw') ?>">
                 <?= csrf_field() ?>
                 <div class="modal-body">
                     <input type="hidden" name="account_id" id="withdrawAccountId">
@@ -190,7 +190,7 @@ function withdrawModal(accountId, accountNumber, balance) {
 
 function viewAccount(accountId) {
     // Implement account details view
-    window.location.href = '<?= route_url('savings/accounts') ?>?view=' + accountId;
+    window.location.href = '<?= route_url('index.php/savings/accounts') ?>?view=' + accountId;
 }
 </script>
 

@@ -50,7 +50,7 @@ class AutoDebitController
         $stmt = $this->db->prepare("
             SELECT ads.*,
                    l.amount as loan_amount,
-                   l.outstanding_balance,
+                   l.amount,
                    m.name as member_name,
                    m.phone as member_phone,
                    COUNT(adt.id) as total_transactions,
@@ -61,7 +61,7 @@ class AutoDebitController
             JOIN members m ON ads.member_id = m.id
             LEFT JOIN auto_debit_transactions adt ON ads.id = adt.auto_debit_id
             WHERE ads.tenant_id = ?
-            GROUP BY ads.id, l.amount, l.outstanding_balance, m.name, m.phone
+            GROUP BY ads.id, l.amount, l.amount, m.name, m.phone
             ORDER BY ads.next_debit_date ASC, ads.created_at DESC
         ");
         $stmt->execute([$tenantId]);
@@ -91,7 +91,7 @@ class AutoDebitController
 
         // Get eligible loans (disbursed, not fully paid, active members)
         $stmt = $this->db->prepare("
-            SELECT l.id, l.amount, l.outstanding_balance, l.status,
+            SELECT l.id, l.amount, l.amount, l.status,
                    m.name as member_name, m.phone as member_phone,
                    p.name as product_name
             FROM loans l
@@ -99,7 +99,7 @@ class AutoDebitController
             JOIN products p ON l.product_id = p.id
             WHERE l.tenant_id = ?
                 AND l.status = 'disbursed'
-                AND l.outstanding_balance > 0
+                AND l.amount > 0
                 AND m.status = 'active'
                 AND NOT EXISTS (
                     SELECT 1 FROM auto_debit_schedules ads
@@ -144,11 +144,11 @@ class AutoDebitController
                 throw new \Exception('Pinjaman tidak ditemukan');
             }
 
-            if ($loan['outstanding_balance'] <= 0) {
+            if ($loan['amount'] <= 0) {
                 throw new \Exception('Pinjaman sudah lunas');
             }
 
-            if ($debitAmount <= 0 || $debitAmount > $loan['outstanding_balance']) {
+            if ($debitAmount <= 0 || $debitAmount > $loan['amount']) {
                 throw new \Exception('Jumlah debit tidak valid');
             }
 
@@ -315,7 +315,7 @@ class AutoDebitController
 
             // Get pending auto debits due today
             $stmt = $this->db->prepare("
-                SELECT ads.*, l.outstanding_balance, m.name as member_name
+                SELECT ads.*, l.amount, m.name as member_name
                 FROM auto_debit_schedules ads
                 JOIN loans l ON ads.loan_id = l.id
                 JOIN members m ON ads.member_id = m.id
@@ -323,7 +323,7 @@ class AutoDebitController
                     AND ads.is_active = 1
                     AND ads.next_debit_date <= ?
                     AND ads.failure_count < ads.max_failures
-                    AND l.outstanding_balance > 0
+                    AND l.amount > 0
                     AND l.status = 'disbursed'
             ");
             $stmt->execute([$tenantId, $today]);
@@ -362,7 +362,7 @@ class AutoDebitController
             // Start transaction
             $this->db->beginTransaction();
 
-            $debitAmount = min($debit['debit_amount'], $debit['outstanding_balance']);
+            $debitAmount = min($debit['debit_amount'], $debit['amount']);
 
             // Create auto debit transaction record
             $stmt = $this->db->prepare("
@@ -394,7 +394,7 @@ class AutoDebitController
                 // Update loan outstanding balance
                 $stmt = $this->db->prepare("
                     UPDATE loans
-                    SET outstanding_balance = outstanding_balance - ?, updated_at = NOW()
+                    SET amount = amount - ?, updated_at = NOW()
                     WHERE id = ?
                 ");
                 $stmt->execute([$debitAmount, $debit['loan_id']]);

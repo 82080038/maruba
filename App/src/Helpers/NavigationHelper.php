@@ -7,85 +7,133 @@ namespace App\Helpers;
  */
 function generate_navigation_menu(): string
 {
-    $currentTenant = get_current_tenant();
     $user = \current_user();
-
+    
     if (!$user) {
         return '';
     }
-
-    // Get user permissions
-    $userPermissions = get_user_permissions($user);
-
-    // Get navigation menu
-    $navigationModel = new \App\Models\Navigation();
-    $menuItems = $navigationModel->getUserMenu(
-        $currentTenant ? $currentTenant['id'] : null,
-        $user['role'] ?? 'user',
-        $userPermissions
-    );
-
-    return build_navigation_html($menuItems);
+    
+    $userRole = $user['role'] ?? 'user';
+    
+    // Static menu based on role
+    $menus = get_static_menu_for_role($userRole);
+    
+    return build_navigation_html($menus);
 }
 
 /**
- * Build navigation HTML from menu items
+ * Get static menu configuration for role
+ */
+function get_static_menu_for_role(string $role): array
+{
+    $baseMenus = [
+        [
+            'title' => 'Dashboard',
+            'icon' => 'bi-speedometer2',
+            'route' => 'dashboard',
+            'active' => true
+        ]
+    ];
+    
+    $roleMenus = [];
+    
+    switch ($role) {
+        case 'admin':
+        case 'creator':
+            $roleMenus = [
+                ['title' => 'Users', 'icon' => 'bi-people', 'route' => 'users'],
+                ['title' => 'Roles', 'icon' => 'bi-shield-lock', 'route' => 'roles'],
+                ['title' => 'Members', 'icon' => 'bi-person-badge', 'route' => 'members'],
+                ['title' => 'Products', 'icon' => 'bi-box', 'route' => 'products'],
+                ['title' => 'Loans', 'icon' => 'bi-bank', 'route' => 'loans'],
+                ['title' => 'Surveys', 'icon' => 'bi-clipboard-check', 'route' => 'surveys'],
+                ['title' => 'Repayments', 'icon' => 'bi-cash-stack', 'route' => 'repayments'],
+                ['title' => 'Reports', 'icon' => 'bi-graph-up', 'route' => 'reports'],
+                ['title' => 'Audit Logs', 'icon' => 'bi-journal-text', 'route' => 'audit-logs'],
+                ['title' => 'System', 'icon' => 'bi-gear', 'route' => 'system']
+            ];
+            break;
+            
+        case 'manajer':
+            $roleMenus = [
+                ['title' => 'Members', 'icon' => 'bi-person-badge', 'route' => 'members'],
+                ['title' => 'Loans', 'icon' => 'bi-bank', 'route' => 'loans'],
+                ['title' => 'Products', 'icon' => 'bi-box', 'route' => 'products'],
+                ['title' => 'Reports', 'icon' => 'bi-graph-up', 'route' => 'reports']
+            ];
+            break;
+            
+        case 'kasir':
+            $roleMenus = [
+                ['title' => 'Cash', 'icon' => 'bi-cash', 'route' => 'cash'],
+                ['title' => 'Transactions', 'icon' => 'bi-arrow-left-right', 'route' => 'transactions'],
+                ['title' => 'Repayments', 'icon' => 'bi-cash-stack', 'route' => 'repayments'],
+                ['title' => 'Reports', 'icon' => 'bi-graph-up', 'route' => 'reports']
+            ];
+            break;
+            
+        case 'teller':
+            $roleMenus = [
+                ['title' => 'Savings', 'icon' => 'bi-piggy-bank', 'route' => 'savings'],
+                ['title' => 'Transactions', 'icon' => 'bi-arrow-left-right', 'route' => 'transactions'],
+                ['title' => 'Members', 'icon' => 'bi-person-badge', 'route' => 'members']
+            ];
+            break;
+            
+        case 'surveyor':
+            $roleMenus = [
+                ['title' => 'Surveys', 'icon' => 'bi-clipboard-check', 'route' => 'surveys'],
+                ['title' => 'Members', 'icon' => 'bi-person-badge', 'route' => 'members'],
+                ['title' => 'Reports', 'icon' => 'bi-graph-up', 'route' => 'reports']
+            ];
+            break;
+            
+        case 'collector':
+            $roleMenus = [
+                ['title' => 'Collections', 'icon' => 'bi-cash-stack', 'route' => 'collections'],
+                ['title' => 'Repayments', 'icon' => 'bi-cash-stack', 'route' => 'repayments'],
+                ['title' => 'Members', 'icon' => 'bi-person-badge', 'route' => 'members']
+            ];
+            break;
+            
+        case 'akuntansi':
+            $roleMenus = [
+                ['title' => 'Transactions', 'icon' => 'bi-arrow-left-right', 'route' => 'transactions'],
+                ['title' => 'Reports', 'icon' => 'bi-graph-up', 'route' => 'reports'],
+                ['title' => 'Audit Logs', 'icon' => 'bi-journal-text', 'route' => 'audit-logs']
+            ];
+            break;
+    }
+    
+    return array_merge($baseMenus, $roleMenus);
+}
+
+/**
+ * Build navigation HTML
  */
 function build_navigation_html(array $menuItems): string
 {
-    $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
-    $html = '';
-
-    // Group items by section
-    $sections = [];
+    $html = '<ul class="nav-menu">';
+    
     foreach ($menuItems as $item) {
-        $section = $item['custom_data']['section'] ?? 'other';
-        if (!isset($sections[$section])) {
-            $sections[$section] = [];
-        }
-        $sections[$section][] = $item;
+        $activeClass = ($item['active'] ?? false) ? 'active' : '';
+        $html .= sprintf(
+            '<li class="menu-item %s">
+                <a href="%s" class="menu-link" data-page="%s" data-href="%s">
+                    <i class="bi %s menu-icon"></i>
+                    <span class="menu-text">%s</span>
+                </a>
+            </li>',
+            htmlspecialchars($activeClass),
+            route_url('index.php/' . $item['route']),
+            htmlspecialchars($item['route']),
+            route_url('index.php/' . $item['route']),
+            htmlspecialchars($item['icon']),
+            htmlspecialchars($item['title'])
+        );
     }
-
-    // Define section titles and order
-    $sectionConfig = [
-        'main' => ['title' => 'Utama', 'order' => 1],
-        'transactions' => ['title' => 'Transaksi', 'order' => 2],
-        'master_data' => ['title' => 'Data Master', 'order' => 3],
-        'reports' => ['title' => 'Laporan', 'order' => 4],
-        'system' => ['title' => 'Sistem', 'order' => 5],
-        'other' => ['title' => 'Lainnya', 'order' => 6]
-    ];
-
-    // Sort sections by order
-    uasort($sections, function($a, $b) use ($sectionConfig) {
-        $orderA = $sectionConfig[array_key_first($a)]['order'] ?? 99;
-        $orderB = $sectionConfig[array_key_first($b)]['order'] ?? 99;
-        return $orderA <=> $orderB;
-    });
-
-    // Build HTML for each section
-    foreach ($sections as $sectionKey => $items) {
-        if (empty($items)) continue;
-
-        $sectionTitle = $sectionConfig[$sectionKey]['title'] ?? ucfirst($sectionKey);
-        $html .= "<div class='menu-section'>\n";
-        $html .= "<div class='menu-section-title'>{$sectionTitle}</div>\n";
-
-        foreach ($items as $item) {
-            $isActive = is_menu_item_active($item, $currentPath);
-            $activeClass = $isActive ? 'active' : '';
-            $route = htmlspecialchars($item['route'] ?? '#');
-            $title = htmlspecialchars($item['title']);
-            $icon = htmlspecialchars($item['icon'] ?? 'bi bi-circle');
-
-            $html .= "<a href='{$route}' class='menu-item {$activeClass}'>\n";
-            $html .= "<i class='{$icon}'></i> {$title}\n";
-            $html .= "</a>\n";
-        }
-
-        $html .= "</div>\n";
-    }
-
+    
+    $html .= '</ul>';
     return $html;
 }
 

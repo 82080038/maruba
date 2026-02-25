@@ -11,7 +11,7 @@
                             <input type="date" name="start_date" class="form-control form-control-sm" value="<?= htmlspecialchars($startDate ?? date('Y-m-01')) ?>" required>
                             <input type="date" name="end_date" class="form-control form-control-sm ml-2" value="<?= htmlspecialchars($endDate ?? date('Y-m-d')) ?>" required>
                             <button type="submit" class="btn btn-primary btn-sm ml-2">Filter</button>
-                            <a href="<?= route_url('accounting/cash_flow/export') ?>?start_date=<?= $startDate ?>&end_date=<?= $endDate ?>" class="btn btn-success btn-sm ml-2">Export PDF</a>
+                            <a href="<?= route_url('index.php/accounting/cash_flow/export') ?>?start_date=<?= $startDate ?>&end_date=<?= $endDate ?>" class="btn btn-success btn-sm ml-2">Export PDF</a>
                         </form>
                     </div>
                 </div>

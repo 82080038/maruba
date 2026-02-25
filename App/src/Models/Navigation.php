@@ -22,12 +22,12 @@ class Navigation extends Model
     /**
      * Get navigation menu for user based on tenant and role
      */
-    public function getUserMenu(int $tenantId, string $userRole, array $userPermissions = []): array
+    public function getUserMenu(?int $tenantId, string $userRole, array $userPermissions = []): array
     {
         $menus = $this->findWhere([
             'tenant_id' => $tenantId,
             'is_active' => true
-        ], ['order' => 'ASC']);
+        ], ['`order`' => 'ASC']);
 
         $filteredMenus = [];
         foreach ($menus as $menu) {

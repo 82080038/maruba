@@ -13,7 +13,7 @@
                         <a href="<?= route_url('tenant/billing/' . $tenant['id']) ?>" class="btn btn-success">
                             <i class="fas fa-file-invoice"></i> Billing
                         </a>
-                        <a href="<?= route_url('tenant') ?>" class="btn btn-secondary">
+                        <a href="<?= route_url('index.php/tenant') ?>" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> Back
                         </a>
                     </div>

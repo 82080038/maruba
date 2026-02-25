@@ -31,7 +31,7 @@ class DisbursementController
         $loanId = (int)($_GET['loan_id'] ?? 0);
         if (!$loanId) {
             $_SESSION['error'] = 'Pinjaman tidak dipilih.';
-            header('Location: ' . route_url('disbursement'));
+            header('Location: ' . route_url('index.php/disbursement'));
             return;
         }
         $pdo = \App\Database::getConnection();
@@ -46,7 +46,7 @@ class DisbursementController
         $loan = $stmt->fetch();
         if (!$loan) {
             $_SESSION['error'] = 'Pinjaman tidak ditemukan atau status tidak sesuai.';
-            header('Location: ' . route_url('disbursement'));
+            header('Location: ' . route_url('index.php/disbursement'));
             return;
         }
         include view_path('disbursement/create');
@@ -88,7 +88,7 @@ class DisbursementController
             $stmt->execute([current_user()['id'], 'disburse', 'loan', $loanId, json_encode(['disbursed_at'=>$disbursedAt])]);
             $pdo->commit();
             $_SESSION['success'] = 'Pencairan berhasil dicatat.';
-            header('Location: ' . route_url('disbursement'));
+            header('Location: ' . route_url('index.php/disbursement'));
         } catch (\Exception $e) {
             $pdo->rollBack();
             $_SESSION['error'] = 'Gagal menyimpan: ' . $e->getMessage();

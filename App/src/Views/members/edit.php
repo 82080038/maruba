@@ -7,7 +7,7 @@
                 <div class="card-header">
                     <h4 class="card-title mb-0">Edit Anggota</h4>
                     <div class="card-tools">
-                        <a href="<?= route_url('members') ?>" class="btn btn-secondary">
+                        <a href="<?= route_url('index.php/members') ?>" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> Kembali
                         </a>
                     </div>
@@ -19,7 +19,7 @@
                         </div>
                     <?php endif; ?>
                     
-                    <form method="post" action="<?= route_url('members/update') ?>" class="needs-validation" novalidate>
+                    <form method="post" action="<?= route_url('index.php/members/update') ?>" class="needs-validation" novalidate>
                         <input type="hidden" name="id" value="<?= htmlspecialchars($member['id']) ?>">
                         <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                         
@@ -168,7 +168,7 @@
                                     <button type="submit" class="btn btn-primary">
                                         <i class="fas fa-save"></i> Simpan Perubahan
                                     </button>
-                                    <a href="<?= route_url('members') ?>" class="btn btn-secondary">
+                                    <a href="<?= route_url('index.php/members') ?>" class="btn btn-secondary">
                                         <i class="fas fa-times"></i> Batal
                                     </a>
                                 </div>

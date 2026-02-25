@@ -10,10 +10,10 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <a href="<?= route_url('payroll/employees/create') ?>" class="btn btn-primary">
+                            <a href="<?= route_url('index.php/payroll/employees/create') ?>" class="btn btn-primary">
                                 <i class="fas fa-user-plus"></i> Tambah Karyawan
                             </a>
-                            <a href="<?= route_url('payroll/process') ?>" class="btn btn-success ml-2">
+                            <a href="<?= route_url('index.php/payroll/process') ?>" class="btn btn-success ml-2">
                                 <i class="fas fa-calculator"></i> Proses Payroll
                             </a>
                         </div>
@@ -143,7 +143,7 @@ function loadEmployees(page = 1, status = '') {
     currentPage = page;
     currentStatus = status;
 
-    fetch(`<?= route_url('api/payroll/employees') ?>?page=${page}&status=${status}`)
+    fetch(`<?= route_url('index.php/api/payroll/employees') ?>?page=${page}&status=${status}`)
         .then(response => response.json())
         .then(data => {
             updateEmployeeTable(data.employees);
@@ -261,7 +261,7 @@ function filterByStatus() {
 
 function viewEmployee(employeeId) {
     // Load employee details via AJAX
-    fetch(`<?= route_url('api/payroll/employees') ?>/${employeeId}`)
+    fetch(`<?= route_url('index.php/api/payroll/employees') ?>/${employeeId}`)
         .then(response => response.json())
         .then(data => {
             document.getElementById('employeeDetails').innerHTML = `
@@ -300,11 +300,11 @@ function viewEmployee(employeeId) {
 }
 
 function editEmployee(employeeId) {
-    window.location.href = `<?= route_url('payroll/employees') ?>/edit/${employeeId}`;
+    window.location.href = `<?= route_url('index.php/payroll/employees') ?>/edit/${employeeId}`;
 }
 
 function payrollEmployee(employeeId) {
-    window.location.href = `<?= route_url('payroll/process') ?>?employee_id=${employeeId}`;
+    window.location.href = `<?= route_url('index.php/payroll/process') ?>?employee_id=${employeeId}`;
 }
 
 // Helper functions

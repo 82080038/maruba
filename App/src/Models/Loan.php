@@ -7,7 +7,7 @@ class Loan extends Model
     protected array $fillable = [
         'loan_number', 'member_id', 'product_id', 'principal_amount', 'interest_rate',
         'interest_type', 'tenor_months', 'monthly_installment', 'total_amount',
-        'outstanding_balance', 'purpose', 'collateral_details', 'status',
+        'amount', 'purpose', 'collateral_details', 'status',
         'application_date', 'approval_date', 'disbursement_date', 'completion_date',
         'survey_date', 'surveyed_by', 'approved_by', 'disbursed_by', 'rejection_reason', 'tenant_id'
     ];
@@ -19,7 +19,7 @@ class Loan extends Model
         'tenor_months' => 'int',
         'monthly_installment' => 'float',
         'total_amount' => 'float',
-        'outstanding_balance' => 'float',
+        'amount' => 'float',
         'application_date' => 'date',
         'approval_date' => 'date',
         'disbursement_date' => 'date',
@@ -254,9 +254,9 @@ class Loan extends Model
                 COUNT(CASE WHEN status = 'active' THEN 1 END) as active_loans,
                 COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed_loans,
                 COUNT(CASE WHEN status = 'defaulted' THEN 1 END) as defaulted_loans,
-                SUM(CASE WHEN status IN ('disbursed', 'active') THEN outstanding_balance ELSE 0 END) as total_outstanding,
-                AVG(CASE WHEN status IN ('disbursed', 'active') THEN interest_rate ELSE NULL END) as avg_interest_rate,
-                SUM(CASE WHEN status = 'defaulted' THEN outstanding_balance ELSE 0 END) as total_defaults
+                SUM(CASE WHEN status IN ('disbursed', 'active') THEN amount ELSE 0 END) as total_outstanding,
+                AVG(CASE WHEN status IN ('disbursed', 'active') THEN rate ELSE NULL END) as avg_interest_rate,
+                SUM(CASE WHEN status = 'defaulted' THEN amount ELSE 0 END) as total_defaults
             FROM {$this->table}
         ");
         $stmt->execute();
